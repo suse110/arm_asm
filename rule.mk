@@ -13,6 +13,7 @@ all:
 	@$(CROSS_COMPILE)objcopy -O binary $(EXEC).elf $(EXEC).bin
 	@$(CROSS_COMPILE)objdump -d -S $(EXEC).elf > $(EXEC).asm
 	@hexdump -C $(EXEC).bin > $(EXEC).binary
+	@git diff $(EXEC).binary > $(EXEC).binary.diff
 
 .PHONY : run
 run: all
