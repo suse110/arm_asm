@@ -43,7 +43,8 @@ SECTIONS_others = \
 
 SECTIONS = \
 	first \
-	arithmetic
+	arithmetic \
+	branch 
 
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \

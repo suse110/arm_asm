@@ -5,7 +5,7 @@ test.elf:     file format elf32-littlearm
 Disassembly of section .text:
 
 00000000 <_start-0x40>:
-   0:	20001208 	.word	0x20001208
+   0:	20001008 	.word	0x20001008
    4:	00000040 	.word	0x00000040
    8:	00000091 	.word	0x00000091
    c:	00000091 	.word	0x00000091
@@ -38,7 +38,7 @@ ldr r1, =main
 
 0000004c <uart_print>:
 static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
-unsigned char buffer[512];
+
 static void uart_print(const char* s)
 {
   4c:	b480      	push	{r7}
