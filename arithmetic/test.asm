@@ -1,5 +1,5 @@
 
-test.elf:     file format elf32-littlearm
+./test.elf:     file format elf32-littlearm
 
 
 Disassembly of section .text:

@@ -1,9 +1,12 @@
 EXEC = test
 
 SOURCE_DIR = .
+BUILD_DIR = ./build
 
-SRC = $(EXEC).s $(EXEC).c
-LINKSCRIPT = $(EXEC).ld
+SRC += ./app/$(EXEC).s 
+SRC += ./app/$(EXEC).c
+
+LINKSCRIPT = ./app/$(EXEC).ld
 GDBINIT = ../gdbinit
 CFLAGS += -Idrivers/chip/lm3s811/inc -Idrivers/CMSIS/Include
 
