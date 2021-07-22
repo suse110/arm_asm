@@ -1,5 +1,5 @@
 CROSS_COMPILE = arm-none-eabi-
-CFLAGS = -nostdlib -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
+CFLAGS += -nostdlib -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
 		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft 
 QEMU = qemu-system-arm
 # QFLAGS = -nographic -smp 1 -machine virt 
