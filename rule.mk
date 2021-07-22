@@ -46,4 +46,4 @@ hex: all
 
 .PHONY : clean
 clean:
-	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.bin $(BUILD_DIR)/*.elf $(BUILD_DIR)/*.asm  $(BUILD_DIR)/*.diff
+	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.bin $(BUILD_DIR)/*.elf $(BUILD_DIR)/*.asm  $(BUILD_DIR)/*.diff $(BUILD_DIR)/*.binary
