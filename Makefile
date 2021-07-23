@@ -44,7 +44,8 @@ SECTIONS_others = \
 SECTIONS = \
 	first \
 	arithmetic \
-	branch 
+	branch \
+	mov
 
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \

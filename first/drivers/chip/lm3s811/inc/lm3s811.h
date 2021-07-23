@@ -13,6 +13,7 @@ typedef enum IRQn
   SysTick_IRQn                = -1,     /*!< 15 Cortex-M4 System Tick Interrupt                                */
 } IRQn_Type;
 
+#define __MPU_PRESENT 1
 #define __NVIC_PRIO_BITS 4
 #include "core_cm3.h"
 

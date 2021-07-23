@@ -3,7 +3,7 @@
 
 void main(void)
 {
-    lite_printf("hello world\n");
+    lite_printf("[%s] hello world\n", __func__);
     hal_mpu_test();
     while(1);
 }
