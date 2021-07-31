@@ -35,6 +35,15 @@ debug: all
 gdb: all
 	@$(GDB) $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}
 
+pydebug: all
+	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"
+	@echo "-------------------------------------------------------"
+	@$(QEMU) $(QFLAGS) -kernel $(BUILD_DIR)/$(EXEC).elf -s -S &
+	@$(GDB)-py $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}
+
+pygdb: all
+	@$(GDB)-py $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}
+
 
 .PHONY : code
 code: all
