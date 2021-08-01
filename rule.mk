@@ -1,9 +1,9 @@
 CROSS_COMPILE = arm-none-eabi-
 CFLAGS += -nostdlib -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
-		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft 
+		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft
 QEMU = qemu-system-arm
-# QFLAGS = -nographic -smp 1 -machine virt 
-QFLAGS = -nographic -smp 1 -machine lm3s811evb #-monitor stdio 
+# QFLAGS = -nographic -smp 1 -machine virt
+QFLAGS = -nographic -smp 1 -machine lm3s811evb #-monitor stdio
 
 GDB = ${CROSS_COMPILE}gdb
 
@@ -11,7 +11,7 @@ BUILD_DIR ?= .
 
 .DEFAULT_GOAL := all
 all:
-	@$(CROSS_COMPILE)gcc $(CFLAGS) ${SRC} -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf 	
+	@$(CROSS_COMPILE)gcc $(CFLAGS) ${SRC} -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf
 	@$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
 	@$(CROSS_COMPILE)objdump -d -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin > $(BUILD_DIR)/$(EXEC).binary
@@ -32,7 +32,7 @@ debug: all
 	@$(GDB) $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}
 
 .PHONY : gdb
-gdb: all
+gdb:
 	@$(GDB) $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}
 
 pydebug: all
@@ -41,7 +41,7 @@ pydebug: all
 	@$(QEMU) $(QFLAGS) -kernel $(BUILD_DIR)/$(EXEC).elf -s -S &
 	@$(GDB)-py $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}-py
 
-pygdb: all
+pygdb:
 	@$(GDB)-py $(BUILD_DIR)/$(EXEC).elf -q -x ${GDBINIT}-py
 
 
