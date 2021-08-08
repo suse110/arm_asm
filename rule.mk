@@ -1,6 +1,6 @@
 CROSS_COMPILE = arm-none-eabi-
 CFLAGS += -nostdlib -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
-		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft
+		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
 QEMU = qemu-system-arm
 # QFLAGS = -nographic -smp 1 -machine virt
 QFLAGS = -nographic -smp 1 -machine lm3s811evb #-monitor stdio
@@ -52,9 +52,15 @@ hex: all
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin > $(BUILD_DIR)/$(EXEC).binary
 	@git diff $(BUILD_DIR)/$(EXEC).binary > $(BUILD_DIR)/$(EXEC).binary.diff
-	@git diff $(BUILD_DIR)/$(EXEC).asm > $(BUILD_DIR)/$(EXEC).asm.diff
-	@git diff $(BUILD_DIR)/$(EXEC).map > $(BUILD_DIR)/$(EXEC).map.diff
+
+BUILD_FILES = $(BUILD_DIR)/*.o 	  \
+			$(BUILD_DIR)/*.bin 	  \
+			$(BUILD_DIR)/*.elf 	  \
+			$(BUILD_DIR)/*.asm    \
+			$(BUILD_DIR)/*.diff   \
+			$(BUILD_DIR)/*.binary \
+			$(BUILD_DIR)/*.map
 
 .PHONY : clean
 clean:
-	rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.bin $(BUILD_DIR)/*.elf $(BUILD_DIR)/*.asm  $(BUILD_DIR)/*.diff $(BUILD_DIR)/*.binary
+	rm -rf $(BUILD_FILES)

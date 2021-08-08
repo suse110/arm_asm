@@ -3,16 +3,6 @@
 #include "mpu_armv7.h"
 #include "hal_log.h"
 
-/*
-
-*/
-void mem_manage_handler(void)
-{
-    lite_printf("[%s]\n", __func__);
-
-    for(;;);
-}
-
 void hal_mpu_test(void)
 {
     /*

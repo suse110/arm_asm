@@ -12,4 +12,4 @@ target remote localhost:1234
 load
 set disassemble-next-line on
 b _start
-
+c

@@ -1,47 +1,5 @@
-SECTIONS_Arithmetic = \
-	add \
-	add2 \
-	sub \
-	addi \
-	subi \
-	neg \
-	nop \
-	mv \
-	lui \
-	li
-
-SECTIONS_Logical = \
-	and \
-	andi \
-	not
-
-SECTIONS_Shifting = \
-	slli \
-	srli \
-	srai
-
-SECTIONS_Load_Store = \
-	lb \
-	lbu \
-	sb \
-	auipc \
-	la
-
-SECTIONS_Branch = \
-	bne
-
-SECTIONS_Jump = \
-	jalr \
-
-SECTIONS_CallingConventions = \
-	cc_leaf \
-	cc_nested \
-
-SECTIONS_others = \
-	asm2c \
-	c2asm
-
 SECTIONS = \
+	template \
 	first \
 	arithmetic \
 	branch \

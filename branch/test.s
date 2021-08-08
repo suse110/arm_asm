@@ -49,10 +49,10 @@
 
 
 .word stack_top
-.word reset
+.word _start
 
-.global reset
-reset:
+.global _start
+_start:
 ldr r0, =c_entry
 bx r0
 
