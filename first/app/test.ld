@@ -2,14 +2,15 @@ SECTIONS
 {
 	. = 0x0;
 	.text : {
+		*(.text._start);
         *(.isr_vectors)
-		LONG(0x11223344)
+		/* LONG(0x11223344) */
 		*(.text);
-		LONG(0x55AA55AA)
+		/* LONG(0x55AA55AA) */
 	}
 	
     . = 0x20000000;
-	.data : { *(.data) ;LONG(0x55AA55AA)}
+	.data : { *(.data)}
 	
 	.bss : { *(.bss) }
 	. = ALIGN(8);

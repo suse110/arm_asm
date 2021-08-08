@@ -52,6 +52,8 @@ hex: all
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin > $(BUILD_DIR)/$(EXEC).binary
 	@git diff $(BUILD_DIR)/$(EXEC).binary > $(BUILD_DIR)/$(EXEC).binary.diff
+	@git diff $(BUILD_DIR)/$(EXEC).asm > $(BUILD_DIR)/$(EXEC).asm.diff
+	@git diff $(BUILD_DIR)/$(EXEC).map > $(BUILD_DIR)/$(EXEC).map.diff
 
 .PHONY : clean
 clean:
