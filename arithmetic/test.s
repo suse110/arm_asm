@@ -25,7 +25,7 @@
 
 
 
-.word stack_top
+.word _estack
 .word _start
 
 .global _start

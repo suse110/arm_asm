@@ -14,6 +14,7 @@ SECTIONS
 	
 	.bss : { *(.bss) }
 	. = ALIGN(8);
+	_sstack = .;
     . = . + 0x1000;
-    stack_top = .;
+	_estack = .;
 }

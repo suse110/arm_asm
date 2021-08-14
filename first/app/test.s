@@ -8,7 +8,7 @@
 _start:
 
 # bl mmu_setting_1
-ldr sp, =stack_top
+ldr sp, =_estack
 ldr r1, =main
 bx r1
 .section .text.default_handler,"ax",%progbits
@@ -19,7 +19,7 @@ default_handler:
 .type  g_pfnVectors, %object
 .size  g_pfnVectors, .-g_pfnVectors
 g_pfnVectors:
-.word stack_top
+.word _estack
 .word _start
 .word nmi_handler
 .word hard_fault_handler
