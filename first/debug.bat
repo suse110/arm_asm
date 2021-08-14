@@ -1,3 +1,4 @@
+@echo off
 SET HOME=%USERPROFILE%
 
 set PWD_BKP=%CD%
@@ -8,8 +9,21 @@ cd ..
 
 set QEMU_ROOT=%CD%\tools\qemu\win\w64-202107062
 set GDB_ROOT=%CD%\tools\arm-none-eabi\Sourcery_CodeBench_Lite_for_ARM_EABI\bin
+set PATH=%PATH%;%QEMU_ROOT%;%GDB_ROOT%
 cd %PWD_BKP%
+tasklist | findstr /i qemu-system-arm.exe > NUL
+if ErrorLevel == 1 (
+    @echo "start qemu-system-arm"
+    start qemu-system-arm -nographic -smp 1 -machine lm3s811evb -kernel .\build\test.elf -s -S
+    sleep 0.5
+) else (
+@echo "qemu-system-arm already run"
+)
 
-start %QEMU_ROOT%\qemu-system-arm -nographic -smp 1 -machine lm3s811evb -kernel .\build\test.elf -s -S
-pause
-%GDB_ROOT%\arm-none-eabi-gdb .\build\test.elf -q -x ..\gdbinit
+tasklist | findstr /i qemu-system-arm.exe > NUL
+if ErrorLevel == 1 (
+    @echo "qemu-system-arm start fail"
+) else (
+    arm-none-eabi-gdb .\build\test.elf -q -x ..\gdbinit
+)
+
