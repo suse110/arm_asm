@@ -43,8 +43,17 @@ g_pfnVectors:
 .weak nmi_handler
 .thumb_set nmi_handler,default_handler
 
-.weak hard_fault_handler
-.thumb_set hard_fault_handler,default_handler
+# .weak hard_fault_handler
+# .thumb_set hard_fault_handler,default_handler
+# .global hard_fault_handler
+# .type hard_fault_handler, %function
+# hard_fault_handler:
+#     MOV     r0, lr                  /* get lr */
+#     MOV     r1, sp                  /* get stack pointer (current is MSP) */
+#     BL      cm_backtrace_fault
+
+# Fault_Loop:
+#     BL      Fault_Loop              /* while(1) */
 
 .weak mem_manage_handler
 .thumb_set mem_manage_handler,default_handler
@@ -66,4 +75,5 @@ g_pfnVectors:
 
 .weak sys_tick_handler
 .thumb_set sys_tick_handler,default_handler
+
 

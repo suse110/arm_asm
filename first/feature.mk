@@ -1,2 +1,2 @@
 #use stdlib
-NOSTDLIB_ENABLE = n
+NOSTDLIB_ENABLE = y
