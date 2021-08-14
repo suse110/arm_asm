@@ -9,7 +9,7 @@ Disassembly of section .text:
    4:	00000008 	.word	0x00000008
 
 00000008 <_start>:
-.word stack_top
+.word _estack
 .word _start
 
 .global _start
@@ -27,33 +27,33 @@ static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
 static void uart_print(const char* s)
 {
   10:	b480      	push	{r7}
-  12:	b081      	sub	sp, #4
+  12:	b083      	sub	sp, #12
   14:	af00      	add	r7, sp, #0
-  16:	6038      	str	r0, [r7, #0]
+  16:	6078      	str	r0, [r7, #4]
     while (*s != '\0') {
   18:	e006      	b.n	28 <uart_print+0x18>
         *UART_DR = *s;
-  1a:	683b      	ldr	r3, [r7, #0]
+  1a:	687b      	ldr	r3, [r7, #4]
   1c:	781a      	ldrb	r2, [r3, #0]
   1e:	4b07      	ldr	r3, [pc, #28]	; (3c <uart_print+0x2c>)
   20:	601a      	str	r2, [r3, #0]
         s++;
-  22:	683b      	ldr	r3, [r7, #0]
+  22:	687b      	ldr	r3, [r7, #4]
   24:	3301      	adds	r3, #1
-  26:	603b      	str	r3, [r7, #0]
+  26:	607b      	str	r3, [r7, #4]
     while (*s != '\0') {
-  28:	683b      	ldr	r3, [r7, #0]
+  28:	687b      	ldr	r3, [r7, #4]
   2a:	781b      	ldrb	r3, [r3, #0]
   2c:	2b00      	cmp	r3, #0
   2e:	d1f4      	bne.n	1a <uart_print+0xa>
     }
 }
   30:	bf00      	nop
-  32:	bf00      	nop
-  34:	3704      	adds	r7, #4
-  36:	46bd      	mov	sp, r7
-  38:	bc80      	pop	{r7}
-  3a:	4770      	bx	lr
+  32:	370c      	adds	r7, #12
+  34:	46bd      	mov	sp, r7
+  36:	bc80      	pop	{r7}
+  38:	4770      	bx	lr
+  3a:	bf00      	nop
   3c:	4000c000 	.word	0x4000c000
 
 00000040 <c_entry>:

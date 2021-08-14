@@ -2,74 +2,73 @@
 Memory Configuration
 
 Name             Origin             Length             Attributes
-*default*        0x0000000000000000 0xffffffffffffffff
+*default*        0x00000000         0xffffffff
 
 Linker script and memory map
 
-LOAD /tmp/ccDdYke3.o
-                0x0000000000000000                . = 0x0
+LOAD C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
+                0x00000000                . = 0x0
 
-.text           0x0000000000000000       0x2c
+.text           0x00000000       0x2c
  *(.text)
- .text          0x0000000000000000       0x2c /tmp/ccDdYke3.o
-                0x0000000000000008                _start
+ .text          0x00000000       0x2c C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
+                0x00000008                _start
  *(.vectors)
 
-.rodata         0x000000000000002c        0xf
- .rodata        0x000000000000002c        0xf /tmp/ccDdYke3.o
+.rodata         0x0000002c        0xf
+ .rodata        0x0000002c        0xf C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.glue_7         0x000000000000003c        0x0
- .glue_7        0x000000000000003c        0x0 linker stubs
+.glue_7         0x0000003c        0x0
+ .glue_7        0x0000003c        0x0 linker stubs
 
-.glue_7t        0x000000000000003c        0x0
- .glue_7t       0x000000000000003c        0x0 linker stubs
+.glue_7t        0x0000003c        0x0
+ .glue_7t       0x0000003c        0x0 linker stubs
 
-.vfp11_veneer   0x000000000000003c        0x0
- .vfp11_veneer  0x000000000000003c        0x0 linker stubs
+.vfp11_veneer   0x0000003c        0x0
+ .vfp11_veneer  0x0000003c        0x0 linker stubs
 
-.v4_bx          0x000000000000003c        0x0
- .v4_bx         0x000000000000003c        0x0 linker stubs
+.v4_bx          0x0000003c        0x0
+ .v4_bx         0x0000003c        0x0 linker stubs
 
-.iplt           0x000000000000003c        0x0
- .iplt          0x000000000000003c        0x0 /tmp/ccDdYke3.o
+.iplt           0x0000003c        0x0
+ .iplt          0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.rel.dyn        0x000000000000003c        0x0
- .rel.iplt      0x000000000000003c        0x0 /tmp/ccDdYke3.o
-                0x0000000020000000                . = 0x20000000
+.rel.dyn        0x0000003c        0x0
+ .rel.iplt      0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
+                0x20000000                . = 0x20000000
 
-.data           0x0000000020000000        0x0
+.data           0x20000000        0x0
  *(.data)
- .data          0x0000000020000000        0x0 /tmp/ccDdYke3.o
+ .data          0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.igot.plt       0x0000000020000000        0x0
- .igot.plt      0x0000000020000000        0x0 /tmp/ccDdYke3.o
+.igot.plt       0x20000000        0x0
+ .igot.plt      0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.bss            0x0000000020000000        0x0
+.bss            0x20000000        0x0
  *(.bss)
- .bss           0x0000000020000000        0x0 /tmp/ccDdYke3.o
-                0x0000000020000000                . = ALIGN (0x8)
-                0x0000000020001000                . = (. + 0x1000)
-                0x0000000020001000                stack_top = .
+ .bss           0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
+                0x20000000                . = ALIGN (0x8)
+                0x20001000                . = (. + 0x1000)
+                0x20001000                stack_top = .
 OUTPUT(./test.elf elf32-littlearm)
-LOAD linker stubs
 
 .ARM.attributes
-                0x0000000000000000       0x1b
+                0x00000000       0x21
  .ARM.attributes
-                0x0000000000000000       0x1b /tmp/ccDdYke3.o
+                0x00000000       0x21 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.debug_line     0x0000000000000000       0x44
- .debug_line    0x0000000000000000       0x44 /tmp/ccDdYke3.o
+.debug_line     0x00000000       0x44
+ .debug_line    0x00000000       0x44 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.debug_info     0x0000000000000000       0x26
- .debug_info    0x0000000000000000       0x26 /tmp/ccDdYke3.o
+.debug_info     0x00000000       0x26
+ .debug_info    0x00000000       0x26 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.debug_abbrev   0x0000000000000000       0x14
- .debug_abbrev  0x0000000000000000       0x14 /tmp/ccDdYke3.o
+.debug_abbrev   0x00000000       0x14
+ .debug_abbrev  0x00000000       0x14 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.debug_aranges  0x0000000000000000       0x20
+.debug_aranges  0x00000000       0x20
  .debug_aranges
-                0x0000000000000000       0x20 /tmp/ccDdYke3.o
+                0x00000000       0x20 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
 
-.debug_str      0x0000000000000000       0x48
- .debug_str     0x0000000000000000       0x48 /tmp/ccDdYke3.o
+.debug_str      0x00000000       0x47
+ .debug_str     0x00000000       0x47 C:\Users\suse1\AppData\Local\Temp\ccA49Ode.o
