@@ -5,7 +5,7 @@
 
 static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
 
-static unsigned long m_pow(int x, int y)
+static unsigned long __pow(int x, int y)
 {
     unsigned long sum = 1;
     while (y--)
@@ -14,18 +14,25 @@ static unsigned long m_pow(int x, int y)
     }
     return sum;
 }
-void m_putchar(const char ch)
+
+void __putchar(const char ch)
 {
     *UART_DR = ch;
 }
-void m_putstr(const char *str)
+#define __putchar(ch) do {*UART_DR = ch;} while(0)
+
+void _putchar(char character)
+{
+    __putchar(character);
+}
+void __putstr(const char *str)
 {
     while (*str)
     {
-        m_putchar(*str++);
+        __putchar(*str++);
     }
 }
-uint32_t m_strlen (const char *__s)
+uint32_t __strlen (const char *__s)
 {
     uint32_t i = 0;
     while(*__s++ != '\0') i++;
@@ -64,10 +71,10 @@ int lite_printf(const char *str, ...)
                 r_val = val;
                 while (count)
                 {
-                    ch = r_val / m_pow(10, count - 1);
-                    r_val %= m_pow(10, count - 1);
+                    ch = r_val / __pow(10, count - 1);
+                    r_val %= __pow(10, count - 1);
 
-                    m_putchar(ch + '0');
+                    __putchar(ch + '0');
                     //数字到字符的转换
                     count--;
                 }
@@ -88,25 +95,25 @@ int lite_printf(const char *str, ...)
                 r_val = val;
                 while (count)
                 {
-                    ch = r_val / m_pow(16, count - 1);
-                    r_val %= m_pow(16, count - 1);
+                    ch = r_val / __pow(16, count - 1);
+                    r_val %= __pow(16, count - 1);
                     if (ch <= 9)
-                        m_putchar(ch + '0');
+                        __putchar(ch + '0');
                     //数字到字符的转换
                     else
-                        m_putchar(ch - 10 + 'a');
+                        __putchar(ch - 10 + 'a');
                     count--;
                 }
                 break;
             case 's': //发送字符串
                 s = va_arg(ap, char *);
-                m_putstr(s);
+                __putstr(s);
                 //字符串,返回值为字符指针
-                res += m_strlen(s);
+                res += __strlen(s);
                 //返回值长度增加
                 break;
             case 'c':
-                m_putchar((char)va_arg(ap, int)); //大家猜为什么不写char，而要写int
+                __putchar((char)va_arg(ap, int)); //大家猜为什么不写char，而要写int
                 res += 1;
 
                 break;
@@ -114,15 +121,15 @@ int lite_printf(const char *str, ...)
             }
             break;
         case '\n':
-            m_putchar('\n');
+            __putchar('\n');
             res += 1;
             break;
         case '\r':
-            m_putchar('\r');
+            __putchar('\r');
             res += 1;
             break;
         default: //显示原来的第一个参数的字符串(不是..里的参数o)
-            m_putchar(*str);
+            __putchar(*str);
             res += 1;
         }
 
