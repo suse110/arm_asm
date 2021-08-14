@@ -3,7 +3,10 @@ SERVICE_DIR = kernel/service
 
 SRC += $(SERVICE_DIR)/printf/printf.c
 
+SRC += $(SERVICE_DIR)/shell/src/shell.c
+
 CFLAGS += -I$(SOURCE_DIR)/$(SERVICE_DIR)/printf
+CFLAGS += -I$(SOURCE_DIR)/$(SERVICE_DIR)/shell/inc
 # for printf module
 CFLAGS += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
 CFLAGS += -DPRINTF_DISABLE_SUPPORT_LONG_LONG

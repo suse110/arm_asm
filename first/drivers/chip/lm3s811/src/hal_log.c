@@ -20,6 +20,20 @@ void __putchar(const char ch)
     *UART_DR = ch;
 }
 #define __putchar(ch) do {*UART_DR = ch;} while(0)
+void __getchar(char *chr)
+{
+    *chr = (char)*UART_DR;
+}
+void lite_getchar(char *chr)
+{
+    do {
+        *chr = (char)*UART_DR;
+    } while (*chr == 0);
+}
+void lite_putchar(char character)
+{
+    __putchar(character);
+}
 
 void _putchar(char character)
 {
@@ -137,4 +151,16 @@ int lite_printf(const char *str, ...)
     }
     va_end(ap);
     return res;
+}
+
+int __io_putchar(int ch)
+{
+    __putchar(ch);
+    return 0;
+}
+
+int __io_getchar(void)
+{   char chr;
+    __getchar(&chr);
+    return chr;
 }

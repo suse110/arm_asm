@@ -1,10 +1,15 @@
 CROSS_COMPILE = arm-none-eabi-
-CFLAGS += -nostdlib -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
-		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=apcs-gnu -mfloat-abi=soft -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
+#"EABI version 0" means the "apcs-gnu" ABI, while "EABI version 4" is the "aapcs-linux", EABI version 5" is aapcs
+CFLAGS += -fno-builtin -march=armv7-m -g -Wall -static -mlittle-endian \
+		-mthumb -mcpu=cortex-m3 -ffreestanding -mabi=aapcs -mfloat-abi=soft -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
 QEMU = qemu-system-arm
 # QFLAGS = -nographic -smp 1 -machine virt
 QFLAGS = -nographic -smp 1 -machine lm3s811evb #-monitor stdio
 
+ifeq ($(NOSTDLIB_ENABLE), y)
+CFLAGS += -nostdlib
+CFLAGS += -DNOSTDLIB_ENABLE
+endif
 GDB = ${CROSS_COMPILE}gdb
 
 BUILD_DIR ?= .

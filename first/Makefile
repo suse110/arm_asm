@@ -8,6 +8,8 @@ SRC += ./app/$(EXEC).c
 
 LINKSCRIPT = ./app/$(EXEC).ld
 GDBINIT = ../gdbinit
+CFLAGS += -Idrivers/chip/lm3s811/inc 
+CFLAGS += -Idrivers/CMSIS/Include
 
 include ./feature.mk
 
