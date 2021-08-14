@@ -1,6 +1,7 @@
 SECTIONS
 {
 	. = 0x0;
+	_stext = .;
 	.text : {
 		*(.text._start);
         *(.isr_vectors)
@@ -8,7 +9,7 @@ SECTIONS
 		*(.text);
 		/* LONG(0x55AA55AA) */
 	}
-	
+	_etext = .;
     . = 0x20000000;
 	.data : { *(.data)}
 	
