@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "hal.h"
+#include "shell.h"
 
 
 void main(void)
