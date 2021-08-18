@@ -11,5 +11,6 @@ display/z $xpsr
 target remote localhost:1234
 load
 set disassemble-next-line on
+set pagination off
 b _start
 c
