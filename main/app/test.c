@@ -7,8 +7,8 @@ void main(void)
 {
 
     printf("[%s] hello world\n", __func__);
-    shell_start();
-    // backtrace_test();
+    // shell_start();
+    backtrace_test();
     // hal_mpu_test();
     while(1);
 }
