@@ -1,6 +1,6 @@
 SECTIONS = \
 	template \
-	first \
+	main \
 	arithmetic \
 	branch \
 	mov
