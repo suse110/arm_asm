@@ -1,3 +1,6 @@
 [submodule "first/kernel/service/printf"]
 	path = first/kernel/service/printf
 	url = https://github.com/suse110/printf.git
+[submodule "main/kernel/service/printf"]
+	path = main/kernel/service/printf
+	url = https://github.com/suse110/printf.git
