@@ -1,3 +1,6 @@
-set ROOT_DIR=J:\document\doc\src\os\toyos\src\gnu\arm_asm
+set CUR_DIR=%CD%
+cd ..\..\..\..\..
+call setenv.bat
+cd %CUR_DIR%
 
-openocd -f %ROOT_DIR%/tools/openocd/config/program.cfg
+openocd -f ./config/program.cfg

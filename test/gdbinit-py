@@ -2303,8 +2303,8 @@ display/z $pc
 display/z $lr
 display/z $xpsr
 
-target remote localhost:3333
+target remote localhost:1234
 load
 set disassemble-next-line on
-b Reset_Handler
+b _start
 c

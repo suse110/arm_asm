@@ -6,17 +6,17 @@ Name             Origin             Length             Attributes
 
 Linker script and memory map
 
-LOAD C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+LOAD C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
                 0x00000000                . = 0x0
 
 .text           0x00000000       0x2c
  *(.text)
- .text          0x00000000       0x2c C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .text          0x00000000       0x2c C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
                 0x00000008                _start
  *(.vectors)
 
 .rodata         0x0000002c        0xf
- .rodata        0x0000002c        0xf C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .rodata        0x0000002c        0xf C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .glue_7         0x0000003c        0x0
  .glue_7        0x0000003c        0x0 linker stubs
@@ -31,22 +31,22 @@ LOAD C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
  .v4_bx         0x0000003c        0x0 linker stubs
 
 .iplt           0x0000003c        0x0
- .iplt          0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .iplt          0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .rel.dyn        0x0000003c        0x0
- .rel.iplt      0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .rel.iplt      0x0000003c        0x0 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
                 0x20000000                . = 0x20000000
 
 .data           0x20000000        0x0
  *(.data)
- .data          0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .data          0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .igot.plt       0x20000000        0x0
- .igot.plt      0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .igot.plt      0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .bss            0x20000000        0x0
  *(.bss)
- .bss           0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .bss           0x20000000        0x0 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
                 0x20000000                . = ALIGN (0x8)
                 0x20001000                . = (. + 0x1000)
                 0x20001000                stack_top = .
@@ -55,20 +55,20 @@ OUTPUT(./test.elf elf32-littlearm)
 .ARM.attributes
                 0x00000000       0x21
  .ARM.attributes
-                0x00000000       0x21 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+                0x00000000       0x21 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .debug_line     0x00000000       0x44
- .debug_line    0x00000000       0x44 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .debug_line    0x00000000       0x44 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .debug_info     0x00000000       0x26
- .debug_info    0x00000000       0x26 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .debug_info    0x00000000       0x26 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .debug_abbrev   0x00000000       0x14
- .debug_abbrev  0x00000000       0x14 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .debug_abbrev  0x00000000       0x14 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .debug_aranges  0x00000000       0x20
  .debug_aranges
-                0x00000000       0x20 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+                0x00000000       0x20 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
 
 .debug_str      0x00000000       0x53
- .debug_str     0x00000000       0x53 C:\Users\suse1\AppData\Local\Temp\ccQz4Nt7.o
+ .debug_str     0x00000000       0x53 C:\Users\suse1\AppData\Local\Temp\ccMyR5SU.o
