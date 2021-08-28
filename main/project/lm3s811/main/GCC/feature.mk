@@ -1,2 +1,3 @@
 #use stdlib
+CHIP_COFNIG = lm3s811
 NOSTDLIB_ENABLE = y
