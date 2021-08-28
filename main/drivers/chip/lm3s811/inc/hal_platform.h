@@ -3,6 +3,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "lm3s811.h"
+#include "core_cm3.h"
+#include "cmsis_gcc.h"
+#include "hal_log.h"
 
 
 
