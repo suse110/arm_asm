@@ -1,0 +1,113 @@
+# import os
+# cross_compiler = "arm-none-eabi-"
+
+# #don't use the default environment
+# DefaultEnvironment(tools=[])
+
+# # Only specify the tools we're using
+# env = Environment(ENV = os.environ, tools=['gcc','g++','gnulink','ar'])
+
+# # overwrite tool names with our cross compiler tools
+# for (tool, name) in [
+#     ('AR','ar'),
+#     ('AS','as'),
+#     ('CC','gcc'),
+#     ('CXX','g++'),
+#     ('LD','g++'),
+#     ('LINK','gcc'),
+#     ('STRIP','strip'),
+#     ('RANLIB','ranlib'),
+#     ('OBJCOPY','objcopy')
+# ]:
+#     env[tool] = cross_compiler + name
+
+# env['OBJSUFFIX']   = ".o"
+# env['PROGSUFFIX'] = '.elf'
+# env['TARGET_ARCH'] = "arm"
+
+# env['LINKFLAGS'] = []
+
+# env.Append(ENV = {'PATH' : os.environ['PATH']})
+
+# #coding:utf-8
+# #默认ARM
+# ARCH = ARGUMENTS.get('ARCH','arm')  
+# src = Glob('Src/*.c')
+# cflags =["-ggdb", "-O0", "-Wall", "-Wextra", "-Warray-bounds"]
+# cflags.append(['-mcpu=cortex-m4', '-mthumb', '-mlittle-endian', '-mthumb-interwork'])
+# cflags.append(['-mfloat-abi=hard', '-mfpu=fpv4-sp-d16'])
+# cflags.append(['-DUSE_STDPERIPH_DRIVER', '-DSTM32F4XX', '-DSTM32F401xE'])
+# cflags.append(['-I../CMSIS/Include', '-I../CMSIS/Device/ST/STM32F4xx/Include' ,'-Inc'])
+
+ 
+# cpppaths = ['Inc']
+
+# defines = ['MODULE1_DEF']
+# env.Append(CPPPATH=cpppaths)
+# env.Append(CFLAGS=cflags)
+# env.Append(CPPDEFINES=defines)
+# # env.Append(CCCOMSTR="CC $SOURCES")
+
+# if ARCH == 'arm':
+
+#     EXE_PATH = 'D:/Program Files (x86)/GNU Tools ARM Embedded/7 2017-q4-major/bin/'  
+#     env.PrependENVPath ('PATH',EXE_PATH)
+
+#     env.SharedLibrary('libstmf4',source=src,LIBS=[], LIBPATH=[])    
+
+# elif ARCH == 'x86':
+#     pass
+
+
+Import('env')
+
+
+libenv = env.Clone()
+
+# libenv.Append(CPPPATH = [
+#     '#Drivers/CMSIS/Device/ST/STM32F4xx/Include',
+#     '#Drivers/STM32F4xx_HAL_Driver/Inc',
+#     '#Drivers/CMSIS/Include'
+#     ])
+libenv.Append(CCFLAGS = [
+'-ggdb', '-O0', '-Wall', '-Wextra', '-Warray-bounds',
+'-mcpu=cortex-m4', '-mthumb', '-mlittle-endian', '-mthumb-interwork',
+'-mfloat-abi=hard', '-mfpu=fpv4-sp-d16',
+'-DUSE_STDPERIPH_DRIVER', '-DSTM32F4XX', '-DSTM32F401xE',
+])
+
+
+stm32f4xx_hal_driver = libenv.StaticLibrary('Src/stm32f4xx_hal_driver',
+['Src/stm32f4xx_hal.c', 'Src/stm32f4xx_hal_msp_template.c',
+'Src/stm32f4xx_hal_adc.c', 'Src/stm32f4xx_hal_nand.c',
+'Src/stm32f4xx_hal_adc_ex.c', 'Src/stm32f4xx_hal_nor.c',
+'Src/stm32f4xx_hal_can.c', 'Src/stm32f4xx_hal_pccard.c',
+'Src/stm32f4xx_hal_cortex.c', 'Src/stm32f4xx_hal_pcd.c',
+'Src/stm32f4xx_hal_crc.c', 'Src/stm32f4xx_hal_pwr.c',
+'Src/stm32f4xx_hal_cryp.c', 'Src/stm32f4xx_hal_pwr_ex.c',
+'Src/stm32f4xx_hal_cryp_ex.c', 'Src/stm32f4xx_hal_rcc.c',
+'Src/stm32f4xx_hal_dac.c', 'Src/stm32f4xx_hal_rcc_ex.c',
+'Src/stm32f4xx_hal_dac_ex.c', 'Src/stm32f4xx_hal_rng.c',
+'Src/stm32f4xx_hal_dcmi.c', 'Src/stm32f4xx_hal_rtc.c',
+'Src/stm32f4xx_hal_dma.c', 'Src/stm32f4xx_hal_rtc_ex.c',
+'Src/stm32f4xx_hal_dma2d.c', 'Src/stm32f4xx_hal_sai.c',
+'Src/stm32f4xx_hal_dma_ex.c', 'Src/stm32f4xx_hal_sd.c',
+'Src/stm32f4xx_hal_eth.c', 'Src/stm32f4xx_hal_sdram.c',
+'Src/stm32f4xx_hal_flash.c', 'Src/stm32f4xx_hal_smartcard.c',
+'Src/stm32f4xx_hal_flash_ex.c', 'Src/stm32f4xx_hal_spi.c',
+'Src/stm32f4xx_hal_gpio.c', 'Src/stm32f4xx_hal_sram.c',
+'Src/stm32f4xx_hal_hash.c', 'Src/stm32f4xx_hal_tim.c',
+'Src/stm32f4xx_hal_hash_ex.c', 'Src/stm32f4xx_hal_tim_ex.c',
+'Src/stm32f4xx_hal_hcd.c', 'Src/stm32f4xx_hal_uart.c',
+'Src/stm32f4xx_hal_i2c.c', 'Src/stm32f4xx_hal_usart.c',
+'Src/stm32f4xx_hal_i2c_ex.c', 'Src/stm32f4xx_hal_wwdg.c',
+'Src/stm32f4xx_hal_i2s.c', 'Src/stm32f4xx_ll_fmc.c',
+'Src/stm32f4xx_hal_i2s_ex.c', 'Src/stm32f4xx_ll_fsmc.c',
+'Src/stm32f4xx_hal_irda.c', 'Src/stm32f4xx_ll_sdmmc.c',
+'Src/stm32f4xx_hal_iwdg.c', 'Src/stm32f4xx_ll_usb.c',
+'Src/stm32f4xx_hal_ltdc.c',
+
+])
+#install stm32f4xx_hal_driver to top lib directory
+libenv.Install('#build/lib/', stm32f4xx_hal_driver)
+
