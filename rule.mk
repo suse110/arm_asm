@@ -10,6 +10,10 @@ ifeq ($(NOSTDLIB_ENABLE), y)
 CFLAGS += -nostdlib
 CFLAGS += -DNOSTDLIB_ENABLE
 endif
+ifeq ($(QEMU_DEBUG_ENABLE), y)
+CFLAGS += -DQEMU_DEBUG_ENABLE
+endif
+
 GDB = ${CROSS_COMPILE}gdb
 
 BUILD_DIR ?= .

@@ -2,8 +2,8 @@
 #define __BACKTRACE_H__
 #include <stdint.h>
 void backtrace_test(void);
-
-
+void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_pointer);
+void print_call_stack(uint32_t sp);
 /* include or export for supported cmb_get_msp, cmb_get_psp and cmb_get_sp function */
 #if defined(__CC_ARM)
 static __inline __asm uint32_t cmb_get_msp(void) {

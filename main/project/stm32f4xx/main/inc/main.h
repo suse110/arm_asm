@@ -28,6 +28,7 @@
 #include "stdio.h"
 #include "serial.h"
 #include "steper.h"
+#include "backtrace.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* User can use this section to tailor USARTx/UARTx instance used and associated 

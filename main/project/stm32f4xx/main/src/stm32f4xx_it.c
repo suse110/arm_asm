@@ -65,6 +65,8 @@ void HardFault_Handler(void)
   //   "MOV     r1, sp\n"                  /* get stack pointer (current is MSP) */
   //   "BL      cm_backtrace_fault\n"
   // );
+    //dump_stack()
+  print_call_stack(cmb_get_sp);
   for(;;);
 }
 

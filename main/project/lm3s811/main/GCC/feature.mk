@@ -1,3 +1,4 @@
 #use stdlib
 CHIP_COFNIG = lm3s811
 NOSTDLIB_ENABLE = y
+QEMU_DEBUG_ENABLE = y

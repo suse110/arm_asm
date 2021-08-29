@@ -114,20 +114,20 @@ int main(void)
        - Global MSP (MCU Support Package) initialization
      */
   HAL_Init();
-  __asm("svc 0");
+//  __asm("svc 0");
   /* Configure the system clock to 84 MHz */
   SystemClock_Config();
 
   serial_init();
   /* Output a message on Hyperterminal using printf function */
-  printf("\n\r -- UART Printf Example: retarget the C library printf function to the UART\n\r");
+//  printf("\n\r -- UART Printf Example: retarget the C library printf function to the UART\n\r");
   
     //   printf("&__shell_command_start=0x%x &__shell_command_end=0x%x\r\n",\
         &__shell_command_start, &__shell_command_end);
     // shell_command_t * scmd = &__shell_command_start;
 
   BSP_LED_Init(LED2);
-  // fault_test_by_unalign();
+  backtrace_test();
 
   InitStepper();
   while (1) {

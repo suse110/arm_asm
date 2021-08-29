@@ -6,8 +6,8 @@
 #include "hal_platform.h"
 int test_div(void)
 {
-    // SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk|SCB_SHCSR_BUSFAULTENA_Msk|SCB_SHCSR_MEMFAULTENA_Msk;
-    // SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk|SCB_CCR_DIV_0_TRP_Msk;
+    SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk|SCB_SHCSR_BUSFAULTENA_Msk|SCB_SHCSR_MEMFAULTENA_Msk;
+    SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk|SCB_CCR_DIV_0_TRP_Msk;
 
     int a = 1;
     int b = 0;
@@ -74,7 +74,7 @@ extern const uint32_t _eheap;
 
 
 
-static void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_pointer)
+void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_pointer)
 {
     if ((uint32_t) stack_pointer < stack_start_addr) {
         stack_pointer = (uint32_t *) stack_start_addr;
@@ -247,7 +247,7 @@ static bool on_fault = false;
      *
      * @return depth
      */
-    size_t cm_backtrace_call_stack(uint32_t *buffer, size_t size, uint32_t sp) {
+    size_t backtrace_call_stack(uint32_t *buffer, size_t size, uint32_t sp) {
         uint32_t pc;
         uint32_t lr;
         size_t depth = 0;
@@ -313,11 +313,11 @@ for (; sp < stack_start_addr + stack_size; sp += sizeof(size_t)) {
 return depth;
     }
 
-    static void print_call_stack(uint32_t sp) {
+    void print_call_stack(uint32_t sp) {
         size_t i, cur_depth = 0;
         uint32_t call_stack_buf[CMB_CALL_STACK_MAX_DEPTH] = {0};
 
-        cur_depth = cm_backtrace_call_stack(call_stack_buf, CMB_CALL_STACK_MAX_DEPTH, sp);
+        cur_depth = backtrace_call_stack(call_stack_buf, CMB_CALL_STACK_MAX_DEPTH, sp);
 
         for (i = 0; i < cur_depth; i++) {
             sprintf(call_stack_info + i * (8 + 1), "%08lx", call_stack_buf[i]);
@@ -386,8 +386,7 @@ return depth;
          __enable_irq();
          // printf("[%s] start\n", __func__);
          // test_div();
-         // fault_test_by_div0();
-         // fault_test_by_unalign();
+
          // __asm("svc 0");
          // printf("[%s] end\n", __func__);
          uint32_t sp = cmb_get_sp();
@@ -415,6 +414,8 @@ return depth;
              sp += 4;
          }
          backtrace_level_1();
+//         fault_test_by_div0();
+//         fault_test_by_unalign();
          while(1);
     }
 

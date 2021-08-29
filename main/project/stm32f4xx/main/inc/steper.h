@@ -5,7 +5,7 @@ struct MotorPin {
     GPIO_TypeDef *Port;
     int number;
 };
-struct Stepper {
+typedef struct Stepper {
   
     // constructors:
     void (*Stepper)(int number_of_steps, struct MotorPin *motor_pin_1, struct MotorPin *motor_pin_2,
