@@ -126,16 +126,16 @@ int main(void)
         &__shell_command_start, &__shell_command_end);
     // shell_command_t * scmd = &__shell_command_start;
 
-  BSP_LED_Init(LED2);
+//  BSP_LED_Init(LED2);
   backtrace_test();
 
-  InitStepper();
+//  InitStepper();
   while (1) {
-    BSP_LED_Toggle(LED2);
+//    BSP_LED_Toggle(LED2);
 
-    HAL_Delay(1);
+//    HAL_Delay(1);
     
-    step(2);
+//    step(2);
   }
 }
 

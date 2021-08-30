@@ -66,7 +66,9 @@ void HardFault_Handler(void)
   //   "BL      cm_backtrace_fault\n"
   // );
     //dump_stack()
-  print_call_stack(cmb_get_sp);
+    printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
+  print_call_stack(cmb_get_sp());
+  cm_backtrace_fault(cmb_get_lr(), cmb_get_sp());
   for(;;);
 }
 

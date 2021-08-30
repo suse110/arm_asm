@@ -23,9 +23,9 @@ ldr r1, =main
 
 00000010 <g_pfnVectors>:
       10:	200018d8 00000001 0000006d 00000085     ... ....m.......
-      20:	0000009d 000000b5 000000cd 000020c0     ............. ..
-      30:	000020c0 000020c0 000020c0 000000e5     . ... ... ......
-      40:	000000fd 000020c0 00000115 0000012d     ..... ......-...
+      20:	0000009d 000000b5 000000cd 000020d8     ............. ..
+      30:	000020d8 000020d8 000020d8 000000e5     . ... ... ......
+      40:	000000fd 000020d8 00000115 0000012d     ..... ......-...
 
 00000050 <main>:
 #include "hal.h"
@@ -43,13 +43,13 @@ void main(void)
       58:	f001 f8bd 	bl	11d6 <printf_>
     // shell_start();
     backtrace_test();
-      5c:	f001 fe6c 	bl	1d38 <backtrace_test>
+      5c:	f001 fe78 	bl	1d50 <backtrace_test>
     // hal_mpu_test();
     while(1);
       60:	e7fe      	b.n	60 <main+0x10>
       62:	bf00      	nop
-      64:	000020e0 	.word	0x000020e0
-      68:	000020c4 	.word	0x000020c4
+      64:	000020f8 	.word	0x000020f8
+      68:	000020dc 	.word	0x000020dc
 
 0000006c <nmi_handler>:
 }
@@ -65,8 +65,8 @@ void nmi_handler(void)
     while(1);
       78:	e7fe      	b.n	78 <nmi_handler+0xc>
       7a:	bf00      	nop
-      7c:	000020e8 	.word	0x000020e8
-      80:	000020d8 	.word	0x000020d8
+      7c:	00002100 	.word	0x00002100
+      80:	000020f0 	.word	0x000020f0
 
 00000084 <hard_fault_handler>:
 }
@@ -82,8 +82,8 @@ void hard_fault_handler(void)
     while(1);
       90:	e7fe      	b.n	90 <hard_fault_handler+0xc>
       92:	bf00      	nop
-      94:	000020f4 	.word	0x000020f4
-      98:	000020d8 	.word	0x000020d8
+      94:	0000210c 	.word	0x0000210c
+      98:	000020f0 	.word	0x000020f0
 
 0000009c <mem_manage_handler>:
 }
@@ -99,8 +99,8 @@ void mem_manage_handler(void)
     while(1);
       a8:	e7fe      	b.n	a8 <mem_manage_handler+0xc>
       aa:	bf00      	nop
-      ac:	00002108 	.word	0x00002108
-      b0:	000020d8 	.word	0x000020d8
+      ac:	00002120 	.word	0x00002120
+      b0:	000020f0 	.word	0x000020f0
 
 000000b4 <bus_fault_handler>:
 }
@@ -116,8 +116,8 @@ void bus_fault_handler(void)
     while(1);
       c0:	e7fe      	b.n	c0 <bus_fault_handler+0xc>
       c2:	bf00      	nop
-      c4:	0000211c 	.word	0x0000211c
-      c8:	000020d8 	.word	0x000020d8
+      c4:	00002134 	.word	0x00002134
+      c8:	000020f0 	.word	0x000020f0
 
 000000cc <usage_fault_handler>:
 }
@@ -133,8 +133,8 @@ void usage_fault_handler(void)
     while(1);
       d8:	e7fe      	b.n	d8 <usage_fault_handler+0xc>
       da:	bf00      	nop
-      dc:	00002130 	.word	0x00002130
-      e0:	000020d8 	.word	0x000020d8
+      dc:	00002148 	.word	0x00002148
+      e0:	000020f0 	.word	0x000020f0
 
 000000e4 <svc_handler>:
 }
@@ -150,8 +150,8 @@ void svc_handler(void)
     while(1);
       f0:	e7fe      	b.n	f0 <svc_handler+0xc>
       f2:	bf00      	nop
-      f4:	00002144 	.word	0x00002144
-      f8:	000020d8 	.word	0x000020d8
+      f4:	0000215c 	.word	0x0000215c
+      f8:	000020f0 	.word	0x000020f0
 
 000000fc <debug_mon_handler>:
 }
@@ -167,8 +167,8 @@ void debug_mon_handler(void)
     while(1);
      108:	e7fe      	b.n	108 <debug_mon_handler+0xc>
      10a:	bf00      	nop
-     10c:	00002150 	.word	0x00002150
-     110:	000020d8 	.word	0x000020d8
+     10c:	00002168 	.word	0x00002168
+     110:	000020f0 	.word	0x000020f0
 
 00000114 <pend_sv_handler>:
 }
@@ -184,8 +184,8 @@ void pend_sv_handler(void)
     while(1);
      120:	e7fe      	b.n	120 <pend_sv_handler+0xc>
      122:	bf00      	nop
-     124:	00002164 	.word	0x00002164
-     128:	000020d8 	.word	0x000020d8
+     124:	0000217c 	.word	0x0000217c
+     128:	000020f0 	.word	0x000020f0
 
 0000012c <sys_tick_handler>:
 }
@@ -201,8 +201,8 @@ void sys_tick_handler(void)
     while(1);
      138:	e7fe      	b.n	138 <sys_tick_handler+0xc>
      13a:	bf00      	nop
-     13c:	00002174 	.word	0x00002174
-     140:	000020d8 	.word	0x000020d8
+     13c:	0000218c 	.word	0x0000218c
+     140:	000020f0 	.word	0x000020f0
 
 00000144 <ARM_MPU_Enable>:
     
@@ -381,7 +381,7 @@ void hal_mpu_test(void)
      222:	46bd      	mov	sp, r7
      224:	bdb0      	pop	{r4, r5, r7, pc}
      226:	bf00      	nop
-     228:	00002188 	.word	0x00002188
+     228:	000021a0 	.word	0x000021a0
 
 0000022c <_putchar>:
 
@@ -3068,8 +3068,8 @@ void task_entry_1(void* param)
         printf("This is %s\n", __func__);
     1380:	e7f8      	b.n	1374 <task_entry_1+0x8>
     1382:	bf00      	nop
-    1384:	000021b8 	.word	0x000021b8
-    1388:	000021ac 	.word	0x000021ac
+    1384:	000021d0 	.word	0x000021d0
+    1388:	000021c4 	.word	0x000021c4
 
 0000138c <task_entry_2>:
     }
@@ -3092,8 +3092,8 @@ void task_entry_2(void* param)
         printf("This is %s\n", __func__);
     13a0:	e7f8      	b.n	1394 <task_entry_2+0x8>
     13a2:	bf00      	nop
-    13a4:	000021c8 	.word	0x000021c8
-    13a8:	000021ac 	.word	0x000021ac
+    13a4:	000021e0 	.word	0x000021e0
+    13a8:	000021c4 	.word	0x000021c4
 
 000013ac <trigget_pendsv>:
     }
@@ -3539,8 +3539,8 @@ uint8_t shell_get_args(char *line, char *args[], uint8_t args_len)
     1656:	46bd      	mov	sp, r7
     1658:	bd80      	pop	{r7, pc}
     165a:	bf00      	nop
-    165c:	000021d8 	.word	0x000021d8
-    1660:	000021dc 	.word	0x000021dc
+    165c:	000021f0 	.word	0x000021f0
+    1660:	000021f4 	.word	0x000021f4
 
 00001664 <shell_help_func>:
 
@@ -3583,9 +3583,9 @@ int shell_help_func(int argc, char **argv)
     1696:	3710      	adds	r7, #16
     1698:	46bd      	mov	sp, r7
     169a:	bd80      	pop	{r7, pc}
-    169c:	000020c0 	.word	0x000020c0
-    16a0:	000021e0 	.word	0x000021e0
-    16a4:	00002db4 	.word	0x00002db4
+    169c:	000020d8 	.word	0x000020d8
+    16a0:	000021f8 	.word	0x000021f8
+    16a4:	00002dd8 	.word	0x00002dd8
 
 000016a8 <strtok_r>:
 #ifdef NOSTDLIB_ENABLE
@@ -4064,12 +4064,12 @@ void shell_main(void)
     1936:	46bd      	mov	sp, r7
     1938:	bd80      	pop	{r7, pc}
     193a:	bf00      	nop
-    193c:	00002208 	.word	0x00002208
-    1940:	000020c0 	.word	0x000020c0
-    1944:	0000220c 	.word	0x0000220c
-    1948:	00002214 	.word	0x00002214
-    194c:	00002db4 	.word	0x00002db4
-    1950:	00002230 	.word	0x00002230
+    193c:	00002220 	.word	0x00002220
+    1940:	000020d8 	.word	0x000020d8
+    1944:	00002224 	.word	0x00002224
+    1948:	0000222c 	.word	0x0000222c
+    194c:	00002dd8 	.word	0x00002dd8
+    1950:	00002248 	.word	0x00002248
 
 00001954 <shell_start>:
 
@@ -4195,7 +4195,7 @@ void fault_test_by_unalign(void) {
     19fc:	46bd      	mov	sp, r7
     19fe:	bd80      	pop	{r7, pc}
     1a00:	e000ed14 	.word	0xe000ed14
-    1a04:	00002238 	.word	0x00002238
+    1a04:	00002250 	.word	0x00002250
 
 00001a08 <fault_test_by_div0>:
 
@@ -4236,7 +4236,7 @@ void fault_test_by_div0(void) {
     1a3c:	46bd      	mov	sp, r7
     1a3e:	bd80      	pop	{r7, pc}
     1a40:	e000ed14 	.word	0xe000ed14
-    1a44:	00002250 	.word	0x00002250
+    1a44:	00002268 	.word	0x00002268
 
 00001a48 <dump_stack>:
 extern const uint32_t _eheap;
@@ -4259,1025 +4259,1034 @@ void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_po
         stack_pointer = (uint32_t *) stack_start_addr;
     1a5c:	68fb      	ldr	r3, [r7, #12]
     1a5e:	607b      	str	r3, [r7, #4]
-    1a60:	e014      	b.n	1a8c <dump_stack+0x44>
+    1a60:	e009      	b.n	1a76 <dump_stack+0x2e>
     } else if ((uint32_t) stack_pointer > stack_start_addr + stack_size) {
     1a62:	68fa      	ldr	r2, [r7, #12]
     1a64:	68bb      	ldr	r3, [r7, #8]
     1a66:	441a      	add	r2, r3
     1a68:	687b      	ldr	r3, [r7, #4]
     1a6a:	429a      	cmp	r2, r3
-    1a6c:	d20e      	bcs.n	1a8c <dump_stack+0x44>
+    1a6c:	d203      	bcs.n	1a76 <dump_stack+0x2e>
         stack_pointer = (uint32_t *) (stack_start_addr + stack_size);
     1a6e:	68fa      	ldr	r2, [r7, #12]
     1a70:	68bb      	ldr	r3, [r7, #8]
     1a72:	4413      	add	r3, r2
     1a74:	607b      	str	r3, [r7, #4]
     }
-
+    printf("[%s] ====================================\n", __func__);
+    1a76:	490e      	ldr	r1, [pc, #56]	; (1ab0 <dump_stack+0x68>)
+    1a78:	480e      	ldr	r0, [pc, #56]	; (1ab4 <dump_stack+0x6c>)
+    1a7a:	f7ff fbac 	bl	11d6 <printf_>
     for (; (uint32_t) stack_pointer < stack_start_addr + stack_size; stack_pointer++) {
-    1a76:	e009      	b.n	1a8c <dump_stack+0x44>
+    1a7e:	e009      	b.n	1a94 <dump_stack+0x4c>
         printf("  addr: %08lx    data: %08lx\n", (uint32_t)stack_pointer, *stack_pointer);
-    1a78:	6879      	ldr	r1, [r7, #4]
-    1a7a:	687b      	ldr	r3, [r7, #4]
-    1a7c:	681b      	ldr	r3, [r3, #0]
-    1a7e:	461a      	mov	r2, r3
-    1a80:	4809      	ldr	r0, [pc, #36]	; (1aa8 <dump_stack+0x60>)
-    1a82:	f7ff fba8 	bl	11d6 <printf_>
+    1a80:	6879      	ldr	r1, [r7, #4]
+    1a82:	687b      	ldr	r3, [r7, #4]
+    1a84:	681b      	ldr	r3, [r3, #0]
+    1a86:	461a      	mov	r2, r3
+    1a88:	480b      	ldr	r0, [pc, #44]	; (1ab8 <dump_stack+0x70>)
+    1a8a:	f7ff fba4 	bl	11d6 <printf_>
     for (; (uint32_t) stack_pointer < stack_start_addr + stack_size; stack_pointer++) {
-    1a86:	687b      	ldr	r3, [r7, #4]
-    1a88:	3304      	adds	r3, #4
-    1a8a:	607b      	str	r3, [r7, #4]
-    1a8c:	68fa      	ldr	r2, [r7, #12]
-    1a8e:	68bb      	ldr	r3, [r7, #8]
-    1a90:	441a      	add	r2, r3
-    1a92:	687b      	ldr	r3, [r7, #4]
-    1a94:	429a      	cmp	r2, r3
-    1a96:	d8ef      	bhi.n	1a78 <dump_stack+0x30>
+    1a8e:	687b      	ldr	r3, [r7, #4]
+    1a90:	3304      	adds	r3, #4
+    1a92:	607b      	str	r3, [r7, #4]
+    1a94:	68fa      	ldr	r2, [r7, #12]
+    1a96:	68bb      	ldr	r3, [r7, #8]
+    1a98:	441a      	add	r2, r3
+    1a9a:	687b      	ldr	r3, [r7, #4]
+    1a9c:	429a      	cmp	r2, r3
+    1a9e:	d8ef      	bhi.n	1a80 <dump_stack+0x38>
     }
-    printf("====================================\n");
-    1a98:	4804      	ldr	r0, [pc, #16]	; (1aac <dump_stack+0x64>)
-    1a9a:	f7ff fb9c 	bl	11d6 <printf_>
+    printf("[%s] ====================================\n", __func__);
+    1aa0:	4903      	ldr	r1, [pc, #12]	; (1ab0 <dump_stack+0x68>)
+    1aa2:	4804      	ldr	r0, [pc, #16]	; (1ab4 <dump_stack+0x6c>)
+    1aa4:	f7ff fb97 	bl	11d6 <printf_>
 }
-    1a9e:	bf00      	nop
-    1aa0:	3710      	adds	r7, #16
-    1aa2:	46bd      	mov	sp, r7
-    1aa4:	bd80      	pop	{r7, pc}
-    1aa6:	bf00      	nop
-    1aa8:	00002258 	.word	0x00002258
-    1aac:	00002278 	.word	0x00002278
+    1aa8:	bf00      	nop
+    1aaa:	3710      	adds	r7, #16
+    1aac:	46bd      	mov	sp, r7
+    1aae:	bd80      	pop	{r7, pc}
+    1ab0:	00002d60 	.word	0x00002d60
+    1ab4:	00002270 	.word	0x00002270
+    1ab8:	0000229c 	.word	0x0000229c
 
-00001ab0 <disassembly_ins_is_bl_blx>:
+00001abc <disassembly_ins_is_bl_blx>:
 #define CMB_ELF_FILE_EXTENSION_NAME          ".elf"
 static char call_stack_info[CMB_CALL_STACK_MAX_DEPTH * (8 + 1)] = { 0 };
 #define cmb_println(...)               printf(__VA_ARGS__);printf("\r\n")
 static bool on_fault = false;
     static bool stack_is_overflow = false;
     static bool disassembly_ins_is_bl_blx(uint32_t addr) {
-    1ab0:	b480      	push	{r7}
-    1ab2:	b085      	sub	sp, #20
-    1ab4:	af00      	add	r7, sp, #0
-    1ab6:	6078      	str	r0, [r7, #4]
+    1abc:	b480      	push	{r7}
+    1abe:	b085      	sub	sp, #20
+    1ac0:	af00      	add	r7, sp, #0
+    1ac2:	6078      	str	r0, [r7, #4]
         uint16_t ins1 = *((uint16_t *)addr);
-    1ab8:	687b      	ldr	r3, [r7, #4]
-    1aba:	881b      	ldrh	r3, [r3, #0]
-    1abc:	81fb      	strh	r3, [r7, #14]
+    1ac4:	687b      	ldr	r3, [r7, #4]
+    1ac6:	881b      	ldrh	r3, [r3, #0]
+    1ac8:	81fb      	strh	r3, [r7, #14]
         uint16_t ins2 = *((uint16_t *)(addr + 2));
-    1abe:	687b      	ldr	r3, [r7, #4]
-    1ac0:	3302      	adds	r3, #2
-    1ac2:	881b      	ldrh	r3, [r3, #0]
-    1ac4:	81bb      	strh	r3, [r7, #12]
+    1aca:	687b      	ldr	r3, [r7, #4]
+    1acc:	3302      	adds	r3, #2
+    1ace:	881b      	ldrh	r3, [r3, #0]
+    1ad0:	81bb      	strh	r3, [r7, #12]
 #define BL_INS_HIGH         0xF800
 #define BL_INS_LOW          0xF000
 #define BLX_INX_MASK        0xFF00
 #define BLX_INX             0x4700
 
         if ((ins2 & BL_INS_MASK) == BL_INS_HIGH && (ins1 & BL_INS_MASK) == BL_INS_LOW) {
-    1ac6:	89bb      	ldrh	r3, [r7, #12]
-    1ac8:	f403 4378 	and.w	r3, r3, #63488	; 0xf800
-    1acc:	f5b3 4f78 	cmp.w	r3, #63488	; 0xf800
-    1ad0:	d107      	bne.n	1ae2 <disassembly_ins_is_bl_blx+0x32>
-    1ad2:	89fb      	ldrh	r3, [r7, #14]
+    1ad2:	89bb      	ldrh	r3, [r7, #12]
     1ad4:	f403 4378 	and.w	r3, r3, #63488	; 0xf800
-    1ad8:	f5b3 4f70 	cmp.w	r3, #61440	; 0xf000
-    1adc:	d101      	bne.n	1ae2 <disassembly_ins_is_bl_blx+0x32>
+    1ad8:	f5b3 4f78 	cmp.w	r3, #63488	; 0xf800
+    1adc:	d107      	bne.n	1aee <disassembly_ins_is_bl_blx+0x32>
+    1ade:	89fb      	ldrh	r3, [r7, #14]
+    1ae0:	f403 4378 	and.w	r3, r3, #63488	; 0xf800
+    1ae4:	f5b3 4f70 	cmp.w	r3, #61440	; 0xf000
+    1ae8:	d101      	bne.n	1aee <disassembly_ins_is_bl_blx+0x32>
             return true;
-    1ade:	2301      	movs	r3, #1
-    1ae0:	e008      	b.n	1af4 <disassembly_ins_is_bl_blx+0x44>
+    1aea:	2301      	movs	r3, #1
+    1aec:	e008      	b.n	1b00 <disassembly_ins_is_bl_blx+0x44>
         } else if ((ins2 & BLX_INX_MASK) == BLX_INX) {
-    1ae2:	89bb      	ldrh	r3, [r7, #12]
-    1ae4:	f403 437f 	and.w	r3, r3, #65280	; 0xff00
-    1ae8:	f5b3 4f8e 	cmp.w	r3, #18176	; 0x4700
-    1aec:	d101      	bne.n	1af2 <disassembly_ins_is_bl_blx+0x42>
+    1aee:	89bb      	ldrh	r3, [r7, #12]
+    1af0:	f403 437f 	and.w	r3, r3, #65280	; 0xff00
+    1af4:	f5b3 4f8e 	cmp.w	r3, #18176	; 0x4700
+    1af8:	d101      	bne.n	1afe <disassembly_ins_is_bl_blx+0x42>
             return true;
-    1aee:	2301      	movs	r3, #1
-    1af0:	e000      	b.n	1af4 <disassembly_ins_is_bl_blx+0x44>
+    1afa:	2301      	movs	r3, #1
+    1afc:	e000      	b.n	1b00 <disassembly_ins_is_bl_blx+0x44>
         } else {
             return false;
-    1af2:	2300      	movs	r3, #0
+    1afe:	2300      	movs	r3, #0
         }
     }
-    1af4:	4618      	mov	r0, r3
-    1af6:	3714      	adds	r7, #20
-    1af8:	46bd      	mov	sp, r7
-    1afa:	bc80      	pop	{r7}
-    1afc:	4770      	bx	lr
+    1b00:	4618      	mov	r0, r3
+    1b02:	3714      	adds	r7, #20
+    1b04:	46bd      	mov	sp, r7
+    1b06:	bc80      	pop	{r7}
+    1b08:	4770      	bx	lr
 
-00001afe <backtrace_call_stack>:
+00001b0a <backtrace_call_stack>:
      * @param size buffer size
      * @param sp stack pointer
      *
      * @return depth
      */
     size_t backtrace_call_stack(uint32_t *buffer, size_t size, uint32_t sp) {
-    1afe:	b580      	push	{r7, lr}
-    1b00:	b08a      	sub	sp, #40	; 0x28
-    1b02:	af02      	add	r7, sp, #8
-    1b04:	60f8      	str	r0, [r7, #12]
-    1b06:	60b9      	str	r1, [r7, #8]
-    1b08:	607a      	str	r2, [r7, #4]
+    1b0a:	b580      	push	{r7, lr}
+    1b0c:	b08a      	sub	sp, #40	; 0x28
+    1b0e:	af02      	add	r7, sp, #8
+    1b10:	60f8      	str	r0, [r7, #12]
+    1b12:	60b9      	str	r1, [r7, #8]
+    1b14:	607a      	str	r2, [r7, #4]
         uint32_t pc;
         uint32_t lr;
         size_t depth = 0;
-    1b0a:	2300      	movs	r3, #0
-    1b0c:	61fb      	str	r3, [r7, #28]
+    1b16:	2300      	movs	r3, #0
+    1b18:	61fb      	str	r3, [r7, #28]
         bool regs_saved_lr_is_valid = false;
-    1b0e:	2300      	movs	r3, #0
-    1b10:	76fb      	strb	r3, [r7, #27]
+    1b1a:	2300      	movs	r3, #0
+    1b1c:	76fb      	strb	r3, [r7, #27]
   2. LR'的值lsb为1
   3. LR' - 4处的指令是bl或者blx指令
 */
 
 //->查看LR对应地址前一条指令是否是跳转指令
 for (; sp < stack_start_addr + stack_size; sp += sizeof(size_t)) {
-    1b12:	e04e      	b.n	1bb2 <backtrace_call_stack+0xb4>
+    1b1e:	e04e      	b.n	1bbe <backtrace_call_stack+0xb4>
 
         当跳转到backtrace_level_2，9d5会放入LR,LR 会被push到堆栈
         当backtrace的时候，堆栈里找到9d5，9d5上一条指令为跳转前的PC的值，即9d5-4=9d1,
         最低位为1表示thumb模式，9d1表示地址9d0
     */
     lr = *((uint32_t *) sp);
-    1b14:	687b      	ldr	r3, [r7, #4]
-    1b16:	681b      	ldr	r3, [r3, #0]
-    1b18:	617b      	str	r3, [r7, #20]
+    1b20:	687b      	ldr	r3, [r7, #4]
+    1b22:	681b      	ldr	r3, [r3, #0]
+    1b24:	617b      	str	r3, [r7, #20]
     /* the Cortex-M using thumb instruction, so the pc must be an odd number */
     // printf("  1 sp=0x%08x *((uint32_t *) sp)=0x%08x valid PC=0x%08x\n", sp, *((uint32_t *) sp), pc);
     if (lr % 2 == 0) {
-    1b1a:	697b      	ldr	r3, [r7, #20]
-    1b1c:	f003 0301 	and.w	r3, r3, #1
-    1b20:	2b00      	cmp	r3, #0
-    1b22:	d040      	beq.n	1ba6 <backtrace_call_stack+0xa8>
+    1b26:	697b      	ldr	r3, [r7, #20]
+    1b28:	f003 0301 	and.w	r3, r3, #1
+    1b2c:	2b00      	cmp	r3, #0
+    1b2e:	d040      	beq.n	1bb2 <backtrace_call_stack+0xa8>
         continue;
     }
     // printf("  valid PC=0x%08x\n", pc);
 
     /* fix the PC address in thumb mode */
     lr -= 1;
-    1b24:	697b      	ldr	r3, [r7, #20]
-    1b26:	3b01      	subs	r3, #1
-    1b28:	617b      	str	r3, [r7, #20]
+    1b30:	697b      	ldr	r3, [r7, #20]
+    1b32:	3b01      	subs	r3, #1
+    1b34:	617b      	str	r3, [r7, #20]
     //printf("  2 sp=0x%08x *((uint32_t *) sp)=0x%08x valid PC=0x%08x\n", sp, *((uint32_t *) sp), lr);
     if ((lr >= code_start_addr) && (lr <= code_start_addr + code_size)
-    1b2a:	4b28      	ldr	r3, [pc, #160]	; (1bcc <backtrace_call_stack+0xce>)
-    1b2c:	681b      	ldr	r3, [r3, #0]
-    1b2e:	697a      	ldr	r2, [r7, #20]
-    1b30:	429a      	cmp	r2, r3
-    1b32:	d33b      	bcc.n	1bac <backtrace_call_stack+0xae>
-    1b34:	4b25      	ldr	r3, [pc, #148]	; (1bcc <backtrace_call_stack+0xce>)
-    1b36:	681a      	ldr	r2, [r3, #0]
-    1b38:	4b25      	ldr	r3, [pc, #148]	; (1bd0 <backtrace_call_stack+0xd2>)
-    1b3a:	681b      	ldr	r3, [r3, #0]
-    1b3c:	4413      	add	r3, r2
-    1b3e:	697a      	ldr	r2, [r7, #20]
-    1b40:	429a      	cmp	r2, r3
-    1b42:	d833      	bhi.n	1bac <backtrace_call_stack+0xae>
+    1b36:	4b28      	ldr	r3, [pc, #160]	; (1bd8 <backtrace_call_stack+0xce>)
+    1b38:	681b      	ldr	r3, [r3, #0]
+    1b3a:	697a      	ldr	r2, [r7, #20]
+    1b3c:	429a      	cmp	r2, r3
+    1b3e:	d33b      	bcc.n	1bb8 <backtrace_call_stack+0xae>
+    1b40:	4b25      	ldr	r3, [pc, #148]	; (1bd8 <backtrace_call_stack+0xce>)
+    1b42:	681a      	ldr	r2, [r3, #0]
+    1b44:	4b25      	ldr	r3, [pc, #148]	; (1bdc <backtrace_call_stack+0xd2>)
+    1b46:	681b      	ldr	r3, [r3, #0]
+    1b48:	4413      	add	r3, r2
+    1b4a:	697a      	ldr	r2, [r7, #20]
+    1b4c:	429a      	cmp	r2, r3
+    1b4e:	d833      	bhi.n	1bb8 <backtrace_call_stack+0xae>
     /* check the the instruction before lr address is 'BL' or 'BLX' */
     && disassembly_ins_is_bl_blx(lr - sizeof(size_t)) && (depth < size)) {
-    1b44:	697b      	ldr	r3, [r7, #20]
-    1b46:	3b04      	subs	r3, #4
-    1b48:	4618      	mov	r0, r3
-    1b4a:	f7ff ffb1 	bl	1ab0 <disassembly_ins_is_bl_blx>
-    1b4e:	4603      	mov	r3, r0
-    1b50:	2b00      	cmp	r3, #0
-    1b52:	d02b      	beq.n	1bac <backtrace_call_stack+0xae>
-    1b54:	69fa      	ldr	r2, [r7, #28]
-    1b56:	68bb      	ldr	r3, [r7, #8]
-    1b58:	429a      	cmp	r2, r3
-    1b5a:	d227      	bcs.n	1bac <backtrace_call_stack+0xae>
+    1b50:	697b      	ldr	r3, [r7, #20]
+    1b52:	3b04      	subs	r3, #4
+    1b54:	4618      	mov	r0, r3
+    1b56:	f7ff ffb1 	bl	1abc <disassembly_ins_is_bl_blx>
+    1b5a:	4603      	mov	r3, r0
+    1b5c:	2b00      	cmp	r3, #0
+    1b5e:	d02b      	beq.n	1bb8 <backtrace_call_stack+0xae>
+    1b60:	69fa      	ldr	r2, [r7, #28]
+    1b62:	68bb      	ldr	r3, [r7, #8]
+    1b64:	429a      	cmp	r2, r3
+    1b66:	d227      	bcs.n	1bb8 <backtrace_call_stack+0xae>
         /* the second depth function may be already saved, so need ignore repeat */
         if ((depth == 2) && regs_saved_lr_is_valid && (lr == buffer[1])) {
-    1b5c:	69fb      	ldr	r3, [r7, #28]
-    1b5e:	2b02      	cmp	r3, #2
-    1b60:	d108      	bne.n	1b74 <backtrace_call_stack+0x76>
-    1b62:	7efb      	ldrb	r3, [r7, #27]
-    1b64:	2b00      	cmp	r3, #0
-    1b66:	d005      	beq.n	1b74 <backtrace_call_stack+0x76>
-    1b68:	68fb      	ldr	r3, [r7, #12]
-    1b6a:	3304      	adds	r3, #4
-    1b6c:	681b      	ldr	r3, [r3, #0]
-    1b6e:	697a      	ldr	r2, [r7, #20]
-    1b70:	429a      	cmp	r2, r3
-    1b72:	d01a      	beq.n	1baa <backtrace_call_stack+0xac>
+    1b68:	69fb      	ldr	r3, [r7, #28]
+    1b6a:	2b02      	cmp	r3, #2
+    1b6c:	d108      	bne.n	1b80 <backtrace_call_stack+0x76>
+    1b6e:	7efb      	ldrb	r3, [r7, #27]
+    1b70:	2b00      	cmp	r3, #0
+    1b72:	d005      	beq.n	1b80 <backtrace_call_stack+0x76>
+    1b74:	68fb      	ldr	r3, [r7, #12]
+    1b76:	3304      	adds	r3, #4
+    1b78:	681b      	ldr	r3, [r3, #0]
+    1b7a:	697a      	ldr	r2, [r7, #20]
+    1b7c:	429a      	cmp	r2, r3
+    1b7e:	d01a      	beq.n	1bb6 <backtrace_call_stack+0xac>
             continue;
         }
         printf("        real PC=0x%08x bl or blx=0x%08x ins1=0x%04x ins2=0x%04x\n", \
         lr, *(uint32_t*)(lr - sizeof(size_t)),*((uint16_t *)(lr - sizeof(size_t))),*((uint16_t *)((lr - sizeof(size_t)) + 2)));
-    1b74:	697b      	ldr	r3, [r7, #20]
-    1b76:	3b04      	subs	r3, #4
+    1b80:	697b      	ldr	r3, [r7, #20]
+    1b82:	3b04      	subs	r3, #4
         printf("        real PC=0x%08x bl or blx=0x%08x ins1=0x%04x ins2=0x%04x\n", \
-    1b78:	681a      	ldr	r2, [r3, #0]
+    1b84:	681a      	ldr	r2, [r3, #0]
         lr, *(uint32_t*)(lr - sizeof(size_t)),*((uint16_t *)(lr - sizeof(size_t))),*((uint16_t *)((lr - sizeof(size_t)) + 2)));
-    1b7a:	697b      	ldr	r3, [r7, #20]
-    1b7c:	3b04      	subs	r3, #4
-    1b7e:	881b      	ldrh	r3, [r3, #0]
+    1b86:	697b      	ldr	r3, [r7, #20]
+    1b88:	3b04      	subs	r3, #4
+    1b8a:	881b      	ldrh	r3, [r3, #0]
         printf("        real PC=0x%08x bl or blx=0x%08x ins1=0x%04x ins2=0x%04x\n", \
-    1b80:	4619      	mov	r1, r3
+    1b8c:	4619      	mov	r1, r3
         lr, *(uint32_t*)(lr - sizeof(size_t)),*((uint16_t *)(lr - sizeof(size_t))),*((uint16_t *)((lr - sizeof(size_t)) + 2)));
-    1b82:	697b      	ldr	r3, [r7, #20]
-    1b84:	3b02      	subs	r3, #2
-    1b86:	881b      	ldrh	r3, [r3, #0]
+    1b8e:	697b      	ldr	r3, [r7, #20]
+    1b90:	3b02      	subs	r3, #2
+    1b92:	881b      	ldrh	r3, [r3, #0]
         printf("        real PC=0x%08x bl or blx=0x%08x ins1=0x%04x ins2=0x%04x\n", \
-    1b88:	9300      	str	r3, [sp, #0]
-    1b8a:	460b      	mov	r3, r1
-    1b8c:	6979      	ldr	r1, [r7, #20]
-    1b8e:	4811      	ldr	r0, [pc, #68]	; (1bd4 <backtrace_call_stack+0xd6>)
-    1b90:	f7ff fb21 	bl	11d6 <printf_>
+    1b94:	9300      	str	r3, [sp, #0]
+    1b96:	460b      	mov	r3, r1
+    1b98:	6979      	ldr	r1, [r7, #20]
+    1b9a:	4811      	ldr	r0, [pc, #68]	; (1be0 <backtrace_call_stack+0xd6>)
+    1b9c:	f7ff fb1b 	bl	11d6 <printf_>
              buffer[depth++] = lr;
-    1b94:	69fb      	ldr	r3, [r7, #28]
-    1b96:	1c5a      	adds	r2, r3, #1
-    1b98:	61fa      	str	r2, [r7, #28]
-    1b9a:	009b      	lsls	r3, r3, #2
-    1b9c:	68fa      	ldr	r2, [r7, #12]
-    1b9e:	4413      	add	r3, r2
-    1ba0:	697a      	ldr	r2, [r7, #20]
-    1ba2:	601a      	str	r2, [r3, #0]
-    1ba4:	e002      	b.n	1bac <backtrace_call_stack+0xae>
+    1ba0:	69fb      	ldr	r3, [r7, #28]
+    1ba2:	1c5a      	adds	r2, r3, #1
+    1ba4:	61fa      	str	r2, [r7, #28]
+    1ba6:	009b      	lsls	r3, r3, #2
+    1ba8:	68fa      	ldr	r2, [r7, #12]
+    1baa:	4413      	add	r3, r2
+    1bac:	697a      	ldr	r2, [r7, #20]
+    1bae:	601a      	str	r2, [r3, #0]
+    1bb0:	e002      	b.n	1bb8 <backtrace_call_stack+0xae>
         continue;
-    1ba6:	bf00      	nop
-    1ba8:	e000      	b.n	1bac <backtrace_call_stack+0xae>
+    1bb2:	bf00      	nop
+    1bb4:	e000      	b.n	1bb8 <backtrace_call_stack+0xae>
             continue;
-    1baa:	bf00      	nop
+    1bb6:	bf00      	nop
 for (; sp < stack_start_addr + stack_size; sp += sizeof(size_t)) {
-    1bac:	687b      	ldr	r3, [r7, #4]
-    1bae:	3304      	adds	r3, #4
-    1bb0:	607b      	str	r3, [r7, #4]
-    1bb2:	4b09      	ldr	r3, [pc, #36]	; (1bd8 <backtrace_call_stack+0xda>)
-    1bb4:	681a      	ldr	r2, [r3, #0]
-    1bb6:	4b09      	ldr	r3, [pc, #36]	; (1bdc <backtrace_call_stack+0xde>)
-    1bb8:	681b      	ldr	r3, [r3, #0]
-    1bba:	4413      	add	r3, r2
-    1bbc:	687a      	ldr	r2, [r7, #4]
-    1bbe:	429a      	cmp	r2, r3
-    1bc0:	d3a8      	bcc.n	1b14 <backtrace_call_stack+0x16>
+    1bb8:	687b      	ldr	r3, [r7, #4]
+    1bba:	3304      	adds	r3, #4
+    1bbc:	607b      	str	r3, [r7, #4]
+    1bbe:	4b09      	ldr	r3, [pc, #36]	; (1be4 <backtrace_call_stack+0xda>)
+    1bc0:	681a      	ldr	r2, [r3, #0]
+    1bc2:	4b09      	ldr	r3, [pc, #36]	; (1be8 <backtrace_call_stack+0xde>)
+    1bc4:	681b      	ldr	r3, [r3, #0]
+    1bc6:	4413      	add	r3, r2
+    1bc8:	687a      	ldr	r2, [r7, #4]
+    1bca:	429a      	cmp	r2, r3
+    1bcc:	d3a8      	bcc.n	1b20 <backtrace_call_stack+0x16>
     }
 }
 
 return depth;
-    1bc2:	69fb      	ldr	r3, [r7, #28]
+    1bce:	69fb      	ldr	r3, [r7, #28]
     }
-    1bc4:	4618      	mov	r0, r3
-    1bc6:	3720      	adds	r7, #32
-    1bc8:	46bd      	mov	sp, r7
-    1bca:	bd80      	pop	{r7, pc}
-    1bcc:	20000008 	.word	0x20000008
-    1bd0:	20000010 	.word	0x20000010
-    1bd4:	00002b94 	.word	0x00002b94
-    1bd8:	20000014 	.word	0x20000014
-    1bdc:	2000001c 	.word	0x2000001c
+    1bd0:	4618      	mov	r0, r3
+    1bd2:	3720      	adds	r7, #32
+    1bd4:	46bd      	mov	sp, r7
+    1bd6:	bd80      	pop	{r7, pc}
+    1bd8:	20000008 	.word	0x20000008
+    1bdc:	20000010 	.word	0x20000010
+    1be0:	00002bb0 	.word	0x00002bb0
+    1be4:	20000014 	.word	0x20000014
+    1be8:	2000001c 	.word	0x2000001c
 
-00001be0 <print_call_stack>:
+00001bec <print_call_stack>:
 
     void print_call_stack(uint32_t sp) {
-    1be0:	b580      	push	{r7, lr}
-    1be2:	b096      	sub	sp, #88	; 0x58
-    1be4:	af02      	add	r7, sp, #8
-    1be6:	6078      	str	r0, [r7, #4]
+    1bec:	b580      	push	{r7, lr}
+    1bee:	b096      	sub	sp, #88	; 0x58
+    1bf0:	af02      	add	r7, sp, #8
+    1bf2:	6078      	str	r0, [r7, #4]
         size_t i, cur_depth = 0;
-    1be8:	2300      	movs	r3, #0
-    1bea:	64bb      	str	r3, [r7, #72]	; 0x48
+    1bf4:	2300      	movs	r3, #0
+    1bf6:	64bb      	str	r3, [r7, #72]	; 0x48
         uint32_t call_stack_buf[CMB_CALL_STACK_MAX_DEPTH] = {0};
-    1bec:	f107 0308 	add.w	r3, r7, #8
-    1bf0:	2240      	movs	r2, #64	; 0x40
-    1bf2:	2100      	movs	r1, #0
-    1bf4:	4618      	mov	r0, r3
-    1bf6:	f7ff fde9 	bl	17cc <memset>
+    1bf8:	f107 0308 	add.w	r3, r7, #8
+    1bfc:	2240      	movs	r2, #64	; 0x40
+    1bfe:	2100      	movs	r1, #0
+    1c00:	4618      	mov	r0, r3
+    1c02:	f7ff fde3 	bl	17cc <memset>
+        printf("[%s] ====================================\n", __func__);
+    1c06:	4928      	ldr	r1, [pc, #160]	; (1ca8 <print_call_stack+0xbc>)
+    1c08:	4828      	ldr	r0, [pc, #160]	; (1cac <print_call_stack+0xc0>)
+    1c0a:	f7ff fae4 	bl	11d6 <printf_>
 
         cur_depth = backtrace_call_stack(call_stack_buf, CMB_CALL_STACK_MAX_DEPTH, sp);
-    1bfa:	f107 0308 	add.w	r3, r7, #8
-    1bfe:	687a      	ldr	r2, [r7, #4]
-    1c00:	2110      	movs	r1, #16
-    1c02:	4618      	mov	r0, r3
-    1c04:	f7ff ff7b 	bl	1afe <backtrace_call_stack>
-    1c08:	64b8      	str	r0, [r7, #72]	; 0x48
+    1c0e:	f107 0308 	add.w	r3, r7, #8
+    1c12:	687a      	ldr	r2, [r7, #4]
+    1c14:	2110      	movs	r1, #16
+    1c16:	4618      	mov	r0, r3
+    1c18:	f7ff ff77 	bl	1b0a <backtrace_call_stack>
+    1c1c:	64b8      	str	r0, [r7, #72]	; 0x48
+        printf("[%s] ====================================\n", __func__);
+    1c1e:	4922      	ldr	r1, [pc, #136]	; (1ca8 <print_call_stack+0xbc>)
+    1c20:	4822      	ldr	r0, [pc, #136]	; (1cac <print_call_stack+0xc0>)
+    1c22:	f7ff fad8 	bl	11d6 <printf_>
 
         for (i = 0; i < cur_depth; i++) {
-    1c0a:	2300      	movs	r3, #0
-    1c0c:	64fb      	str	r3, [r7, #76]	; 0x4c
-    1c0e:	e01b      	b.n	1c48 <print_call_stack+0x68>
+    1c26:	2300      	movs	r3, #0
+    1c28:	64fb      	str	r3, [r7, #76]	; 0x4c
+    1c2a:	e01b      	b.n	1c64 <print_call_stack+0x78>
             sprintf(call_stack_info + i * (8 + 1), "%08lx", call_stack_buf[i]);
-    1c10:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
-    1c12:	4613      	mov	r3, r2
-    1c14:	00db      	lsls	r3, r3, #3
-    1c16:	4413      	add	r3, r2
-    1c18:	4a1c      	ldr	r2, [pc, #112]	; (1c8c <print_call_stack+0xac>)
-    1c1a:	1898      	adds	r0, r3, r2
-    1c1c:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
-    1c1e:	009b      	lsls	r3, r3, #2
-    1c20:	f107 0250 	add.w	r2, r7, #80	; 0x50
-    1c24:	4413      	add	r3, r2
-    1c26:	f853 3c48 	ldr.w	r3, [r3, #-72]
-    1c2a:	461a      	mov	r2, r3
-    1c2c:	4918      	ldr	r1, [pc, #96]	; (1c90 <print_call_stack+0xb0>)
-    1c2e:	f7ff faed 	bl	120c <sprintf_>
+    1c2c:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
+    1c2e:	4613      	mov	r3, r2
+    1c30:	00db      	lsls	r3, r3, #3
+    1c32:	4413      	add	r3, r2
+    1c34:	4a1e      	ldr	r2, [pc, #120]	; (1cb0 <print_call_stack+0xc4>)
+    1c36:	1898      	adds	r0, r3, r2
+    1c38:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
+    1c3a:	009b      	lsls	r3, r3, #2
+    1c3c:	f107 0250 	add.w	r2, r7, #80	; 0x50
+    1c40:	4413      	add	r3, r2
+    1c42:	f853 3c48 	ldr.w	r3, [r3, #-72]
+    1c46:	461a      	mov	r2, r3
+    1c48:	491a      	ldr	r1, [pc, #104]	; (1cb4 <print_call_stack+0xc8>)
+    1c4a:	f7ff fadf 	bl	120c <sprintf_>
             call_stack_info[i * (8 + 1) + 8] = ' ';
-    1c32:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
-    1c34:	4613      	mov	r3, r2
-    1c36:	00db      	lsls	r3, r3, #3
-    1c38:	4413      	add	r3, r2
-    1c3a:	3308      	adds	r3, #8
-    1c3c:	4a13      	ldr	r2, [pc, #76]	; (1c8c <print_call_stack+0xac>)
-    1c3e:	2120      	movs	r1, #32
-    1c40:	54d1      	strb	r1, [r2, r3]
+    1c4e:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
+    1c50:	4613      	mov	r3, r2
+    1c52:	00db      	lsls	r3, r3, #3
+    1c54:	4413      	add	r3, r2
+    1c56:	3308      	adds	r3, #8
+    1c58:	4a15      	ldr	r2, [pc, #84]	; (1cb0 <print_call_stack+0xc4>)
+    1c5a:	2120      	movs	r1, #32
+    1c5c:	54d1      	strb	r1, [r2, r3]
         for (i = 0; i < cur_depth; i++) {
-    1c42:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
-    1c44:	3301      	adds	r3, #1
-    1c46:	64fb      	str	r3, [r7, #76]	; 0x4c
-    1c48:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
-    1c4a:	6cbb      	ldr	r3, [r7, #72]	; 0x48
-    1c4c:	429a      	cmp	r2, r3
-    1c4e:	d3df      	bcc.n	1c10 <print_call_stack+0x30>
+    1c5e:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
+    1c60:	3301      	adds	r3, #1
+    1c62:	64fb      	str	r3, [r7, #76]	; 0x4c
+    1c64:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
+    1c66:	6cbb      	ldr	r3, [r7, #72]	; 0x48
+    1c68:	429a      	cmp	r2, r3
+    1c6a:	d3df      	bcc.n	1c2c <print_call_stack+0x40>
         }
 
         if (cur_depth) {
-    1c50:	6cbb      	ldr	r3, [r7, #72]	; 0x48
-    1c52:	2b00      	cmp	r3, #0
-    1c54:	d00f      	beq.n	1c76 <print_call_stack+0x96>
+    1c6c:	6cbb      	ldr	r3, [r7, #72]	; 0x48
+    1c6e:	2b00      	cmp	r3, #0
+    1c70:	d00f      	beq.n	1c92 <print_call_stack+0xa6>
             cmb_println(print_info[PRINT_CALL_STACK_INFO], "./build/test", CMB_ELF_FILE_EXTENSION_NAME, cur_depth * (8 + 1),
-    1c56:	480f      	ldr	r0, [pc, #60]	; (1c94 <print_call_stack+0xb4>)
-    1c58:	6cba      	ldr	r2, [r7, #72]	; 0x48
-    1c5a:	4613      	mov	r3, r2
-    1c5c:	00db      	lsls	r3, r3, #3
-    1c5e:	441a      	add	r2, r3
-    1c60:	4b0a      	ldr	r3, [pc, #40]	; (1c8c <print_call_stack+0xac>)
-    1c62:	9300      	str	r3, [sp, #0]
-    1c64:	4613      	mov	r3, r2
-    1c66:	4a0c      	ldr	r2, [pc, #48]	; (1c98 <print_call_stack+0xb8>)
-    1c68:	490c      	ldr	r1, [pc, #48]	; (1c9c <print_call_stack+0xbc>)
-    1c6a:	f7ff fab4 	bl	11d6 <printf_>
-    1c6e:	480c      	ldr	r0, [pc, #48]	; (1ca0 <print_call_stack+0xc0>)
-    1c70:	f7ff fab1 	bl	11d6 <printf_>
+    1c72:	4811      	ldr	r0, [pc, #68]	; (1cb8 <print_call_stack+0xcc>)
+    1c74:	6cba      	ldr	r2, [r7, #72]	; 0x48
+    1c76:	4613      	mov	r3, r2
+    1c78:	00db      	lsls	r3, r3, #3
+    1c7a:	441a      	add	r2, r3
+    1c7c:	4b0c      	ldr	r3, [pc, #48]	; (1cb0 <print_call_stack+0xc4>)
+    1c7e:	9300      	str	r3, [sp, #0]
+    1c80:	4613      	mov	r3, r2
+    1c82:	4a0e      	ldr	r2, [pc, #56]	; (1cbc <print_call_stack+0xd0>)
+    1c84:	490e      	ldr	r1, [pc, #56]	; (1cc0 <print_call_stack+0xd4>)
+    1c86:	f7ff faa6 	bl	11d6 <printf_>
+    1c8a:	480e      	ldr	r0, [pc, #56]	; (1cc4 <print_call_stack+0xd8>)
+    1c8c:	f7ff faa3 	bl	11d6 <printf_>
                         call_stack_info);
         } else {
             cmb_println(print_info[PRINT_CALL_STACK_ERR]);
         }
     }
-    1c74:	e006      	b.n	1c84 <print_call_stack+0xa4>
+    1c90:	e006      	b.n	1ca0 <print_call_stack+0xb4>
             cmb_println(print_info[PRINT_CALL_STACK_ERR]);
-    1c76:	4b0b      	ldr	r3, [pc, #44]	; (1ca4 <print_call_stack+0xc4>)
-    1c78:	4618      	mov	r0, r3
-    1c7a:	f7ff faac 	bl	11d6 <printf_>
-    1c7e:	4808      	ldr	r0, [pc, #32]	; (1ca0 <print_call_stack+0xc0>)
-    1c80:	f7ff faa9 	bl	11d6 <printf_>
+    1c92:	4b0d      	ldr	r3, [pc, #52]	; (1cc8 <print_call_stack+0xdc>)
+    1c94:	4618      	mov	r0, r3
+    1c96:	f7ff fa9e 	bl	11d6 <printf_>
+    1c9a:	480a      	ldr	r0, [pc, #40]	; (1cc4 <print_call_stack+0xd8>)
+    1c9c:	f7ff fa9b 	bl	11d6 <printf_>
     }
-    1c84:	bf00      	nop
-    1c86:	3750      	adds	r7, #80	; 0x50
-    1c88:	46bd      	mov	sp, r7
-    1c8a:	bd80      	pop	{r7, pc}
-    1c8c:	2000002c 	.word	0x2000002c
-    1c90:	00002bd8 	.word	0x00002bd8
-    1c94:	00002430 	.word	0x00002430
-    1c98:	00002be0 	.word	0x00002be0
-    1c9c:	00002be8 	.word	0x00002be8
-    1ca0:	00002bf8 	.word	0x00002bf8
-    1ca4:	00002470 	.word	0x00002470
+    1ca0:	bf00      	nop
+    1ca2:	3750      	adds	r7, #80	; 0x50
+    1ca4:	46bd      	mov	sp, r7
+    1ca6:	bd80      	pop	{r7, pc}
+    1ca8:	00002d6c 	.word	0x00002d6c
+    1cac:	00002270 	.word	0x00002270
+    1cb0:	2000002c 	.word	0x2000002c
+    1cb4:	00002bf4 	.word	0x00002bf4
+    1cb8:	0000244c 	.word	0x0000244c
+    1cbc:	00002bfc 	.word	0x00002bfc
+    1cc0:	00002c04 	.word	0x00002c04
+    1cc4:	00002c14 	.word	0x00002c14
+    1cc8:	0000248c 	.word	0x0000248c
 
-00001ca8 <backtrace_level_3>:
+00001ccc <backtrace_level_3>:
     void BackTraceSub(unsigned long sp);
     void backtrace_level_3(void)
     {
-    1ca8:	b598      	push	{r3, r4, r7, lr}
-    1caa:	af00      	add	r7, sp, #0
+    1ccc:	b598      	push	{r3, r4, r7, lr}
+    1cce:	af00      	add	r7, sp, #0
         printf("[%s]\n", __func__);
-    1cac:	490f      	ldr	r1, [pc, #60]	; (1cec <backtrace_level_3+0x44>)
-    1cae:	4810      	ldr	r0, [pc, #64]	; (1cf0 <backtrace_level_3+0x48>)
-    1cb0:	f7ff fa91 	bl	11d6 <printf_>
+    1cd0:	490d      	ldr	r1, [pc, #52]	; (1d08 <backtrace_level_3+0x3c>)
+    1cd2:	480e      	ldr	r0, [pc, #56]	; (1d0c <backtrace_level_3+0x40>)
+    1cd4:	f7ff fa7f 	bl	11d6 <printf_>
         dump_stack(stack_start_addr, stack_size, (uint32_t*)cmb_get_sp());
-    1cb4:	4b0f      	ldr	r3, [pc, #60]	; (1cf4 <backtrace_level_3+0x4c>)
-    1cb6:	6818      	ldr	r0, [r3, #0]
-    1cb8:	4b0f      	ldr	r3, [pc, #60]	; (1cf8 <backtrace_level_3+0x50>)
-    1cba:	681b      	ldr	r3, [r3, #0]
+    1cd8:	4b0d      	ldr	r3, [pc, #52]	; (1d10 <backtrace_level_3+0x44>)
+    1cda:	6818      	ldr	r0, [r3, #0]
+    1cdc:	4b0d      	ldr	r3, [pc, #52]	; (1d14 <backtrace_level_3+0x48>)
+    1cde:	681b      	ldr	r3, [r3, #0]
     __asm volatile ("MRS %0, psp\n" : "=r" (result) );
     return(result);
 }
 __attribute__( ( always_inline ) ) static inline uint32_t cmb_get_sp(void) {
     register uint32_t result;
     __asm volatile ("MOV %0, sp\n" : "=r" (result) );
-    1cbc:	466a      	mov	r2, sp
-    1cbe:	4614      	mov	r4, r2
+    1ce0:	466a      	mov	r2, sp
+    1ce2:	4614      	mov	r4, r2
     return(result);
-    1cc0:	4622      	mov	r2, r4
-    1cc2:	4619      	mov	r1, r3
-    1cc4:	f7ff fec0 	bl	1a48 <dump_stack>
+    1ce4:	4622      	mov	r2, r4
+    1ce6:	4619      	mov	r1, r3
+    1ce8:	f7ff feae 	bl	1a48 <dump_stack>
     __asm volatile ("MOV %0, sp\n" : "=r" (result) );
-    1cc8:	466b      	mov	r3, sp
-    1cca:	461c      	mov	r4, r3
+    1cec:	466b      	mov	r3, sp
+    1cee:	461c      	mov	r4, r3
     return(result);
-    1ccc:	4623      	mov	r3, r4
+    1cf0:	4623      	mov	r3, r4
 
         print_call_stack(cmb_get_sp());
-    1cce:	4618      	mov	r0, r3
-    1cd0:	f7ff ff86 	bl	1be0 <print_call_stack>
-        printf("======================\n");
-    1cd4:	4809      	ldr	r0, [pc, #36]	; (1cfc <backtrace_level_3+0x54>)
-    1cd6:	f7ff fa7e 	bl	11d6 <printf_>
+    1cf2:	4618      	mov	r0, r3
+    1cf4:	f7ff ff7a 	bl	1bec <print_call_stack>
     __asm volatile ("MOV %0, sp\n" : "=r" (result) );
-    1cda:	466b      	mov	r3, sp
-    1cdc:	461c      	mov	r4, r3
+    1cf8:	466b      	mov	r3, sp
+    1cfa:	461c      	mov	r4, r3
     return(result);
-    1cde:	4623      	mov	r3, r4
+    1cfc:	4623      	mov	r3, r4
         BackTraceSub(cmb_get_sp());
-    1ce0:	4618      	mov	r0, r3
-    1ce2:	f000 f98f 	bl	2004 <BackTraceSub>
+    1cfe:	4618      	mov	r0, r3
+    1d00:	f000 f98c 	bl	201c <BackTraceSub>
     }
-    1ce6:	bf00      	nop
-    1ce8:	bd98      	pop	{r3, r4, r7, pc}
-    1cea:	bf00      	nop
-    1cec:	00002d5c 	.word	0x00002d5c
-    1cf0:	00002bfc 	.word	0x00002bfc
-    1cf4:	20000014 	.word	0x20000014
-    1cf8:	2000001c 	.word	0x2000001c
-    1cfc:	00002c04 	.word	0x00002c04
+    1d04:	bf00      	nop
+    1d06:	bd98      	pop	{r3, r4, r7, pc}
+    1d08:	00002d80 	.word	0x00002d80
+    1d0c:	00002c18 	.word	0x00002c18
+    1d10:	20000014 	.word	0x20000014
+    1d14:	2000001c 	.word	0x2000001c
 
-00001d00 <backtrace_level_2>:
+00001d18 <backtrace_level_2>:
     void backtrace_level_2(void)
     {
-    1d00:	b580      	push	{r7, lr}
-    1d02:	af00      	add	r7, sp, #0
+    1d18:	b580      	push	{r7, lr}
+    1d1a:	af00      	add	r7, sp, #0
         printf("[%s]\n", __func__);
-    1d04:	4903      	ldr	r1, [pc, #12]	; (1d14 <backtrace_level_2+0x14>)
-    1d06:	4804      	ldr	r0, [pc, #16]	; (1d18 <backtrace_level_2+0x18>)
-    1d08:	f7ff fa65 	bl	11d6 <printf_>
+    1d1c:	4903      	ldr	r1, [pc, #12]	; (1d2c <backtrace_level_2+0x14>)
+    1d1e:	4804      	ldr	r0, [pc, #16]	; (1d30 <backtrace_level_2+0x18>)
+    1d20:	f7ff fa59 	bl	11d6 <printf_>
         backtrace_level_3();
-    1d0c:	f7ff ffcc 	bl	1ca8 <backtrace_level_3>
+    1d24:	f7ff ffd2 	bl	1ccc <backtrace_level_3>
     }
-    1d10:	bf00      	nop
-    1d12:	bd80      	pop	{r7, pc}
-    1d14:	00002d70 	.word	0x00002d70
-    1d18:	00002bfc 	.word	0x00002bfc
+    1d28:	bf00      	nop
+    1d2a:	bd80      	pop	{r7, pc}
+    1d2c:	00002d94 	.word	0x00002d94
+    1d30:	00002c18 	.word	0x00002c18
 
-00001d1c <backtrace_level_1>:
+00001d34 <backtrace_level_1>:
     void backtrace_level_1(void)
     {
-    1d1c:	b580      	push	{r7, lr}
-    1d1e:	af00      	add	r7, sp, #0
+    1d34:	b580      	push	{r7, lr}
+    1d36:	af00      	add	r7, sp, #0
         printf("[%s]\n", __func__);
-    1d20:	4903      	ldr	r1, [pc, #12]	; (1d30 <backtrace_level_1+0x14>)
-    1d22:	4804      	ldr	r0, [pc, #16]	; (1d34 <backtrace_level_1+0x18>)
-    1d24:	f7ff fa57 	bl	11d6 <printf_>
+    1d38:	4903      	ldr	r1, [pc, #12]	; (1d48 <backtrace_level_1+0x14>)
+    1d3a:	4804      	ldr	r0, [pc, #16]	; (1d4c <backtrace_level_1+0x18>)
+    1d3c:	f7ff fa4b 	bl	11d6 <printf_>
         backtrace_level_2();
-    1d28:	f7ff ffea 	bl	1d00 <backtrace_level_2>
+    1d40:	f7ff ffea 	bl	1d18 <backtrace_level_2>
     }
-    1d2c:	bf00      	nop
-    1d2e:	bd80      	pop	{r7, pc}
-    1d30:	00002d84 	.word	0x00002d84
-    1d34:	00002bfc 	.word	0x00002bfc
+    1d44:	bf00      	nop
+    1d46:	bd80      	pop	{r7, pc}
+    1d48:	00002da8 	.word	0x00002da8
+    1d4c:	00002c18 	.word	0x00002c18
 
-00001d38 <backtrace_test>:
+00001d50 <backtrace_test>:
     void backtrace_test(void)
     {
-    1d38:	b590      	push	{r4, r7, lr}
-    1d3a:	b089      	sub	sp, #36	; 0x24
-    1d3c:	af02      	add	r7, sp, #8
+    1d50:	b590      	push	{r4, r7, lr}
+    1d52:	b089      	sub	sp, #36	; 0x24
+    1d54:	af02      	add	r7, sp, #8
         int bt1 = 0xAA;
-    1d3e:	23aa      	movs	r3, #170	; 0xaa
-    1d40:	613b      	str	r3, [r7, #16]
+    1d56:	23aa      	movs	r3, #170	; 0xaa
+    1d58:	613b      	str	r3, [r7, #16]
         int bt2 = 0x55;
-    1d42:	2355      	movs	r3, #85	; 0x55
-    1d44:	60fb      	str	r3, [r7, #12]
+    1d5a:	2355      	movs	r3, #85	; 0x55
+    1d5c:	60fb      	str	r3, [r7, #12]
         int bt3 = 0x77;
-    1d46:	2377      	movs	r3, #119	; 0x77
-    1d48:	60bb      	str	r3, [r7, #8]
+    1d5e:	2377      	movs	r3, #119	; 0x77
+    1d60:	60bb      	str	r3, [r7, #8]
         (void)bt1;
         (void)bt2;
         (void)bt3;
 
         code_start_addr = (uint32_t)&_stext;
-    1d4a:	4a42      	ldr	r2, [pc, #264]	; (1e54 <backtrace_test+0x11c>)
-    1d4c:	4b42      	ldr	r3, [pc, #264]	; (1e58 <backtrace_test+0x120>)
-    1d4e:	601a      	str	r2, [r3, #0]
+    1d62:	4a42      	ldr	r2, [pc, #264]	; (1e6c <backtrace_test+0x11c>)
+    1d64:	4b42      	ldr	r3, [pc, #264]	; (1e70 <backtrace_test+0x120>)
+    1d66:	601a      	str	r2, [r3, #0]
         code_end_addr = (uint32_t)&_etext;
-    1d50:	4a42      	ldr	r2, [pc, #264]	; (1e5c <backtrace_test+0x124>)
-    1d52:	4b43      	ldr	r3, [pc, #268]	; (1e60 <backtrace_test+0x128>)
-    1d54:	601a      	str	r2, [r3, #0]
+    1d68:	4a42      	ldr	r2, [pc, #264]	; (1e74 <backtrace_test+0x124>)
+    1d6a:	4b43      	ldr	r3, [pc, #268]	; (1e78 <backtrace_test+0x128>)
+    1d6c:	601a      	str	r2, [r3, #0]
         code_size = code_end_addr - code_start_addr;
-    1d56:	4b42      	ldr	r3, [pc, #264]	; (1e60 <backtrace_test+0x128>)
-    1d58:	681a      	ldr	r2, [r3, #0]
-    1d5a:	4b3f      	ldr	r3, [pc, #252]	; (1e58 <backtrace_test+0x120>)
-    1d5c:	681b      	ldr	r3, [r3, #0]
-    1d5e:	1ad3      	subs	r3, r2, r3
-    1d60:	4a40      	ldr	r2, [pc, #256]	; (1e64 <backtrace_test+0x12c>)
-    1d62:	6013      	str	r3, [r2, #0]
+    1d6e:	4b42      	ldr	r3, [pc, #264]	; (1e78 <backtrace_test+0x128>)
+    1d70:	681a      	ldr	r2, [r3, #0]
+    1d72:	4b3f      	ldr	r3, [pc, #252]	; (1e70 <backtrace_test+0x120>)
+    1d74:	681b      	ldr	r3, [r3, #0]
+    1d76:	1ad3      	subs	r3, r2, r3
+    1d78:	4a40      	ldr	r2, [pc, #256]	; (1e7c <backtrace_test+0x12c>)
+    1d7a:	6013      	str	r3, [r2, #0]
         stack_start_addr = (uint32_t)&_sstack;
-    1d64:	4a40      	ldr	r2, [pc, #256]	; (1e68 <backtrace_test+0x130>)
-    1d66:	4b41      	ldr	r3, [pc, #260]	; (1e6c <backtrace_test+0x134>)
-    1d68:	601a      	str	r2, [r3, #0]
+    1d7c:	4a40      	ldr	r2, [pc, #256]	; (1e80 <backtrace_test+0x130>)
+    1d7e:	4b41      	ldr	r3, [pc, #260]	; (1e84 <backtrace_test+0x134>)
+    1d80:	601a      	str	r2, [r3, #0]
         stack_end_addr = (uint32_t)&_estack;
-    1d6a:	4a41      	ldr	r2, [pc, #260]	; (1e70 <backtrace_test+0x138>)
-    1d6c:	4b41      	ldr	r3, [pc, #260]	; (1e74 <backtrace_test+0x13c>)
-    1d6e:	601a      	str	r2, [r3, #0]
+    1d82:	4a41      	ldr	r2, [pc, #260]	; (1e88 <backtrace_test+0x138>)
+    1d84:	4b41      	ldr	r3, [pc, #260]	; (1e8c <backtrace_test+0x13c>)
+    1d86:	601a      	str	r2, [r3, #0]
         stack_size = stack_end_addr - stack_start_addr;
-    1d70:	4b40      	ldr	r3, [pc, #256]	; (1e74 <backtrace_test+0x13c>)
-    1d72:	681a      	ldr	r2, [r3, #0]
-    1d74:	4b3d      	ldr	r3, [pc, #244]	; (1e6c <backtrace_test+0x134>)
-    1d76:	681b      	ldr	r3, [r3, #0]
-    1d78:	1ad3      	subs	r3, r2, r3
-    1d7a:	4a3f      	ldr	r2, [pc, #252]	; (1e78 <backtrace_test+0x140>)
-    1d7c:	6013      	str	r3, [r2, #0]
+    1d88:	4b40      	ldr	r3, [pc, #256]	; (1e8c <backtrace_test+0x13c>)
+    1d8a:	681a      	ldr	r2, [r3, #0]
+    1d8c:	4b3d      	ldr	r3, [pc, #244]	; (1e84 <backtrace_test+0x134>)
+    1d8e:	681b      	ldr	r3, [r3, #0]
+    1d90:	1ad3      	subs	r3, r2, r3
+    1d92:	4a3f      	ldr	r2, [pc, #252]	; (1e90 <backtrace_test+0x140>)
+    1d94:	6013      	str	r3, [r2, #0]
         heap_start_addr = (uint32_t)&_sheap;
-    1d7e:	4a3f      	ldr	r2, [pc, #252]	; (1e7c <backtrace_test+0x144>)
-    1d80:	4b3f      	ldr	r3, [pc, #252]	; (1e80 <backtrace_test+0x148>)
-    1d82:	601a      	str	r2, [r3, #0]
+    1d96:	4a3f      	ldr	r2, [pc, #252]	; (1e94 <backtrace_test+0x144>)
+    1d98:	4b3f      	ldr	r3, [pc, #252]	; (1e98 <backtrace_test+0x148>)
+    1d9a:	601a      	str	r2, [r3, #0]
         heap_end_addr = (uint32_t)&_eheap;
-    1d84:	4a3f      	ldr	r2, [pc, #252]	; (1e84 <backtrace_test+0x14c>)
-    1d86:	4b40      	ldr	r3, [pc, #256]	; (1e88 <backtrace_test+0x150>)
-    1d88:	601a      	str	r2, [r3, #0]
+    1d9c:	4a3f      	ldr	r2, [pc, #252]	; (1e9c <backtrace_test+0x14c>)
+    1d9e:	4b40      	ldr	r3, [pc, #256]	; (1ea0 <backtrace_test+0x150>)
+    1da0:	601a      	str	r2, [r3, #0]
         heap_size = heap_end_addr - heap_start_addr;
-    1d8a:	4b3f      	ldr	r3, [pc, #252]	; (1e88 <backtrace_test+0x150>)
-    1d8c:	681a      	ldr	r2, [r3, #0]
-    1d8e:	4b3c      	ldr	r3, [pc, #240]	; (1e80 <backtrace_test+0x148>)
-    1d90:	681b      	ldr	r3, [r3, #0]
-    1d92:	1ad3      	subs	r3, r2, r3
-    1d94:	4a3d      	ldr	r2, [pc, #244]	; (1e8c <backtrace_test+0x154>)
-    1d96:	6013      	str	r3, [r2, #0]
+    1da2:	4b3f      	ldr	r3, [pc, #252]	; (1ea0 <backtrace_test+0x150>)
+    1da4:	681a      	ldr	r2, [r3, #0]
+    1da6:	4b3c      	ldr	r3, [pc, #240]	; (1e98 <backtrace_test+0x148>)
+    1da8:	681b      	ldr	r3, [r3, #0]
+    1daa:	1ad3      	subs	r3, r2, r3
+    1dac:	4a3d      	ldr	r2, [pc, #244]	; (1ea4 <backtrace_test+0x154>)
+    1dae:	6013      	str	r3, [r2, #0]
         printf("[%s] code_start_addr=0x%lx code_end_addr=0x%lx code_size=%ld<0x%lx>\n", \
-    1d98:	4b2f      	ldr	r3, [pc, #188]	; (1e58 <backtrace_test+0x120>)
-    1d9a:	6819      	ldr	r1, [r3, #0]
-    1d9c:	4b30      	ldr	r3, [pc, #192]	; (1e60 <backtrace_test+0x128>)
-    1d9e:	6818      	ldr	r0, [r3, #0]
-    1da0:	4b30      	ldr	r3, [pc, #192]	; (1e64 <backtrace_test+0x12c>)
-    1da2:	681b      	ldr	r3, [r3, #0]
-    1da4:	4a2f      	ldr	r2, [pc, #188]	; (1e64 <backtrace_test+0x12c>)
-    1da6:	6812      	ldr	r2, [r2, #0]
-    1da8:	9201      	str	r2, [sp, #4]
-    1daa:	9300      	str	r3, [sp, #0]
-    1dac:	4603      	mov	r3, r0
-    1dae:	460a      	mov	r2, r1
-    1db0:	4937      	ldr	r1, [pc, #220]	; (1e90 <backtrace_test+0x158>)
-    1db2:	4838      	ldr	r0, [pc, #224]	; (1e94 <backtrace_test+0x15c>)
-    1db4:	f7ff fa0f 	bl	11d6 <printf_>
+    1db0:	4b2f      	ldr	r3, [pc, #188]	; (1e70 <backtrace_test+0x120>)
+    1db2:	6819      	ldr	r1, [r3, #0]
+    1db4:	4b30      	ldr	r3, [pc, #192]	; (1e78 <backtrace_test+0x128>)
+    1db6:	6818      	ldr	r0, [r3, #0]
+    1db8:	4b30      	ldr	r3, [pc, #192]	; (1e7c <backtrace_test+0x12c>)
+    1dba:	681b      	ldr	r3, [r3, #0]
+    1dbc:	4a2f      	ldr	r2, [pc, #188]	; (1e7c <backtrace_test+0x12c>)
+    1dbe:	6812      	ldr	r2, [r2, #0]
+    1dc0:	9201      	str	r2, [sp, #4]
+    1dc2:	9300      	str	r3, [sp, #0]
+    1dc4:	4603      	mov	r3, r0
+    1dc6:	460a      	mov	r2, r1
+    1dc8:	4937      	ldr	r1, [pc, #220]	; (1ea8 <backtrace_test+0x158>)
+    1dca:	4838      	ldr	r0, [pc, #224]	; (1eac <backtrace_test+0x15c>)
+    1dcc:	f7ff fa03 	bl	11d6 <printf_>
         __func__, code_start_addr, code_end_addr, code_size, code_size);
         printf("[%s] stack_start_addr=0x%lx stack_end_addr=0x%lx stack_size=%ld<0x%lx>\n", \
-    1db8:	4b2c      	ldr	r3, [pc, #176]	; (1e6c <backtrace_test+0x134>)
-    1dba:	6819      	ldr	r1, [r3, #0]
-    1dbc:	4b2d      	ldr	r3, [pc, #180]	; (1e74 <backtrace_test+0x13c>)
-    1dbe:	6818      	ldr	r0, [r3, #0]
-    1dc0:	4b2d      	ldr	r3, [pc, #180]	; (1e78 <backtrace_test+0x140>)
-    1dc2:	681b      	ldr	r3, [r3, #0]
-    1dc4:	4a2c      	ldr	r2, [pc, #176]	; (1e78 <backtrace_test+0x140>)
-    1dc6:	6812      	ldr	r2, [r2, #0]
-    1dc8:	9201      	str	r2, [sp, #4]
-    1dca:	9300      	str	r3, [sp, #0]
-    1dcc:	4603      	mov	r3, r0
-    1dce:	460a      	mov	r2, r1
-    1dd0:	492f      	ldr	r1, [pc, #188]	; (1e90 <backtrace_test+0x158>)
-    1dd2:	4831      	ldr	r0, [pc, #196]	; (1e98 <backtrace_test+0x160>)
-    1dd4:	f7ff f9ff 	bl	11d6 <printf_>
+    1dd0:	4b2c      	ldr	r3, [pc, #176]	; (1e84 <backtrace_test+0x134>)
+    1dd2:	6819      	ldr	r1, [r3, #0]
+    1dd4:	4b2d      	ldr	r3, [pc, #180]	; (1e8c <backtrace_test+0x13c>)
+    1dd6:	6818      	ldr	r0, [r3, #0]
+    1dd8:	4b2d      	ldr	r3, [pc, #180]	; (1e90 <backtrace_test+0x140>)
+    1dda:	681b      	ldr	r3, [r3, #0]
+    1ddc:	4a2c      	ldr	r2, [pc, #176]	; (1e90 <backtrace_test+0x140>)
+    1dde:	6812      	ldr	r2, [r2, #0]
+    1de0:	9201      	str	r2, [sp, #4]
+    1de2:	9300      	str	r3, [sp, #0]
+    1de4:	4603      	mov	r3, r0
+    1de6:	460a      	mov	r2, r1
+    1de8:	492f      	ldr	r1, [pc, #188]	; (1ea8 <backtrace_test+0x158>)
+    1dea:	4831      	ldr	r0, [pc, #196]	; (1eb0 <backtrace_test+0x160>)
+    1dec:	f7ff f9f3 	bl	11d6 <printf_>
         __func__, stack_start_addr, stack_end_addr, stack_size, stack_size);
         printf("[%s] heap_start_addr=0x%lx heap_end_addr=0x%lx heap_size=%ld<0x%lx>\n", \
-    1dd8:	4b29      	ldr	r3, [pc, #164]	; (1e80 <backtrace_test+0x148>)
-    1dda:	6819      	ldr	r1, [r3, #0]
-    1ddc:	4b2a      	ldr	r3, [pc, #168]	; (1e88 <backtrace_test+0x150>)
-    1dde:	6818      	ldr	r0, [r3, #0]
-    1de0:	4b2a      	ldr	r3, [pc, #168]	; (1e8c <backtrace_test+0x154>)
-    1de2:	681b      	ldr	r3, [r3, #0]
-    1de4:	4a29      	ldr	r2, [pc, #164]	; (1e8c <backtrace_test+0x154>)
-    1de6:	6812      	ldr	r2, [r2, #0]
-    1de8:	9201      	str	r2, [sp, #4]
-    1dea:	9300      	str	r3, [sp, #0]
-    1dec:	4603      	mov	r3, r0
-    1dee:	460a      	mov	r2, r1
-    1df0:	4927      	ldr	r1, [pc, #156]	; (1e90 <backtrace_test+0x158>)
-    1df2:	482a      	ldr	r0, [pc, #168]	; (1e9c <backtrace_test+0x164>)
-    1df4:	f7ff f9ef 	bl	11d6 <printf_>
+    1df0:	4b29      	ldr	r3, [pc, #164]	; (1e98 <backtrace_test+0x148>)
+    1df2:	6819      	ldr	r1, [r3, #0]
+    1df4:	4b2a      	ldr	r3, [pc, #168]	; (1ea0 <backtrace_test+0x150>)
+    1df6:	6818      	ldr	r0, [r3, #0]
+    1df8:	4b2a      	ldr	r3, [pc, #168]	; (1ea4 <backtrace_test+0x154>)
+    1dfa:	681b      	ldr	r3, [r3, #0]
+    1dfc:	4a29      	ldr	r2, [pc, #164]	; (1ea4 <backtrace_test+0x154>)
+    1dfe:	6812      	ldr	r2, [r2, #0]
+    1e00:	9201      	str	r2, [sp, #4]
+    1e02:	9300      	str	r3, [sp, #0]
+    1e04:	4603      	mov	r3, r0
+    1e06:	460a      	mov	r2, r1
+    1e08:	4927      	ldr	r1, [pc, #156]	; (1ea8 <backtrace_test+0x158>)
+    1e0a:	482a      	ldr	r0, [pc, #168]	; (1eb4 <backtrace_test+0x164>)
+    1e0c:	f7ff f9e3 	bl	11d6 <printf_>
   __ASM volatile ("cpsie i" : : : "memory");
-    1df8:	b662      	cpsie	i
+    1e10:	b662      	cpsie	i
     __asm volatile ("MOV %0, sp\n" : "=r" (result) );
-    1dfa:	466b      	mov	r3, sp
-    1dfc:	461c      	mov	r4, r3
+    1e12:	466b      	mov	r3, sp
+    1e14:	461c      	mov	r4, r3
     return(result);
-    1dfe:	4623      	mov	r3, r4
+    1e16:	4623      	mov	r3, r4
          // printf("[%s] start\n", __func__);
          // test_div();
 
          // __asm("svc 0");
          // printf("[%s] end\n", __func__);
          uint32_t sp = cmb_get_sp();
-    1e00:	617b      	str	r3, [r7, #20]
+    1e18:	617b      	str	r3, [r7, #20]
          printf("sp=0x%lx\n", sp);
-    1e02:	6979      	ldr	r1, [r7, #20]
-    1e04:	4826      	ldr	r0, [pc, #152]	; (1ea0 <backtrace_test+0x168>)
-    1e06:	f7ff f9e6 	bl	11d6 <printf_>
+    1e1a:	6979      	ldr	r1, [r7, #20]
+    1e1c:	4826      	ldr	r0, [pc, #152]	; (1eb8 <backtrace_test+0x168>)
+    1e1e:	f7ff f9da 	bl	11d6 <printf_>
          区间内筛选出当前栈中的汇编指令地址。并通过判断上一条是否为bl指令或
          blx指令（b、bx指令不将lr寄存器入栈，不对其进行处理）对上一条指令
          进行计算
          */
          uint32_t addr;
          while(sp < (uint32_t)&_estack) {//在堆栈里查找LR
-    1e0a:	e01b      	b.n	1e44 <backtrace_test+0x10c>
+    1e22:	e01b      	b.n	1e5c <backtrace_test+0x10c>
              //sp 在代码段内
              addr = *(uint32_t*)sp;//如果是LR寄存器，存放的返回地址指向
-    1e0c:	697b      	ldr	r3, [r7, #20]
-    1e0e:	681b      	ldr	r3, [r3, #0]
-    1e10:	607b      	str	r3, [r7, #4]
-             printf("addr :%08x\n", addr);
-    1e12:	6879      	ldr	r1, [r7, #4]
-    1e14:	4823      	ldr	r0, [pc, #140]	; (1ea4 <backtrace_test+0x16c>)
-    1e16:	f7ff f9de 	bl	11d6 <printf_>
-             if ((addr >= (uint32_t)&_stext) &&
-    1e1a:	4a0e      	ldr	r2, [pc, #56]	; (1e54 <backtrace_test+0x11c>)
-    1e1c:	687b      	ldr	r3, [r7, #4]
-    1e1e:	4293      	cmp	r3, r2
-    1e20:	d30d      	bcc.n	1e3e <backtrace_test+0x106>
-             (sp <= (uint32_t)&_etext) &&
-    1e22:	4a0e      	ldr	r2, [pc, #56]	; (1e5c <backtrace_test+0x124>)
-             if ((addr >= (uint32_t)&_stext) &&
     1e24:	697b      	ldr	r3, [r7, #20]
-    1e26:	4293      	cmp	r3, r2
-    1e28:	d809      	bhi.n	1e3e <backtrace_test+0x106>
-             IS_ALIGNED(addr - 1, 2)) {//thumb-2z指令 2字节
-    1e2a:	687b      	ldr	r3, [r7, #4]
-    1e2c:	3b01      	subs	r3, #1
-    1e2e:	f003 0301 	and.w	r3, r3, #1
+    1e26:	681b      	ldr	r3, [r3, #0]
+    1e28:	607b      	str	r3, [r7, #4]
+             printf("addr :%08x\n", addr);
+    1e2a:	6879      	ldr	r1, [r7, #4]
+    1e2c:	4823      	ldr	r0, [pc, #140]	; (1ebc <backtrace_test+0x16c>)
+    1e2e:	f7ff f9d2 	bl	11d6 <printf_>
+             if ((addr >= (uint32_t)&_stext) &&
+    1e32:	4a0e      	ldr	r2, [pc, #56]	; (1e6c <backtrace_test+0x11c>)
+    1e34:	687b      	ldr	r3, [r7, #4]
+    1e36:	4293      	cmp	r3, r2
+    1e38:	d30d      	bcc.n	1e56 <backtrace_test+0x106>
              (sp <= (uint32_t)&_etext) &&
-    1e32:	2b00      	cmp	r3, #0
-    1e34:	d103      	bne.n	1e3e <backtrace_test+0x106>
+    1e3a:	4a0e      	ldr	r2, [pc, #56]	; (1e74 <backtrace_test+0x124>)
+             if ((addr >= (uint32_t)&_stext) &&
+    1e3c:	697b      	ldr	r3, [r7, #20]
+    1e3e:	4293      	cmp	r3, r2
+    1e40:	d809      	bhi.n	1e56 <backtrace_test+0x106>
+             IS_ALIGNED(addr - 1, 2)) {//thumb-2z指令 2字节
+    1e42:	687b      	ldr	r3, [r7, #4]
+    1e44:	3b01      	subs	r3, #1
+    1e46:	f003 0301 	and.w	r3, r3, #1
+             (sp <= (uint32_t)&_etext) &&
+    1e4a:	2b00      	cmp	r3, #0
+    1e4c:	d103      	bne.n	1e56 <backtrace_test+0x106>
 
                  printf("find ld 0x%08x\n", addr);
-    1e36:	6879      	ldr	r1, [r7, #4]
-    1e38:	481b      	ldr	r0, [pc, #108]	; (1ea8 <backtrace_test+0x170>)
-    1e3a:	f7ff f9cc 	bl	11d6 <printf_>
+    1e4e:	6879      	ldr	r1, [r7, #4]
+    1e50:	481b      	ldr	r0, [pc, #108]	; (1ec0 <backtrace_test+0x170>)
+    1e52:	f7ff f9c0 	bl	11d6 <printf_>
              }
              sp += 4;
-    1e3e:	697b      	ldr	r3, [r7, #20]
-    1e40:	3304      	adds	r3, #4
-    1e42:	617b      	str	r3, [r7, #20]
+    1e56:	697b      	ldr	r3, [r7, #20]
+    1e58:	3304      	adds	r3, #4
+    1e5a:	617b      	str	r3, [r7, #20]
          while(sp < (uint32_t)&_estack) {//在堆栈里查找LR
-    1e44:	4a0a      	ldr	r2, [pc, #40]	; (1e70 <backtrace_test+0x138>)
-    1e46:	697b      	ldr	r3, [r7, #20]
-    1e48:	4293      	cmp	r3, r2
-    1e4a:	d3df      	bcc.n	1e0c <backtrace_test+0xd4>
+    1e5c:	4a0a      	ldr	r2, [pc, #40]	; (1e88 <backtrace_test+0x138>)
+    1e5e:	697b      	ldr	r3, [r7, #20]
+    1e60:	4293      	cmp	r3, r2
+    1e62:	d3df      	bcc.n	1e24 <backtrace_test+0xd4>
          }
          backtrace_level_1();
-    1e4c:	f7ff ff66 	bl	1d1c <backtrace_level_1>
+    1e64:	f7ff ff66 	bl	1d34 <backtrace_level_1>
 //         fault_test_by_div0();
 //         fault_test_by_unalign();
          while(1);
-    1e50:	e7fe      	b.n	1e50 <backtrace_test+0x118>
-    1e52:	bf00      	nop
-    1e54:	00000000 	.word	0x00000000
-    1e58:	20000008 	.word	0x20000008
-    1e5c:	00002db4 	.word	0x00002db4
-    1e60:	2000000c 	.word	0x2000000c
-    1e64:	20000010 	.word	0x20000010
-    1e68:	200008d8 	.word	0x200008d8
-    1e6c:	20000014 	.word	0x20000014
-    1e70:	200018d8 	.word	0x200018d8
-    1e74:	20000018 	.word	0x20000018
-    1e78:	2000001c 	.word	0x2000001c
-    1e7c:	200018d8 	.word	0x200018d8
-    1e80:	20000020 	.word	0x20000020
-    1e84:	200058d8 	.word	0x200058d8
-    1e88:	20000024 	.word	0x20000024
-    1e8c:	20000028 	.word	0x20000028
-    1e90:	00002d98 	.word	0x00002d98
-    1e94:	00002c1c 	.word	0x00002c1c
-    1e98:	00002c64 	.word	0x00002c64
-    1e9c:	00002cac 	.word	0x00002cac
-    1ea0:	00002cf4 	.word	0x00002cf4
-    1ea4:	00002d00 	.word	0x00002d00
-    1ea8:	00002d0c 	.word	0x00002d0c
+    1e68:	e7fe      	b.n	1e68 <backtrace_test+0x118>
+    1e6a:	bf00      	nop
+    1e6c:	00000000 	.word	0x00000000
+    1e70:	20000008 	.word	0x20000008
+    1e74:	00002dd8 	.word	0x00002dd8
+    1e78:	2000000c 	.word	0x2000000c
+    1e7c:	20000010 	.word	0x20000010
+    1e80:	200008d8 	.word	0x200008d8
+    1e84:	20000014 	.word	0x20000014
+    1e88:	200018d8 	.word	0x200018d8
+    1e8c:	20000018 	.word	0x20000018
+    1e90:	2000001c 	.word	0x2000001c
+    1e94:	200018d8 	.word	0x200018d8
+    1e98:	20000020 	.word	0x20000020
+    1e9c:	200058d8 	.word	0x200058d8
+    1ea0:	20000024 	.word	0x20000024
+    1ea4:	20000028 	.word	0x20000028
+    1ea8:	00002dbc 	.word	0x00002dbc
+    1eac:	00002c20 	.word	0x00002c20
+    1eb0:	00002c68 	.word	0x00002c68
+    1eb4:	00002cb0 	.word	0x00002cb0
+    1eb8:	00002cf8 	.word	0x00002cf8
+    1ebc:	00002d04 	.word	0x00002d04
+    1ec0:	00002d10 	.word	0x00002d10
 
-00001eac <LoopUntilEntry>:
+00001ec4 <LoopUntilEntry>:
 #define OFFSET_OF_PSP          40 // 10 registers
 #define BL_INS                 0xF000F000
 #define BLX_INX                0x4700
 
 unsigned long  LoopUntilEntry(unsigned long addr)
 {
-    1eac:	b480      	push	{r7}
-    1eae:	b083      	sub	sp, #12
-    1eb0:	af00      	add	r7, sp, #0
-    1eb2:	6078      	str	r0, [r7, #4]
+    1ec4:	b480      	push	{r7}
+    1ec6:	b083      	sub	sp, #12
+    1ec8:	af00      	add	r7, sp, #0
+    1eca:	6078      	str	r0, [r7, #4]
         while (addr > (unsigned long)code_start_addr) {
-    1eb4:	e00e      	b.n	1ed4 <LoopUntilEntry+0x28>
+    1ecc:	e00e      	b.n	1eec <LoopUntilEntry+0x28>
             if (((*((uint16_t *)addr) >> 8) == PUSH_MASK_WITH_LR) || ((*((uint16_t *)addr) >> 8) == PUSH_MASK)) {
-    1eb6:	687b      	ldr	r3, [r7, #4]
-    1eb8:	881b      	ldrh	r3, [r3, #0]
-    1eba:	0a1b      	lsrs	r3, r3, #8
-    1ebc:	b29b      	uxth	r3, r3
-    1ebe:	2bb5      	cmp	r3, #181	; 0xb5
-    1ec0:	d00d      	beq.n	1ede <LoopUntilEntry+0x32>
-    1ec2:	687b      	ldr	r3, [r7, #4]
-    1ec4:	881b      	ldrh	r3, [r3, #0]
-    1ec6:	0a1b      	lsrs	r3, r3, #8
-    1ec8:	b29b      	uxth	r3, r3
-    1eca:	2bb4      	cmp	r3, #180	; 0xb4
-    1ecc:	d007      	beq.n	1ede <LoopUntilEntry+0x32>
+    1ece:	687b      	ldr	r3, [r7, #4]
+    1ed0:	881b      	ldrh	r3, [r3, #0]
+    1ed2:	0a1b      	lsrs	r3, r3, #8
+    1ed4:	b29b      	uxth	r3, r3
+    1ed6:	2bb5      	cmp	r3, #181	; 0xb5
+    1ed8:	d00d      	beq.n	1ef6 <LoopUntilEntry+0x32>
+    1eda:	687b      	ldr	r3, [r7, #4]
+    1edc:	881b      	ldrh	r3, [r3, #0]
+    1ede:	0a1b      	lsrs	r3, r3, #8
+    1ee0:	b29b      	uxth	r3, r3
+    1ee2:	2bb4      	cmp	r3, #180	; 0xb4
+    1ee4:	d007      	beq.n	1ef6 <LoopUntilEntry+0x32>
                 break;
             }
             addr -= THUM_OFFSET;
-    1ece:	687b      	ldr	r3, [r7, #4]
-    1ed0:	3b02      	subs	r3, #2
-    1ed2:	607b      	str	r3, [r7, #4]
+    1ee6:	687b      	ldr	r3, [r7, #4]
+    1ee8:	3b02      	subs	r3, #2
+    1eea:	607b      	str	r3, [r7, #4]
         while (addr > (unsigned long)code_start_addr) {
-    1ed4:	4b05      	ldr	r3, [pc, #20]	; (1eec <LoopUntilEntry+0x40>)
-    1ed6:	681b      	ldr	r3, [r3, #0]
-    1ed8:	687a      	ldr	r2, [r7, #4]
-    1eda:	429a      	cmp	r2, r3
-    1edc:	d8eb      	bhi.n	1eb6 <LoopUntilEntry+0xa>
+    1eec:	4b05      	ldr	r3, [pc, #20]	; (1f04 <LoopUntilEntry+0x40>)
+    1eee:	681b      	ldr	r3, [r3, #0]
+    1ef0:	687a      	ldr	r2, [r7, #4]
+    1ef2:	429a      	cmp	r2, r3
+    1ef4:	d8eb      	bhi.n	1ece <LoopUntilEntry+0xa>
         }
 
         return addr;
-    1ede:	687b      	ldr	r3, [r7, #4]
+    1ef6:	687b      	ldr	r3, [r7, #4]
 }
-    1ee0:	4618      	mov	r0, r3
-    1ee2:	370c      	adds	r7, #12
-    1ee4:	46bd      	mov	sp, r7
-    1ee6:	bc80      	pop	{r7}
-    1ee8:	4770      	bx	lr
-    1eea:	bf00      	nop
-    1eec:	20000008 	.word	0x20000008
+    1ef8:	4618      	mov	r0, r3
+    1efa:	370c      	adds	r7, #12
+    1efc:	46bd      	mov	sp, r7
+    1efe:	bc80      	pop	{r7}
+    1f00:	4770      	bx	lr
+    1f02:	bf00      	nop
+    1f04:	20000008 	.word	0x20000008
 
-00001ef0 <CalculateBLTargetAddress>:
+00001f08 <CalculateBLTargetAddress>:
 
 unsigned long CalculateBLTargetAddress(unsigned long bl)
 {
-    1ef0:	b480      	push	{r7}
-    1ef2:	b087      	sub	sp, #28
-    1ef4:	af00      	add	r7, sp, #0
-    1ef6:	6078      	str	r0, [r7, #4]
+    1f08:	b480      	push	{r7}
+    1f0a:	b087      	sub	sp, #28
+    1f0c:	af00      	add	r7, sp, #0
+    1f0e:	6078      	str	r0, [r7, #4]
         unsigned long target = 0;
-    1ef8:	2300      	movs	r3, #0
-    1efa:	617b      	str	r3, [r7, #20]
+    1f10:	2300      	movs	r3, #0
+    1f12:	617b      	str	r3, [r7, #20]
         uint32_t off0, off1, off;
 
         if (*(uint16_t *)bl & SIGN_BIT_MASK) {
-    1efc:	687b      	ldr	r3, [r7, #4]
-    1efe:	881b      	ldrh	r3, [r3, #0]
-    1f00:	f403 0380 	and.w	r3, r3, #4194304	; 0x400000
-    1f04:	2b00      	cmp	r3, #0
-    1f06:	d00b      	beq.n	1f20 <CalculateBLTargetAddress+0x30>
-            off1 = *(uint16_t *)bl & LOW_11_BITS_MASK;
-    1f08:	687b      	ldr	r3, [r7, #4]
-    1f0a:	881b      	ldrh	r3, [r3, #0]
-    1f0c:	f3c3 030a 	ubfx	r3, r3, #0, #11
-    1f10:	60fb      	str	r3, [r7, #12]
-            off0 = *(uint16_t *)(bl + 2) & LOW_11_BITS_MASK;
-    1f12:	687b      	ldr	r3, [r7, #4]
-    1f14:	3302      	adds	r3, #2
+    1f14:	687b      	ldr	r3, [r7, #4]
     1f16:	881b      	ldrh	r3, [r3, #0]
-    1f18:	f3c3 030a 	ubfx	r3, r3, #0, #11
-    1f1c:	613b      	str	r3, [r7, #16]
-    1f1e:	e00a      	b.n	1f36 <CalculateBLTargetAddress+0x46>
-        } else {
-            off0 = *(uint16_t *)bl & LOW_11_BITS_MASK;
+    1f18:	f403 0380 	and.w	r3, r3, #4194304	; 0x400000
+    1f1c:	2b00      	cmp	r3, #0
+    1f1e:	d00b      	beq.n	1f38 <CalculateBLTargetAddress+0x30>
+            off1 = *(uint16_t *)bl & LOW_11_BITS_MASK;
     1f20:	687b      	ldr	r3, [r7, #4]
     1f22:	881b      	ldrh	r3, [r3, #0]
     1f24:	f3c3 030a 	ubfx	r3, r3, #0, #11
-    1f28:	613b      	str	r3, [r7, #16]
-            off1 = *(uint16_t *)(bl + 2) & LOW_11_BITS_MASK;
+    1f28:	60fb      	str	r3, [r7, #12]
+            off0 = *(uint16_t *)(bl + 2) & LOW_11_BITS_MASK;
     1f2a:	687b      	ldr	r3, [r7, #4]
     1f2c:	3302      	adds	r3, #2
     1f2e:	881b      	ldrh	r3, [r3, #0]
     1f30:	f3c3 030a 	ubfx	r3, r3, #0, #11
-    1f34:	60fb      	str	r3, [r7, #12]
+    1f34:	613b      	str	r3, [r7, #16]
+    1f36:	e00a      	b.n	1f4e <CalculateBLTargetAddress+0x46>
+        } else {
+            off0 = *(uint16_t *)bl & LOW_11_BITS_MASK;
+    1f38:	687b      	ldr	r3, [r7, #4]
+    1f3a:	881b      	ldrh	r3, [r3, #0]
+    1f3c:	f3c3 030a 	ubfx	r3, r3, #0, #11
+    1f40:	613b      	str	r3, [r7, #16]
+            off1 = *(uint16_t *)(bl + 2) & LOW_11_BITS_MASK;
+    1f42:	687b      	ldr	r3, [r7, #4]
+    1f44:	3302      	adds	r3, #2
+    1f46:	881b      	ldrh	r3, [r3, #0]
+    1f48:	f3c3 030a 	ubfx	r3, r3, #0, #11
+    1f4c:	60fb      	str	r3, [r7, #12]
         }
         off = (off0 << HIGH_OFFSET_NUMBER) + (off1 << LOW_OFFSET_NUMBER);
-    1f36:	693b      	ldr	r3, [r7, #16]
-    1f38:	031a      	lsls	r2, r3, #12
-    1f3a:	68fb      	ldr	r3, [r7, #12]
-    1f3c:	005b      	lsls	r3, r3, #1
-    1f3e:	4413      	add	r3, r2
-    1f40:	60bb      	str	r3, [r7, #8]
+    1f4e:	693b      	ldr	r3, [r7, #16]
+    1f50:	031a      	lsls	r2, r3, #12
+    1f52:	68fb      	ldr	r3, [r7, #12]
+    1f54:	005b      	lsls	r3, r3, #1
+    1f56:	4413      	add	r3, r2
+    1f58:	60bb      	str	r3, [r7, #8]
         if (off & SIGN_BIT_MASK) {
-    1f42:	68bb      	ldr	r3, [r7, #8]
-    1f44:	f403 0380 	and.w	r3, r3, #4194304	; 0x400000
-    1f48:	2b00      	cmp	r3, #0
-    1f4a:	d008      	beq.n	1f5e <CalculateBLTargetAddress+0x6e>
+    1f5a:	68bb      	ldr	r3, [r7, #8]
+    1f5c:	f403 0380 	and.w	r3, r3, #4194304	; 0x400000
+    1f60:	2b00      	cmp	r3, #0
+    1f62:	d008      	beq.n	1f76 <CalculateBLTargetAddress+0x6e>
             target = bl + BL_CMD_OFFSET - ((~(off - 1)) & 0x7FFFFF); // 0x7FFFFF : offset mask
-    1f4c:	68bb      	ldr	r3, [r7, #8]
-    1f4e:	425b      	negs	r3, r3
-    1f50:	f3c3 0316 	ubfx	r3, r3, #0, #23
-    1f54:	687a      	ldr	r2, [r7, #4]
-    1f56:	1ad3      	subs	r3, r2, r3
-    1f58:	3304      	adds	r3, #4
-    1f5a:	617b      	str	r3, [r7, #20]
-    1f5c:	e004      	b.n	1f68 <CalculateBLTargetAddress+0x78>
+    1f64:	68bb      	ldr	r3, [r7, #8]
+    1f66:	425b      	negs	r3, r3
+    1f68:	f3c3 0316 	ubfx	r3, r3, #0, #23
+    1f6c:	687a      	ldr	r2, [r7, #4]
+    1f6e:	1ad3      	subs	r3, r2, r3
+    1f70:	3304      	adds	r3, #4
+    1f72:	617b      	str	r3, [r7, #20]
+    1f74:	e004      	b.n	1f80 <CalculateBLTargetAddress+0x78>
         } else {
             target = bl + BL_CMD_OFFSET + off;
-    1f5e:	687a      	ldr	r2, [r7, #4]
-    1f60:	68bb      	ldr	r3, [r7, #8]
-    1f62:	4413      	add	r3, r2
-    1f64:	3304      	adds	r3, #4
-    1f66:	617b      	str	r3, [r7, #20]
+    1f76:	687a      	ldr	r2, [r7, #4]
+    1f78:	68bb      	ldr	r3, [r7, #8]
+    1f7a:	4413      	add	r3, r2
+    1f7c:	3304      	adds	r3, #4
+    1f7e:	617b      	str	r3, [r7, #20]
         }
 
         return target;
-    1f68:	697b      	ldr	r3, [r7, #20]
+    1f80:	697b      	ldr	r3, [r7, #20]
 }
-    1f6a:	4618      	mov	r0, r3
-    1f6c:	371c      	adds	r7, #28
-    1f6e:	46bd      	mov	sp, r7
-    1f70:	bc80      	pop	{r7}
-    1f72:	4770      	bx	lr
+    1f82:	4618      	mov	r0, r3
+    1f84:	371c      	adds	r7, #28
+    1f86:	46bd      	mov	sp, r7
+    1f88:	bc80      	pop	{r7}
+    1f8a:	4770      	bx	lr
 
-00001f74 <CalculateTargetAddress>:
+00001f8c <CalculateTargetAddress>:
 
 unsigned long  CalculateTargetAddress(unsigned long bl)
 {
-    1f74:	b580      	push	{r7, lr}
-    1f76:	b084      	sub	sp, #16
-    1f78:	af00      	add	r7, sp, #0
-    1f7a:	6078      	str	r0, [r7, #4]
+    1f8c:	b580      	push	{r7, lr}
+    1f8e:	b084      	sub	sp, #16
+    1f90:	af00      	add	r7, sp, #0
+    1f92:	6078      	str	r0, [r7, #4]
         unsigned long target = 0;
-    1f7c:	2300      	movs	r3, #0
-    1f7e:	60fb      	str	r3, [r7, #12]
+    1f94:	2300      	movs	r3, #0
+    1f96:	60fb      	str	r3, [r7, #12]
         static unsigned long tmpBL = 0;
 
         if ((((*(uint16_t *)(bl - BLX_CMD_OFFSET)) & HIGH_8_BITS_MASK) == BLX_INX)) {
-    1f80:	687b      	ldr	r3, [r7, #4]
-    1f82:	3b02      	subs	r3, #2
-    1f84:	881b      	ldrh	r3, [r3, #0]
-    1f86:	f403 437f 	and.w	r3, r3, #65280	; 0xff00
-    1f8a:	f5b3 4f8e 	cmp.w	r3, #18176	; 0x4700
-    1f8e:	d11a      	bne.n	1fc6 <CalculateTargetAddress+0x52>
+    1f98:	687b      	ldr	r3, [r7, #4]
+    1f9a:	3b02      	subs	r3, #2
+    1f9c:	881b      	ldrh	r3, [r3, #0]
+    1f9e:	f403 437f 	and.w	r3, r3, #65280	; 0xff00
+    1fa2:	f5b3 4f8e 	cmp.w	r3, #18176	; 0x4700
+    1fa6:	d11a      	bne.n	1fde <CalculateTargetAddress+0x52>
             if (tmpBL != 0) {
-    1f90:	4b1b      	ldr	r3, [pc, #108]	; (2000 <CalculateTargetAddress+0x8c>)
-    1f92:	681b      	ldr	r3, [r3, #0]
-    1f94:	2b00      	cmp	r3, #0
-    1f96:	d00b      	beq.n	1fb0 <CalculateTargetAddress+0x3c>
+    1fa8:	4b1b      	ldr	r3, [pc, #108]	; (2018 <CalculateTargetAddress+0x8c>)
+    1faa:	681b      	ldr	r3, [r3, #0]
+    1fac:	2b00      	cmp	r3, #0
+    1fae:	d00b      	beq.n	1fc8 <CalculateTargetAddress+0x3c>
                 target = LoopUntilEntry (tmpBL);
-    1f98:	4b19      	ldr	r3, [pc, #100]	; (2000 <CalculateTargetAddress+0x8c>)
-    1f9a:	681b      	ldr	r3, [r3, #0]
-    1f9c:	4618      	mov	r0, r3
-    1f9e:	f7ff ff85 	bl	1eac <LoopUntilEntry>
-    1fa2:	60f8      	str	r0, [r7, #12]
+    1fb0:	4b19      	ldr	r3, [pc, #100]	; (2018 <CalculateTargetAddress+0x8c>)
+    1fb2:	681b      	ldr	r3, [r3, #0]
+    1fb4:	4618      	mov	r0, r3
+    1fb6:	f7ff ff85 	bl	1ec4 <LoopUntilEntry>
+    1fba:	60f8      	str	r0, [r7, #12]
                 tmpBL = bl - BLX_CMD_OFFSET;
-    1fa4:	687b      	ldr	r3, [r7, #4]
-    1fa6:	3b02      	subs	r3, #2
-    1fa8:	4a15      	ldr	r2, [pc, #84]	; (2000 <CalculateTargetAddress+0x8c>)
-    1faa:	6013      	str	r3, [r2, #0]
+    1fbc:	687b      	ldr	r3, [r7, #4]
+    1fbe:	3b02      	subs	r3, #2
+    1fc0:	4a15      	ldr	r2, [pc, #84]	; (2018 <CalculateTargetAddress+0x8c>)
+    1fc2:	6013      	str	r3, [r2, #0]
                 return target;
-    1fac:	68fb      	ldr	r3, [r7, #12]
-    1fae:	e023      	b.n	1ff8 <CalculateTargetAddress+0x84>
+    1fc4:	68fb      	ldr	r3, [r7, #12]
+    1fc6:	e023      	b.n	2010 <CalculateTargetAddress+0x84>
             }
             tmpBL = bl - BLX_CMD_OFFSET;
-    1fb0:	687b      	ldr	r3, [r7, #4]
-    1fb2:	3b02      	subs	r3, #2
-    1fb4:	4a12      	ldr	r2, [pc, #72]	; (2000 <CalculateTargetAddress+0x8c>)
-    1fb6:	6013      	str	r3, [r2, #0]
+    1fc8:	687b      	ldr	r3, [r7, #4]
+    1fca:	3b02      	subs	r3, #2
+    1fcc:	4a12      	ldr	r2, [pc, #72]	; (2018 <CalculateTargetAddress+0x8c>)
+    1fce:	6013      	str	r3, [r2, #0]
             return LoopUntilEntry(tmpBL);
-    1fb8:	4b11      	ldr	r3, [pc, #68]	; (2000 <CalculateTargetAddress+0x8c>)
-    1fba:	681b      	ldr	r3, [r3, #0]
-    1fbc:	4618      	mov	r0, r3
-    1fbe:	f7ff ff75 	bl	1eac <LoopUntilEntry>
-    1fc2:	4603      	mov	r3, r0
-    1fc4:	e018      	b.n	1ff8 <CalculateTargetAddress+0x84>
+    1fd0:	4b11      	ldr	r3, [pc, #68]	; (2018 <CalculateTargetAddress+0x8c>)
+    1fd2:	681b      	ldr	r3, [r3, #0]
+    1fd4:	4618      	mov	r0, r3
+    1fd6:	f7ff ff75 	bl	1ec4 <LoopUntilEntry>
+    1fda:	4603      	mov	r3, r0
+    1fdc:	e018      	b.n	2010 <CalculateTargetAddress+0x84>
         } else if ((*(uint32_t *)(bl - BL_CMD_OFFSET) & BL_INS) == BL_INS) {
-    1fc6:	687b      	ldr	r3, [r7, #4]
-    1fc8:	3b04      	subs	r3, #4
-    1fca:	681b      	ldr	r3, [r3, #0]
-    1fcc:	f003 23f0 	and.w	r3, r3, #4026593280	; 0xf000f000
-    1fd0:	f1b3 2ff0 	cmp.w	r3, #4026593280	; 0xf000f000
-    1fd4:	d10f      	bne.n	1ff6 <CalculateTargetAddress+0x82>
+    1fde:	687b      	ldr	r3, [r7, #4]
+    1fe0:	3b04      	subs	r3, #4
+    1fe2:	681b      	ldr	r3, [r3, #0]
+    1fe4:	f003 23f0 	and.w	r3, r3, #4026593280	; 0xf000f000
+    1fe8:	f1b3 2ff0 	cmp.w	r3, #4026593280	; 0xf000f000
+    1fec:	d10f      	bne.n	200e <CalculateTargetAddress+0x82>
             tmpBL = bl - BL_CMD_OFFSET;
-    1fd6:	687b      	ldr	r3, [r7, #4]
-    1fd8:	3b04      	subs	r3, #4
-    1fda:	4a09      	ldr	r2, [pc, #36]	; (2000 <CalculateTargetAddress+0x8c>)
-    1fdc:	6013      	str	r3, [r2, #0]
+    1fee:	687b      	ldr	r3, [r7, #4]
+    1ff0:	3b04      	subs	r3, #4
+    1ff2:	4a09      	ldr	r2, [pc, #36]	; (2018 <CalculateTargetAddress+0x8c>)
+    1ff4:	6013      	str	r3, [r2, #0]
             CalculateBLTargetAddress (tmpBL);
-    1fde:	4b08      	ldr	r3, [pc, #32]	; (2000 <CalculateTargetAddress+0x8c>)
-    1fe0:	681b      	ldr	r3, [r3, #0]
-    1fe2:	4618      	mov	r0, r3
-    1fe4:	f7ff ff84 	bl	1ef0 <CalculateBLTargetAddress>
+    1ff6:	4b08      	ldr	r3, [pc, #32]	; (2018 <CalculateTargetAddress+0x8c>)
+    1ff8:	681b      	ldr	r3, [r3, #0]
+    1ffa:	4618      	mov	r0, r3
+    1ffc:	f7ff ff84 	bl	1f08 <CalculateBLTargetAddress>
 
             return CalculateBLTargetAddress (tmpBL);
-    1fe8:	4b05      	ldr	r3, [pc, #20]	; (2000 <CalculateTargetAddress+0x8c>)
-    1fea:	681b      	ldr	r3, [r3, #0]
-    1fec:	4618      	mov	r0, r3
-    1fee:	f7ff ff7f 	bl	1ef0 <CalculateBLTargetAddress>
-    1ff2:	4603      	mov	r3, r0
-    1ff4:	e000      	b.n	1ff8 <CalculateTargetAddress+0x84>
+    2000:	4b05      	ldr	r3, [pc, #20]	; (2018 <CalculateTargetAddress+0x8c>)
+    2002:	681b      	ldr	r3, [r3, #0]
+    2004:	4618      	mov	r0, r3
+    2006:	f7ff ff7f 	bl	1f08 <CalculateBLTargetAddress>
+    200a:	4603      	mov	r3, r0
+    200c:	e000      	b.n	2010 <CalculateTargetAddress+0x84>
         }
 
         return 0;
-    1ff6:	2300      	movs	r3, #0
+    200e:	2300      	movs	r3, #0
 }
-    1ff8:	4618      	mov	r0, r3
-    1ffa:	3710      	adds	r7, #16
-    1ffc:	46bd      	mov	sp, r7
-    1ffe:	bd80      	pop	{r7, pc}
-    2000:	200000c0 	.word	0x200000c0
+    2010:	4618      	mov	r0, r3
+    2012:	3710      	adds	r7, #16
+    2014:	46bd      	mov	sp, r7
+    2016:	bd80      	pop	{r7, pc}
+    2018:	200000c0 	.word	0x200000c0
 
-00002004 <BackTraceSub>:
+0000201c <BackTraceSub>:
 
 void BackTraceSub(unsigned long sp)
 {
-    2004:	b580      	push	{r7, lr}
-    2006:	b086      	sub	sp, #24
-    2008:	af00      	add	r7, sp, #0
-    200a:	6078      	str	r0, [r7, #4]
+    201c:	b580      	push	{r7, lr}
+    201e:	b086      	sub	sp, #24
+    2020:	af00      	add	r7, sp, #0
+    2022:	6078      	str	r0, [r7, #4]
         unsigned long stackPointer = sp;
-    200c:	687b      	ldr	r3, [r7, #4]
-    200e:	617b      	str	r3, [r7, #20]
+    2024:	687b      	ldr	r3, [r7, #4]
+    2026:	617b      	str	r3, [r7, #20]
         uint32_t count = 0;
-    2010:	2300      	movs	r3, #0
-    2012:	613b      	str	r3, [r7, #16]
+    2028:	2300      	movs	r3, #0
+    202a:	613b      	str	r3, [r7, #16]
         static unsigned long tmpJump = 0;
 
 
         while ((stackPointer < stack_end_addr) && (count < OS_MAX_BACKTRACE)) {
-    2014:	e03b      	b.n	208e <BackTraceSub+0x8a>
+    202c:	e03b      	b.n	20a6 <BackTraceSub+0x8a>
             if ((*(uint32_t *)stackPointer >= (uint32_t)code_start_addr) &&
-    2016:	697b      	ldr	r3, [r7, #20]
-    2018:	681a      	ldr	r2, [r3, #0]
-    201a:	4b23      	ldr	r3, [pc, #140]	; (20a8 <BackTraceSub+0xa4>)
-    201c:	681b      	ldr	r3, [r3, #0]
-    201e:	429a      	cmp	r2, r3
-    2020:	d32e      	bcc.n	2080 <BackTraceSub+0x7c>
-            (*(uint32_t *)stackPointer <= (uint32_t)code_end_addr) &&
-    2022:	697b      	ldr	r3, [r7, #20]
-    2024:	681a      	ldr	r2, [r3, #0]
-    2026:	4b21      	ldr	r3, [pc, #132]	; (20ac <BackTraceSub+0xa8>)
-    2028:	681b      	ldr	r3, [r3, #0]
-            if ((*(uint32_t *)stackPointer >= (uint32_t)code_start_addr) &&
-    202a:	429a      	cmp	r2, r3
-    202c:	d828      	bhi.n	2080 <BackTraceSub+0x7c>
-            IS_ALIGNED(*(uint32_t *)stackPointer - 1, THUM_OFFSET)) {
     202e:	697b      	ldr	r3, [r7, #20]
-    2030:	681b      	ldr	r3, [r3, #0]
-    2032:	3b01      	subs	r3, #1
-    2034:	f003 0301 	and.w	r3, r3, #1
+    2030:	681a      	ldr	r2, [r3, #0]
+    2032:	4b23      	ldr	r3, [pc, #140]	; (20c0 <BackTraceSub+0xa4>)
+    2034:	681b      	ldr	r3, [r3, #0]
+    2036:	429a      	cmp	r2, r3
+    2038:	d32e      	bcc.n	2098 <BackTraceSub+0x7c>
             (*(uint32_t *)stackPointer <= (uint32_t)code_end_addr) &&
-    2038:	2b00      	cmp	r3, #0
-    203a:	d121      	bne.n	2080 <BackTraceSub+0x7c>
+    203a:	697b      	ldr	r3, [r7, #20]
+    203c:	681a      	ldr	r2, [r3, #0]
+    203e:	4b21      	ldr	r3, [pc, #132]	; (20c4 <BackTraceSub+0xa8>)
+    2040:	681b      	ldr	r3, [r3, #0]
+            if ((*(uint32_t *)stackPointer >= (uint32_t)code_start_addr) &&
+    2042:	429a      	cmp	r2, r3
+    2044:	d828      	bhi.n	2098 <BackTraceSub+0x7c>
+            IS_ALIGNED(*(uint32_t *)stackPointer - 1, THUM_OFFSET)) {
+    2046:	697b      	ldr	r3, [r7, #20]
+    2048:	681b      	ldr	r3, [r3, #0]
+    204a:	3b01      	subs	r3, #1
+    204c:	f003 0301 	and.w	r3, r3, #1
+            (*(uint32_t *)stackPointer <= (uint32_t)code_end_addr) &&
+    2050:	2b00      	cmp	r3, #0
+    2052:	d121      	bne.n	2098 <BackTraceSub+0x7c>
 
                 /* Get the entry address of current function. */
                 unsigned long checkBL = CalculateTargetAddress(*(uint32_t *)stackPointer - 1);
-    203c:	697b      	ldr	r3, [r7, #20]
-    203e:	681b      	ldr	r3, [r3, #0]
-    2040:	3b01      	subs	r3, #1
-    2042:	4618      	mov	r0, r3
-    2044:	f7ff ff96 	bl	1f74 <CalculateTargetAddress>
-    2048:	60f8      	str	r0, [r7, #12]
+    2054:	697b      	ldr	r3, [r7, #20]
+    2056:	681b      	ldr	r3, [r3, #0]
+    2058:	3b01      	subs	r3, #1
+    205a:	4618      	mov	r0, r3
+    205c:	f7ff ff96 	bl	1f8c <CalculateTargetAddress>
+    2060:	60f8      	str	r0, [r7, #12]
                 if ((checkBL == 0) || (checkBL == tmpJump)) {
-    204a:	68fb      	ldr	r3, [r7, #12]
-    204c:	2b00      	cmp	r3, #0
-    204e:	d004      	beq.n	205a <BackTraceSub+0x56>
-    2050:	4b17      	ldr	r3, [pc, #92]	; (20b0 <BackTraceSub+0xac>)
-    2052:	681b      	ldr	r3, [r3, #0]
-    2054:	68fa      	ldr	r2, [r7, #12]
-    2056:	429a      	cmp	r2, r3
-    2058:	d103      	bne.n	2062 <BackTraceSub+0x5e>
+    2062:	68fb      	ldr	r3, [r7, #12]
+    2064:	2b00      	cmp	r3, #0
+    2066:	d004      	beq.n	2072 <BackTraceSub+0x56>
+    2068:	4b17      	ldr	r3, [pc, #92]	; (20c8 <BackTraceSub+0xac>)
+    206a:	681b      	ldr	r3, [r3, #0]
+    206c:	68fa      	ldr	r2, [r7, #12]
+    206e:	429a      	cmp	r2, r3
+    2070:	d103      	bne.n	207a <BackTraceSub+0x5e>
                     stackPointer += STACK_OFFSET;
-    205a:	697b      	ldr	r3, [r7, #20]
-    205c:	3304      	adds	r3, #4
-    205e:	617b      	str	r3, [r7, #20]
+    2072:	697b      	ldr	r3, [r7, #20]
+    2074:	3304      	adds	r3, #4
+    2076:	617b      	str	r3, [r7, #20]
                     continue;
-    2060:	e015      	b.n	208e <BackTraceSub+0x8a>
+    2078:	e015      	b.n	20a6 <BackTraceSub+0x8a>
                 }
                 tmpJump = checkBL;
-    2062:	4a13      	ldr	r2, [pc, #76]	; (20b0 <BackTraceSub+0xac>)
-    2064:	68fb      	ldr	r3, [r7, #12]
-    2066:	6013      	str	r3, [r2, #0]
+    207a:	4a13      	ldr	r2, [pc, #76]	; (20c8 <BackTraceSub+0xac>)
+    207c:	68fb      	ldr	r3, [r7, #12]
+    207e:	6013      	str	r3, [r2, #0]
                 count++;
-    2068:	693b      	ldr	r3, [r7, #16]
-    206a:	3301      	adds	r3, #1
-    206c:	613b      	str	r3, [r7, #16]
+    2080:	693b      	ldr	r3, [r7, #16]
+    2082:	3301      	adds	r3, #1
+    2084:	613b      	str	r3, [r7, #16]
                 printf("traceback %u -- lr = 0x%08x -- fp = 0x%08x\n", count, *(uint32_t *)stackPointer - 1, tmpJump);
-    206e:	697b      	ldr	r3, [r7, #20]
-    2070:	681b      	ldr	r3, [r3, #0]
-    2072:	1e5a      	subs	r2, r3, #1
-    2074:	4b0e      	ldr	r3, [pc, #56]	; (20b0 <BackTraceSub+0xac>)
-    2076:	681b      	ldr	r3, [r3, #0]
-    2078:	6939      	ldr	r1, [r7, #16]
-    207a:	480e      	ldr	r0, [pc, #56]	; (20b4 <BackTraceSub+0xb0>)
-    207c:	f7ff f8ab 	bl	11d6 <printf_>
+    2086:	697b      	ldr	r3, [r7, #20]
+    2088:	681b      	ldr	r3, [r3, #0]
+    208a:	1e5a      	subs	r2, r3, #1
+    208c:	4b0e      	ldr	r3, [pc, #56]	; (20c8 <BackTraceSub+0xac>)
+    208e:	681b      	ldr	r3, [r3, #0]
+    2090:	6939      	ldr	r1, [r7, #16]
+    2092:	480e      	ldr	r0, [pc, #56]	; (20cc <BackTraceSub+0xb0>)
+    2094:	f7ff f89f 	bl	11d6 <printf_>
             }
             stackPointer += STACK_OFFSET;
-    2080:	697b      	ldr	r3, [r7, #20]
-    2082:	3304      	adds	r3, #4
-    2084:	617b      	str	r3, [r7, #20]
+    2098:	697b      	ldr	r3, [r7, #20]
+    209a:	3304      	adds	r3, #4
+    209c:	617b      	str	r3, [r7, #20]
             printf("stackPointer=0x%x\n",stackPointer);
-    2086:	6979      	ldr	r1, [r7, #20]
-    2088:	480b      	ldr	r0, [pc, #44]	; (20b8 <BackTraceSub+0xb4>)
-    208a:	f7ff f8a4 	bl	11d6 <printf_>
+    209e:	6979      	ldr	r1, [r7, #20]
+    20a0:	480b      	ldr	r0, [pc, #44]	; (20d0 <BackTraceSub+0xb4>)
+    20a2:	f7ff f898 	bl	11d6 <printf_>
         while ((stackPointer < stack_end_addr) && (count < OS_MAX_BACKTRACE)) {
-    208e:	4b0b      	ldr	r3, [pc, #44]	; (20bc <BackTraceSub+0xb8>)
-    2090:	681b      	ldr	r3, [r3, #0]
-    2092:	697a      	ldr	r2, [r7, #20]
-    2094:	429a      	cmp	r2, r3
-    2096:	d202      	bcs.n	209e <BackTraceSub+0x9a>
-    2098:	693b      	ldr	r3, [r7, #16]
-    209a:	2b0e      	cmp	r3, #14
-    209c:	d9bb      	bls.n	2016 <BackTraceSub+0x12>
+    20a6:	4b0b      	ldr	r3, [pc, #44]	; (20d4 <BackTraceSub+0xb8>)
+    20a8:	681b      	ldr	r3, [r3, #0]
+    20aa:	697a      	ldr	r2, [r7, #20]
+    20ac:	429a      	cmp	r2, r3
+    20ae:	d202      	bcs.n	20b6 <BackTraceSub+0x9a>
+    20b0:	693b      	ldr	r3, [r7, #16]
+    20b2:	2b0e      	cmp	r3, #14
+    20b4:	d9bb      	bls.n	202e <BackTraceSub+0x12>
         }
 }
-    209e:	bf00      	nop
-    20a0:	3718      	adds	r7, #24
-    20a2:	46bd      	mov	sp, r7
-    20a4:	bd80      	pop	{r7, pc}
-    20a6:	bf00      	nop
-    20a8:	20000008 	.word	0x20000008
-    20ac:	2000000c 	.word	0x2000000c
-    20b0:	200000c4 	.word	0x200000c4
-    20b4:	00002d1c 	.word	0x00002d1c
-    20b8:	00002d48 	.word	0x00002d48
-    20bc:	20000018 	.word	0x20000018
+    20b6:	bf00      	nop
+    20b8:	3718      	adds	r7, #24
+    20ba:	46bd      	mov	sp, r7
+    20bc:	bd80      	pop	{r7, pc}
+    20be:	bf00      	nop
+    20c0:	20000008 	.word	0x20000008
+    20c4:	2000000c 	.word	0x2000000c
+    20c8:	200000c4 	.word	0x200000c4
+    20cc:	00002d20 	.word	0x00002d20
+    20d0:	00002d4c 	.word	0x00002d4c
+    20d4:	20000018 	.word	0x20000018
 
 Disassembly of section .text.default_handler:
 
-000020c0 <default_handler>:
+000020d8 <default_handler>:
 .section .text.default_handler,"ax",%progbits
 default_handler:
     b .
-    20c0:	e7fe      	b.n	20c0 <default_handler>
+    20d8:	e7fe      	b.n	20d8 <default_handler>
