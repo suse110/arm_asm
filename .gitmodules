@@ -1,3 +1,6 @@
 [submodule "main/kernel/service/printf"]
 	path = main/kernel/service/printf
 	url = https://github.com/suse110/printf.git
+[submodule "main/kernel/service/CmBacktrace"]
+	path = main/kernel/service/CmBacktrace
+	url = https://github.com/suse110/CmBacktrace.git
