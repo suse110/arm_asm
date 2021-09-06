@@ -1,0 +1,395 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+next_task           0x4               ../../../../build/lm3s811/kernel/service/rtos/task.o
+stack               0x800             ../../../../build/lm3s811/kernel/service/rtos/task.o
+g_unaligned_buffer  0x4               ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+task1               0x4               ../../../../build/lm3s811/kernel/service/rtos/task.o
+task2               0x4               ../../../../build/lm3s811/kernel/service/rtos/task.o
+current_task        0x4               ../../../../build/lm3s811/kernel/service/rtos/task.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+LOAD ../../../../build/lm3s811/project/lm3s811/main/test.o
+LOAD ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+LOAD ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+LOAD ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+LOAD ../../../../build/lm3s811/kernel/service/printf/printf.o
+LOAD ../../../../build/lm3s811/kernel/service/rtos/task.o
+LOAD ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+LOAD ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+LOAD ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+LOAD ../../../../build/lm3s811/kernel/service/exception/src/example.o
+LOAD ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+                0x0000000000000000                . = 0x0
+                0x0000000000000000                _stext = .
+
+.text           0x0000000000000000     0x2514
+ *(.text.Reset_Handler)
+ .text.Reset_Handler
+                0x0000000000000000       0x10 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+                0x0000000000000000                Reset_Handler
+ *(.isr_vectors)
+ .isr_vectors   0x0000000000000010       0x40 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+ *(.text)
+ .text          0x0000000000000050       0xf4 ../../../../build/lm3s811/project/lm3s811/main/test.o
+                0x0000000000000050                main
+                0x000000000000006c                NMI_Handler
+                0x0000000000000084                HardFault_Handler
+                0x000000000000009c                MemManage_Handler
+                0x00000000000000b4                BusFault_Handler
+                0x00000000000000cc                UsageFault_Handler
+                0x00000000000000e4                SVC_Handler
+                0x00000000000000fc                DebugMon_Handler
+                0x0000000000000114                PendSV_Handler
+                0x000000000000012c                SysTick_Handler
+ .text          0x0000000000000144       0xf0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+                0x00000000000001dc                hal_mpu_test
+ .text          0x0000000000000234        0x0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .text          0x0000000000000234      0x380 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+                0x0000000000000234                _putchar
+                0x0000000000000254                _getchar
+                0x000000000000026c                __io_putchar
+                0x0000000000000288                __io_getchar
+                0x0000000000000296                lite_getchar
+                0x00000000000002bc                lite_putchar
+                0x00000000000002d6                _putstr
+                0x0000000000000300                _strlen
+                0x000000000000035c                lite_printf
+ .text          0x00000000000005b4      0xd74 ../../../../build/lm3s811/kernel/service/printf/printf.o
+                0x00000000000011e6                printf_
+                0x000000000000121c                sprintf_
+                0x0000000000001254                snprintf_
+                0x000000000000128c                vprintf_
+                0x00000000000012b8                vsnprintf_
+                0x00000000000012e4                fctprintf
+ .text          0x0000000000001328      0x244 ../../../../build/lm3s811/kernel/service/rtos/task.o
+                0x000000000000137c                task_entry_1
+                0x000000000000139c                task_entry_2
+                0x00000000000013bc                trigget_pendsv
+                0x00000000000013d8                task_create
+                0x00000000000014b8                task_sched
+                0x00000000000014ec                run_first_task
+                0x0000000000001520                task_start
+ .text          0x000000000000156c      0x40c ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+                0x000000000000156c                shell_get_line
+                0x0000000000001614                shell_get_args
+                0x0000000000001678                shell_help_func
+                0x00000000000016bc                strtok_r
+                0x0000000000001770                strtok
+                0x0000000000001794                memcpy
+                0x00000000000017e0                memset
+                0x000000000000181e                strcmp
+                0x0000000000001878                shell_main
+                0x000000000000196c                shell_start
+ .text          0x0000000000001978      0x7c0 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+                0x0000000000001978                test_div
+                0x00000000000019b8                fault_test_by_unalign
+                0x0000000000001a20                fault_test_by_div0
+                0x0000000000001a60                dump_stack
+                0x0000000000001b22                backtrace_call_stack
+                0x0000000000001c34                print_call_stack
+                0x0000000000001d14                backtrace_level_3
+                0x0000000000001d60                backtrace_level_2
+                0x0000000000001d7c                backtrace_level_1
+                0x0000000000001d98                backtrace_test
+                0x0000000000001f24                LoopUntilEntry
+                0x0000000000001f68                CalculateBLTargetAddress
+                0x0000000000001fec                CalculateTargetAddress
+                0x000000000000207c                BackTraceSub
+ .text          0x0000000000002138      0x1c8 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+                0x0000000000002138                HardFault_Handler_C
+                0x00000000000022cc                Irq0_Handler
+                0x00000000000022d8                exception_init
+                0x00000000000022f4                exception_test
+ .text          0x0000000000002300      0x214 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+                0x0000000000002300                trigger_irq
+                0x0000000000002330                stkerr_from_psp
+                0x00000000000023c8                bad_memory_access_crash
+                0x00000000000023e4                read_from_bad_address
+                0x00000000000023f8                illegal_instruction_execution
+                0x0000000000002412                unaligned_double_word_read
+                0x000000000000241e                bad_addr_double_word_write
+                0x0000000000002448                access_disabled_coprocessor
+                0x0000000000002460                usagefault
+                0x0000000000002466                busfault
+                0x000000000000247c                memmanage
+                0x0000000000002494                Irq1_Handler
+                0x000000000000249c                trigger_crash
+                0x000000000000250a                recover_from_task_fault
+ .text          0x0000000000002514        0x0 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+                0x0000000000002514                __shell_command_start = .
+
+.rodata         0x0000000000002514      0xd2b
+ .rodata        0x0000000000002514       0xc0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .rodata        0x00000000000025d4       0x20 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .rodata        0x00000000000025f4        0x4 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .rodata        0x00000000000025f8       0x29 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ *fill*         0x0000000000002621        0x3 
+ .rodata        0x0000000000002624       0x5e ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ *fill*         0x0000000000002682        0x2 
+ .rodata        0x0000000000002684      0xbbb ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+
+.ram_isr_vector
+                0x0000000000003240      0x194
+ .ram_isr_vector
+                0x0000000000003240      0x194 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+                0x0000000000003240                pfnVectors
+
+.glue_7         0x00000000000033d4        0x0
+ .glue_7        0x00000000000033d4        0x0 linker stubs
+
+.glue_7t        0x00000000000033d4        0x0
+ .glue_7t       0x00000000000033d4        0x0 linker stubs
+
+.vfp11_veneer   0x00000000000033d4        0x0
+ .vfp11_veneer  0x00000000000033d4        0x0 linker stubs
+
+.v4_bx          0x00000000000033d4        0x0
+ .v4_bx         0x00000000000033d4        0x0 linker stubs
+
+.iplt           0x00000000000033d4        0x0
+ .iplt          0x00000000000033d4        0x0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+
+.text.Default_Handler
+                0x00000000000033d4        0x2
+ .text.Default_Handler
+                0x00000000000033d4        0x2 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.rel.dyn        0x00000000000033d8        0x0
+ .rel.iplt      0x00000000000033d8        0x0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+
+.shell_command  0x00000000000033d8        0xc
+ *(.shell_command)
+ .shell_command
+                0x00000000000033d8        0xc ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+                0x00000000000033d8                __shell_command_help
+                0x00000000000033e4                __shell_command_end = .
+                0x00000000000033e4                . = ALIGN (0x4)
+                0x00000000000033e4                _etext = .
+                0x00000000000033e4                _exit = .
+                0x0000000020000000                . = 0x20000000
+                0x0000000020000000                _sdata = .
+
+.data           0x0000000020000000        0x0
+ *(.data)
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .data          0x0000000020000000        0x0 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+                0x0000000020000000                _edata = .
+                0x0000000020000000                _sidata = LOADADDR (.data)
+                0x0000000020000024                __bss_start__ = .
+
+.igot.plt       0x0000000020000000        0x0
+ .igot.plt      0x0000000020000000        0x0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+
+.noinit.crash_info
+                0x0000000020000000       0x24
+ .noinit.crash_info
+                0x0000000020000000       0x24 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+
+.bss            0x0000000020000024      0x8ec
+                0x0000000020000024                . = ALIGN (0x4)
+                0x0000000020000024                __bss_start__ = .
+                0x0000000020000024                _sbss = __bss_start__
+ *(.bss*)
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .bss           0x0000000020000024        0x0 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .bss           0x0000000020000024        0x8 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .bss           0x000000002000002c       0xc0 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+                0x000000002000002c                code_start_addr
+                0x0000000020000030                code_end_addr
+                0x0000000020000034                code_size
+                0x0000000020000038                stack_start_addr
+                0x000000002000003c                stack_end_addr
+                0x0000000020000040                stack_size
+                0x0000000020000044                heap_start_addr
+                0x0000000020000048                heap_end_addr
+                0x000000002000004c                heap_size
+ .bss           0x00000000200000ec        0xa ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ *fill*         0x00000000200000f6        0x2 
+ .bss           0x00000000200000f8        0x4 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+                0x00000000200000f8                exception_crash_id
+ .bss           0x00000000200000fc        0x0 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+ *(COMMON)
+ COMMON         0x00000000200000fc      0x810 ../../../../build/lm3s811/kernel/service/rtos/task.o
+                0x00000000200000fc                next_task
+                0x0000000020000100                stack
+                0x0000000020000900                task1
+                0x0000000020000904                task2
+                0x0000000020000908                current_task
+ COMMON         0x000000002000090c        0x4 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+                0x000000002000090c                g_unaligned_buffer
+                0x0000000020000910                . = ALIGN (0x4)
+                0x0000000020000910                __bss_end__ = .
+                0x0000000020000910                _ebss = __bss_end__
+                0x0000000020000910                . = ALIGN (0x8)
+                0x0000000020000910                __bss_end__ = .
+                0x0000000020000910                _sstack = .
+                0x0000000020001910                . = (. + 0x1000)
+                0x0000000020001910                _estack = .
+                0x0000000020001910                . = ALIGN (0x8)
+                0x0000000020001910                _sheap = .
+                0x0000000020005910                . = (. + 0x4000)
+                0x0000000020005910                _eheap = .
+                0x0000000020005910                ensd = _eheap
+OUTPUT(../../../../build/lm3s811/main.elf elf32-littlearm)
+LOAD linker stubs
+
+.debug_info     0x0000000000000000     0x70b9
+ .debug_info    0x0000000000000000      0xb5b ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .debug_info    0x0000000000000b5b      0xd0a ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .debug_info    0x0000000000001865       0x3a ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .debug_info    0x000000000000189f      0x2dc ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .debug_info    0x0000000000001b7b      0x9de ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .debug_info    0x0000000000002559      0xef5 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .debug_info    0x000000000000344e      0xd93 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_info    0x00000000000041e1     0x13d2 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .debug_info    0x00000000000055b3      0xe38 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .debug_info    0x00000000000063eb      0xcac ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .debug_info    0x0000000000007097       0x22 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.debug_abbrev   0x0000000000000000     0x17b5
+ .debug_abbrev  0x0000000000000000      0x1e5 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .debug_abbrev  0x00000000000001e5      0x24e ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .debug_abbrev  0x0000000000000433       0x26 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .debug_abbrev  0x0000000000000459      0x182 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .debug_abbrev  0x00000000000005db      0x20d ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .debug_abbrev  0x00000000000007e8      0x303 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .debug_abbrev  0x0000000000000aeb      0x2cd ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_abbrev  0x0000000000000db8      0x3fb ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .debug_abbrev  0x00000000000011b3      0x2fb ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .debug_abbrev  0x00000000000014ae      0x2f5 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .debug_abbrev  0x00000000000017a3       0x12 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.debug_aranges  0x0000000000000000      0x160
+ .debug_aranges
+                0x0000000000000000       0x20 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .debug_aranges
+                0x0000000000000020       0x20 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .debug_aranges
+                0x0000000000000040       0x18 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .debug_aranges
+                0x0000000000000058       0x20 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .debug_aranges
+                0x0000000000000078       0x20 ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .debug_aranges
+                0x0000000000000098       0x20 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .debug_aranges
+                0x00000000000000b8       0x20 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_aranges
+                0x00000000000000d8       0x20 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .debug_aranges
+                0x00000000000000f8       0x20 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .debug_aranges
+                0x0000000000000118       0x20 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .debug_aranges
+                0x0000000000000138       0x28 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.debug_line     0x0000000000000000     0x1e3b
+ .debug_line    0x0000000000000000      0x1e7 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .debug_line    0x00000000000001e7      0x1ec ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .debug_line    0x00000000000003d3       0x1d ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .debug_line    0x00000000000003f0      0x261 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .debug_line    0x0000000000000651      0x6e0 ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .debug_line    0x0000000000000d31      0x268 ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .debug_line    0x0000000000000f99      0x3c9 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_line    0x0000000000001362      0x5ec ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .debug_line    0x000000000000194e      0x240 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .debug_line    0x0000000000001b8e      0x209 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .debug_line    0x0000000000001d97       0xa4 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.debug_str      0x0000000000000000     0x18ef
+ .debug_str     0x0000000000000000      0x64f ../../../../build/lm3s811/project/lm3s811/main/test.o
+                                        0x6ca (size before relaxing)
+ .debug_str     0x000000000000064f      0x18d ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+                                        0x73e (size before relaxing)
+ .debug_str     0x00000000000007dc       0x65 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+                                        0x19e (size before relaxing)
+ .debug_str     0x0000000000000841       0xf6 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+                                        0x2c6 (size before relaxing)
+ .debug_str     0x0000000000000937      0x172 ../../../../build/lm3s811/kernel/service/printf/printf.o
+                                        0x386 (size before relaxing)
+ .debug_str     0x0000000000000aa9      0x23b ../../../../build/lm3s811/kernel/service/rtos/task.o
+                                        0x85e (size before relaxing)
+ .debug_str     0x0000000000000ce4      0x1a8 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+                                        0x7c3 (size before relaxing)
+ .debug_str     0x0000000000000e8c      0x605 ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+                                        0xc77 (size before relaxing)
+ .debug_str     0x0000000000001491      0x21d ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+                                        0x889 (size before relaxing)
+ .debug_str     0x00000000000016ae      0x1d3 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+                                        0x811 (size before relaxing)
+ .debug_str     0x0000000000001881       0x6e ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+                                         0xc9 (size before relaxing)
+
+.comment        0x0000000000000000       0x59
+ .comment       0x0000000000000000       0x59 ../../../../build/lm3s811/project/lm3s811/main/test.o
+                                         0x5a (size before relaxing)
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .comment       0x0000000000000059       0x5a ../../../../build/lm3s811/kernel/service/exception/src/example.o
+
+.ARM.attributes
+                0x0000000000000000       0x2b
+ .ARM.attributes
+                0x0000000000000000       0x2d ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .ARM.attributes
+                0x000000000000002d       0x2d ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .ARM.attributes
+                0x000000000000005a       0x33 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_log.o
+ .ARM.attributes
+                0x000000000000008d       0x2d ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .ARM.attributes
+                0x00000000000000ba       0x2d ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .ARM.attributes
+                0x00000000000000e7       0x2d ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .ARM.attributes
+                0x0000000000000114       0x2d ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .ARM.attributes
+                0x0000000000000141       0x2d ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .ARM.attributes
+                0x000000000000016e       0x2d ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .ARM.attributes
+                0x000000000000019b       0x2d ../../../../build/lm3s811/kernel/service/exception/src/example.o
+ .ARM.attributes
+                0x00000000000001c8       0x1b ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o
+
+.debug_frame    0x0000000000000000      0xe50
+ .debug_frame   0x0000000000000000      0x128 ../../../../build/lm3s811/project/lm3s811/main/test.o
+ .debug_frame   0x0000000000000128       0xa8 ../../../../build/lm3s811/drivers/chip/lm3s811/src/hal_mpu.o
+ .debug_frame   0x00000000000001d0      0x194 ../../../../build/lm3s811/kernel/service/lite_printf/lite_printf.o
+ .debug_frame   0x0000000000000364      0x2e8 ../../../../build/lm3s811/kernel/service/printf/printf.o
+ .debug_frame   0x000000000000064c      0x11c ../../../../build/lm3s811/kernel/service/rtos/task.o
+ .debug_frame   0x0000000000000768      0x184 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_frame   0x00000000000008ec      0x22c ../../../../build/lm3s811/kernel/service/backtrace/src/backtrace.o
+ .debug_frame   0x0000000000000b18      0x164 ../../../../build/lm3s811/kernel/service/exception/src/exception.o
+ .debug_frame   0x0000000000000c7c      0x1d4 ../../../../build/lm3s811/kernel/service/exception/src/example.o
+
+.debug_ranges   0x0000000000000000       0x38
+ .debug_ranges  0x0000000000000000       0x18 ../../../../build/lm3s811/kernel/service/shell/src/shell.o
+ .debug_ranges  0x0000000000000018       0x20 ../../../../build/lm3s811/project/lm3s811/main/GCC/test.o

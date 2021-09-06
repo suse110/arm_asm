@@ -1,18 +1,18 @@
 .syntax unified
 /*有没有.type看上去没区别,它什么作用? */
-.type _start, %function
-.global _start
-.section  .text._start
-.weak  _start
-.type  _start, %function
-_start:
+.type Reset_Handler, %function
+.global Reset_Handler
+.section  .text.Reset_Handler
+.weak  Reset_Handler
+.type  Reset_Handler, %function
+Reset_Handler:
 
 # bl mmu_setting_1
 ldr sp, =_estack
 ldr r1, =main
 bx r1
-.section .text.default_handler,"ax",%progbits
-default_handler:
+.section .text.Default_Handler,"ax",%progbits
+Default_Handler:
     b .
 
 .section .isr_vectors,"a",%progbits
@@ -20,34 +20,34 @@ default_handler:
 .size  g_pfnVectors, .-g_pfnVectors
 g_pfnVectors:
 .word _estack
-.word _start
-.word nmi_handler
-.word hard_fault_handler
-.word mem_manage_handler
-.word bus_fault_handler
-.word usage_fault_handler
-.word default_handler
-.word default_handler
-.word default_handler
-.word default_handler
-.word svc_handler
-.word debug_mon_handler
-.word default_handler
-.word pend_sv_handler
-.word sys_tick_handler
+.word Reset_Handler
+.word NMI_Handler
+.word HardFault_Handler
+.word MemManage_Handler
+.word BusFault_Handler
+.word UsageFault_Handler
+.word Default_Handler
+.word Default_Handler
+.word Default_Handler
+.word Default_Handler
+.word SVC_Handler
+.word DebugMon_Handler
+.word Default_Handler
+.word PendSV_Handler
+.word SysTick_Handler
 
 
 
 
 
-.weak nmi_handler
-.thumb_set nmi_handler,default_handler
+.weak NMI_Handler
+.thumb_set NMI_Handler,Default_Handler
 
-# .weak hard_fault_handler
-# .thumb_set hard_fault_handler,default_handler
-# .global hard_fault_handler
-# .type hard_fault_handler, %function
-# hard_fault_handler:
+# .weak HardFault_Handler
+# .thumb_set HardFault_Handler,Default_Handler
+# .global HardFault_Handler
+# .type HardFault_Handler, %function
+# HardFault_Handler:
 #     MOV     r0, lr                  /* get lr */
 #     MOV     r1, sp                  /* get stack pointer (current is MSP) */
 #     BL      cm_backtrace_fault
@@ -55,25 +55,25 @@ g_pfnVectors:
 # Fault_Loop:
 #     BL      Fault_Loop              /* while(1) */
 
-.weak mem_manage_handler
-.thumb_set mem_manage_handler,default_handler
+.weak MemManage_Handler
+.thumb_set MemManage_Handler,Default_Handler
 
-.weak bus_fault_handler
-.thumb_set bus_fault_handler,default_handler
+.weak BusFault_Handler
+.thumb_set BusFault_Handler,Default_Handler
 
-.weak usage_fault_handler
-.thumb_set usage_fault_handler,default_handler
+.weak UsageFault_Handler
+.thumb_set UsageFault_Handler,Default_Handler
 
-.weak svc_handler
-.thumb_set svc_handler,default_handler
+.weak SVC_Handler
+.thumb_set SVC_Handler,Default_Handler
 
-.weak debug_mon_handler
-.thumb_set debug_mon_handler,default_handler
+.weak DebugMon_Handler
+.thumb_set DebugMon_Handler,Default_Handler
 
-.weak pend_sv_handler
-.thumb_set pend_sv_handler,default_handler
+.weak PendSV_Handler
+.thumb_set PendSV_Handler,Default_Handler
 
-.weak sys_tick_handler
-.thumb_set sys_tick_handler,default_handler
+.weak SysTick_Handler
+.thumb_set SysTick_Handler,Default_Handler
 
 
