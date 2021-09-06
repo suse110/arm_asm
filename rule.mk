@@ -4,7 +4,7 @@ CFLAGS += -fno-builtin -g -Wall -static -mlittle-endian \
 		-mthumb -ffreestanding -mabi=aapcs -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
 QEMU = qemu-system-arm
 # QFLAGS = -nographic -smp 1 -machine virt
-QFLAGS = -nographic -smp 1 -machine lm3s811evb #-monitor stdio
+QFLAGS += -nographic -smp 1  #-monitor stdio
 
 ifeq ($(NOSTDLIB_ENABLE), y)
 CFLAGS += -nostdlib

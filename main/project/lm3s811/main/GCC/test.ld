@@ -16,7 +16,9 @@ SECTIONS
 	_etext = .;
 	_exit = .; /*for stdlib*/
     . = 0x20000000;
+	_sdata = .;
 	.data : { *(.data)}
+	_edata = .;
 	__bss_start__ = .;/*for stdlib*/
 	.bss : { *(.bss) }
 	. = ALIGN(8);

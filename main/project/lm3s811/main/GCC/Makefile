@@ -18,6 +18,9 @@ CFLAGS += -I$(SOURCE_DIR)/drivers/CMSIS/Include
 CFLAGS += -march=armv7-m 
 CFLAGS += -mcpu=cortex-m3
 CFLAGS += -mfloat-abi=soft
+
+QFLAGS += -machine lm3s811evb
+
 include ./feature.mk
 
 include $(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/module.mk

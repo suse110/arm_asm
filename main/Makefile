@@ -26,3 +26,8 @@ all :
 clean:
 	@for %%proj in ($(PROJS)) do $(MAKE) -C ./project/%%proj/GCC clean|| exit "$$?"
 endif
+
+st:
+	$(MAKE) -C ./project/stm32f4xx/main/GCC 
+stc:
+	$(MAKE) -C ./project/stm32f4xx/main/GCC clean
