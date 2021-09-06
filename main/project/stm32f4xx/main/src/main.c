@@ -127,8 +127,9 @@ int main(void)
     // shell_command_t * scmd = &__shell_command_start;
 
 //  BSP_LED_Init(LED2);
+  
+  exception_test();
   backtrace_test();
-
 //  InitStepper();
   while (1) {
 //    BSP_LED_Toggle(LED2);
@@ -227,7 +228,9 @@ void assert_failed(uint8_t* file, uint32_t line)
 { 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+#ifdef CM_BACKTRACE_ENABLE
   cm_backtrace_assert(cmb_get_sp());
+#endif
   /* Infinite loop */
   while (1)
   {

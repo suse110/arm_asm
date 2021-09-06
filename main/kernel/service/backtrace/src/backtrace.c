@@ -361,9 +361,9 @@ void backtrace_level_1(void)
 
 #define HARDWARE_VERSION               "V1.0.0"
 #define SOFTWARE_VERSION               "V0.1.0"
-
+#ifdef CM_BACKTRACE_ENABLE
 #include <cm_backtrace.h>
-
+#endif
 void backtrace_test(void)
 {
     int bt1 = 0xAA;
@@ -372,8 +372,9 @@ void backtrace_test(void)
     (void)bt1;
     (void)bt2;
     (void)bt3;
+#ifdef CM_BACKTRACE_ENABLE
     cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
-
+#endif
     code_start_addr = (uint32_t)&_stext;
     code_end_addr = (uint32_t)&_etext;
     code_size = code_end_addr - code_start_addr;
@@ -405,6 +406,8 @@ void backtrace_test(void)
     // printf("[%s] end\n", __func__);
     uint32_t sp = cmb_get_sp();
     printf("sp=0x%lx\n", sp);
+    uint32_t pc = cmb_get_pc();
+    printf("pc=0x%lx\n", pc);
     /*
     根据函数调用执行流程的原理，当程序跳入异常时，传入当前位置sp指针，
     通过对sp指针进行循环自增访问操作获取栈中的内容，sp指向栈顶，循环
