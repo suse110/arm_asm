@@ -13,5 +13,11 @@
 * 执行下一行
 -exec si
 
+* arm-none-eabi-addr2line --pretty-print --functions--addresses 0x3c82 -e memfaultelf
+8x08883c82: buggy_function at./third-party/memfault/memfault-platform_port.c: 386
+
+* arm-none-eabi-nm --numeric-sort <elf>
+
+* arm-none-eabi-gdb-py --eval-command="target remote locahost:3333" --ex="mon reset" --ex="load" --ex="mon reset" --se=main.elf
 
 [Cortex-Debug for Visual Studio Code](https://lonesometraveler.github.io/2020/03/27/debug.html)

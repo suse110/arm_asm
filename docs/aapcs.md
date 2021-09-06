@@ -1,5 +1,5 @@
 ### Core Registers
-![Core registers and AAPCS usage](./ARM_Core_Registers_and_AAPCS_usage.png)
+![Core registers and AAPCS usage](./img/ARM_Core_Registers_and_AAPCS_usage.png)
 
 * r0~r3 用来传递参数到子程序和从函数返回结果;也可用来在routine 中保存中间值
 
