@@ -1,9 +1,18 @@
-EXEC = test
+EXEC = main
 
-BUILD_DIR = ./build
 
-SRC = $(EXEC).s $(EXEC).c
-LINKSCRIPT = $(EXEC).ld
+SOURCE_DIR = ../..
+
+SDK_PATH = $(abspath $(shell pwd))/$(SOURCE_DIR)
+
+APP_PATH=test/template
+
+BUILD_DIR=./build
+
+ASM_SRC = $(APP_PATH)/test.s 
+SRC = $(APP_PATH)/main.c
+
+LINKSCRIPT = test.ld
 GDBINIT = gdbinit
 
 #use stdlib
