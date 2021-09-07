@@ -1,13 +1,11 @@
 #ifndef __BACKTRACE_H__
 #define __BACKTRACE_H__
 #include <stdint.h>
-#ifdef CM_BACKTRACE_ENABLE
 #include "cmb_def.h"
-#endif
 void backtrace_test(void);
 void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_pointer);
 void print_call_stack(uint32_t sp);
-#ifdef CM_BACKTRACE_ENABLE
+#if 1
 #else
 /* include or export for supported cmb_get_msp, cmb_get_psp and cmb_get_sp function */
 #if defined(__CC_ARM)
@@ -66,11 +64,6 @@ __attribute__( ( always_inline ) ) static inline uint32_t cmb_get_sp(void) {
 __attribute__( ( always_inline ) ) static inline uint32_t cmb_get_lr(void) {
     register uint32_t result;
     __asm volatile ("MOV %0, lr\n" : "=r" (result) );
-    return(result);
-}
-__attribute__( ( always_inline ) ) static inline uint32_t cmb_get_pc(void) {
-    register uint32_t result;
-    __asm volatile ("MOV %0, pc\n" : "=r" (result) );
     return(result);
 }
 #endif // __BACKTRACE_H__

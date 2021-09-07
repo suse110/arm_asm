@@ -157,19 +157,10 @@ SECTIONS
 
 		KEEP(*(.jcr*))
 		. = ALIGN(4);
-
 		/* All data end */
 		__data_end__ = .;
 		_edata = __data_end__;
 
-	} > RAM
-	
-	.ram_isr_vector :
-	{
-		. = ALIGN(512);
-		_s_ram_vtor = .;
-		*(.ram_isr_vector)
-		_e_ram_vtor = .;
 	} > RAM
 
 	_sidata = LOADADDR(.data);

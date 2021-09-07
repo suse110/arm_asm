@@ -41,7 +41,7 @@
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
 /******************************************************************************/
-#if 1
+
 /**
   * @brief  This function handles NMI exception.
   * @param  None
@@ -66,11 +66,9 @@ void HardFault_Handler(void)
   //   "BL      cm_backtrace_fault\n"
   // );
     //dump_stack()
-  printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
+    printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
   print_call_stack(cmb_get_sp());
-  #ifdef CM_BACKTRACE_ENABLE
-    cm_backtrace_fault(cmb_get_lr(), cmb_get_sp());
-  #endif
+  cm_backtrace_fault(cmb_get_lr(), cmb_get_sp());
   for(;;);
 }
 
@@ -149,7 +147,7 @@ void SysTick_Handler(void)
 {
   HAL_IncTick();
 }
-#endif
+
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
