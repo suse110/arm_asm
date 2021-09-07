@@ -13,55 +13,55 @@ void main(void)
     while(1);
 }
 
-void NMI_Handler(void)
+void nmi_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void HardFault_Handler(void)
+void hard_fault_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void MemManage_Handler(void)
+void mem_manage_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void BusFault_Handler(void)
+void bus_fault_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void UsageFault_Handler(void)
+void usage_fault_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void SVC_Handler(void)
+void svc_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void DebugMon_Handler(void)
+void debug_mon_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void PendSV_Handler(void)
+void pend_sv_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);
 }
 
-void SysTick_Handler(void)
+void sys_tick_handler(void)
 {
     printf("[%s]\n", __func__);
     while(1);

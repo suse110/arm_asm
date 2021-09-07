@@ -1,4 +1,3 @@
-
 CROSS_COMPILE = arm-none-eabi-
 #"EABI version 0" means the "apcs-gnu" ABI, while "EABI version 4" is the "aapcs-linux", EABI version 5" is aapcs
 CFLAGS += -fno-builtin -g -Wall -static -mlittle-endian \
@@ -19,32 +18,11 @@ GDB = ${CROSS_COMPILE}gdb
 
 BUILD_DIR ?= .
 
-Objects = $(SRC:%.c=$(BUILD_DIR)/%.o)
-AsmObjects = $(ASM_SRC:%.s=$(BUILD_DIR)/%.o)
-
-$(BUILD_DIR)/$(EXEC).elf:$(Objects) $(AsmObjects)
-	$(CROSS_COMPILE)gcc -o $@ $^  $(CFLAGS) -T $(LINKSCRIPT)
-
-$(Objects): $(BUILD_DIR)/%.o : $(SDK_PATH)/%.c
-	@mkdir -p $(shell dirname $@)
-	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@ 
-
-$(AsmObjects): $(BUILD_DIR)/%.o : $(SDK_PATH)/%.s
-	@mkdir -p $(shell dirname $@)
-	echo  "BUILD_DI=" $^
-	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@ 
-
-
 .DEFAULT_GOAL := all
-# all:
-# 	$(CROSS_COMPILE)gcc $(CFLAGS) ${SRC} $(ASM_SRC) -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf
-# 	$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
-# 	$(CROSS_COMPILE)objdump -d -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
-
-all:$(BUILD_DIR)/$(EXEC).elf
+all:
+	$(CROSS_COMPILE)gcc $(CFLAGS) ${SRC} -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf
 	$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
 	$(CROSS_COMPILE)objdump -d -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
-
 
 .PHONY : run
 run: all
@@ -84,7 +62,13 @@ hex: all
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin > $(BUILD_DIR)/$(EXEC).binary
 	@git diff $(BUILD_DIR)/$(EXEC).binary > $(BUILD_DIR)/$(EXEC).binary.diff
 
-BUILD_FILES = $(BUILD_DIR)/*
+BUILD_FILES = $(BUILD_DIR)/*.o 	  \
+			$(BUILD_DIR)/*.bin 	  \
+			$(BUILD_DIR)/*.elf 	  \
+			$(BUILD_DIR)/*.asm    \
+			$(BUILD_DIR)/*.diff   \
+			$(BUILD_DIR)/*.binary \
+			$(BUILD_DIR)/*.map
 
 .PHONY : clean
 clean:

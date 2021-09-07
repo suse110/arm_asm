@@ -13,6 +13,6 @@ load
 set disassemble-next-line on
 set pagination off
 #layout split
-b Reset_Handler
+b _start
 c
 #c

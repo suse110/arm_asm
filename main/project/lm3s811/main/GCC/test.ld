@@ -3,7 +3,7 @@ SECTIONS
 	. = 0x0;
 	_stext = .;
 	.text : {
-		*(.text.Reset_Handler);
+		*(.text._start);
         *(.isr_vectors)
 		/* LONG(0x11223344) */
 		*(.text);
@@ -19,19 +19,8 @@ SECTIONS
 	_sdata = .;
 	.data : { *(.data)}
 	_edata = .;
-	_sidata = LOADADDR(.data);
 	__bss_start__ = .;/*for stdlib*/
-	.bss : {
-		. = ALIGN(4);
-		__bss_start__ = .;
-		_sbss = __bss_start__;
-		*(.bss*)
-		*(COMMON)
-		. = ALIGN(4);
-		__bss_end__ = .;
-		_ebss = __bss_end__;
-	}
-	
+	.bss : { *(.bss) }
 	. = ALIGN(8);
 	__bss_end__ = .;/*for stdlib*/
 	_sstack = .;

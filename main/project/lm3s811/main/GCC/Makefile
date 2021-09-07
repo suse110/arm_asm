@@ -1,18 +1,16 @@
-EXEC = main
+EXEC = test
 
 SOURCE_DIR = ../../../..
+SDK_PATH = $(abspath $(PWD)/$(SOURCE_DIR))
 
 PWD = $(shell pwd)
-SDK_PATH = $(abspath $(shell pwd))/$(SOURCE_DIR)
 
 BUILD_DIR = $(SOURCE_DIR)/build/$(CHIP_COFNIG)
 
-APP_PATH=project/$(CHIP_COFNIG)/$(EXEC)
+SRC += $(EXEC).s 
+SRC += ../$(EXEC).c
 
-ASM_SRC = $(APP_PATH)/GCC/test.s 
-SRC = $(APP_PATH)/test.c
-
-LINKSCRIPT = test.ld
+LINKSCRIPT = $(EXEC).ld
 GDBINIT = $(SOURCE_DIR)/project/$(CHIP_COFNIG)/main/GCC/gdbinit
 CFLAGS += -I$(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/inc 
 CFLAGS += -I$(SOURCE_DIR)/drivers/CMSIS/Include
