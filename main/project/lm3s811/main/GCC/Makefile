@@ -1,19 +1,16 @@
 EXEC = test
+SDKPATH ?= ../../../..
+BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)
 
-SOURCE_DIR = ../../../..
-SDK_PATH = $(abspath $(PWD)/$(SOURCE_DIR))
+APP_DIR=project/$(CHIP_COFNIG)/main
 
-PWD = $(shell pwd)
-
-BUILD_DIR = $(SOURCE_DIR)/build/$(CHIP_COFNIG)
-
-ASMSRC += $(EXEC).s 
-SRC += ../$(EXEC).c
+ASMSRC += $(APP_DIR)/GCC/$(EXEC).s 
+SRC += $(APP_DIR)/$(EXEC).c
 
 LINKSCRIPT = $(EXEC).ld
-GDBINIT = $(SOURCE_DIR)/project/$(CHIP_COFNIG)/main/GCC/gdbinit
-CFLAGS += -I$(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/inc 
-CFLAGS += -I$(SOURCE_DIR)/drivers/CMSIS/Include
+GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/main/GCC/gdbinit
+CFLAGS += -I$(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/inc 
+CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 
 CFLAGS += -march=armv7-m 
 CFLAGS += -mcpu=cortex-m3
@@ -23,7 +20,7 @@ QFLAGS += -machine lm3s811evb
 
 include ./feature.mk
 
-include $(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/module.mk
-include $(SOURCE_DIR)/kernel/service/module.mk
+include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
+include $(SDKPATH)/kernel/service/module.mk
 
-include $(SOURCE_DIR)/rule.mk
+include $(SDKPATH)/rule.mk

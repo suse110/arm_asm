@@ -1,5 +1,6 @@
 PROJS = lm3s811/main \
 		stm32f4xx/main
+SDKPATH = $(abspath $(shell pwd))
 
 # 一般情况下，linux是有 LANG这个环境变量 而window没有的，所有通过  ifeq ($(LANG),)  是否为空即可判断操作系统。
 # windows情况下，一般情况是要用cl.exe 编译的，所以要用if 之下 else之上的块。
@@ -9,22 +10,24 @@ ifneq ($(LANG),)
 #linux
 .DEFAULT_GOAL := all
 all :
+	@echo "SDKPATH=  "$(SDKPATH)
 	@echo "begin compile ALL exercises for assembly samples in linux......................."
-	@for proj in $(PROJS); do $(MAKE) -C ./project/$$proj/GCC || exit "$$?"; done
+	@for proj in $(PROJS); do $(MAKE)  SDKPATH=$(SDKPATH)  -C ./project/$$proj/GCC || exit "$$?"; done
 	@echo "compile ALL exercises finished successfully! ......"
 .PHONY : clean
 clean:
-	@for proj in $(PROJS); do $(MAKE) -C ./project/$$proj/GCC clean|| exit "$$?"; done
+	@for proj in $(PROJS); do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/$$proj/GCC clean|| exit "$$?"; done
 else
 #windows
 .DEFAULT_GOAL := all
 all :
+	@echo "SDKPATH=  "$(SDKPATH)
 	@echo "begin compile ALL exercises for assembly samples in windows......................."
-	@for %%proj in ($(PROJS)) do $(MAKE) -C ./project/%%proj/GCC || exit "$$?"
+	@for %%proj in ($(PROJS)) do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/%%proj/GCC || exit "$$?"
 	@echo "compile ALL exercises finished successfully! ......"
 .PHONY : clean
 clean:
-	@for %%proj in ($(PROJS)) do $(MAKE) -C ./project/%%proj/GCC clean|| exit "$$?"
+	@for %%proj in ($(PROJS)) do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/%%proj/GCC clean|| exit "$$?"
 endif
 
 st:
