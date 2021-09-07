@@ -7,7 +7,7 @@ PWD = $(shell pwd)
 
 BUILD_DIR = $(SOURCE_DIR)/build/$(CHIP_COFNIG)
 
-SRC += $(EXEC).s 
+ASMSRC += $(EXEC).s 
 SRC += ../$(EXEC).c
 
 LINKSCRIPT = $(EXEC).ld
@@ -26,4 +26,4 @@ include ./feature.mk
 include $(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/module.mk
 include $(SOURCE_DIR)/kernel/service/module.mk
 
-include $(SOURCE_DIR)/../rule.mk
+include $(SOURCE_DIR)/rule.mk

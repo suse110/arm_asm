@@ -2307,7 +2307,7 @@ target remote localhost:1234
 load
 set disassemble-next-line on
 
-b _start
+b Reset_Handler
 b backtrace.c:337
 dashboard memory watch 0x20001000 256
 c

@@ -1,9 +1,7 @@
 SECTIONS = \
-	test/template \
-	main \
-	test/arithmetic \
-	test/branch \
-	test/mov
+	test \
+	main 
+
 
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \

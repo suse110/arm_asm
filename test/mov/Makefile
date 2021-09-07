@@ -1,8 +1,10 @@
 EXEC = test
 
-SRC = $(EXEC).s 
+BUILD_DIR=./build
+
+ASMSRC = $(EXEC).s 
 LINKSCRIPT = $(EXEC).ld
-GDBINIT = ../../gdbinit
+GDBINIT = ../gdbinit
 #use stdlib
 NOSTDLIB_ENABLE = y
 
@@ -12,4 +14,4 @@ CFLAGS += -mfloat-abi=soft
 
 QFLAGS += -machine lm3s811evb
 
-include ../../rule.mk
+include ../rule.mk

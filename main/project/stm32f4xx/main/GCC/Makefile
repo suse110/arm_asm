@@ -7,7 +7,7 @@ PWD = $(shell pwd)
 
 BUILD_DIR = $(SOURCE_DIR)/build/$(CHIP_COFNIG)
 
-SRC += startup_stm32f401xe.s 
+ASMSRC += startup_stm32f401xe.s 
 SRC += ../src/main.c
 SRC += ../src/serial.c
 SRC += ../src/steper.c
@@ -36,4 +36,4 @@ include ./feature.mk
 include $(SOURCE_DIR)/drivers/chip/$(CHIP_COFNIG)/module.mk
 include $(SOURCE_DIR)/kernel/service/module.mk
 
-include $(SOURCE_DIR)/../rule.mk
+include $(SOURCE_DIR)/rule.mk
