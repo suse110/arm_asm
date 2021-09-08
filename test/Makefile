@@ -2,7 +2,9 @@ SECTIONS = \
 	template \
 	arithmetic \
 	branch \
-	mov
+	mov \
+	cm4 \
+	cm33
 SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/test
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \
