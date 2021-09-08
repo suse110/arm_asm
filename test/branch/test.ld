@@ -2,8 +2,8 @@ SECTIONS
 {
 	. = 0x0;
 	.text : {
+        *(.isr_vectors)
 		*(.text)
-        *(.vectors)
 	}
     . = 0x20000000;
 	.data : { *(.data) }

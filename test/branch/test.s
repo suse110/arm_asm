@@ -48,6 +48,10 @@
 
 
 
+.section .isr_vectors
+# .size vector, .-vector
+
+# vector:
 .word _estack
 .word _start
 

@@ -26,13 +26,11 @@ $(BUILD_DIR)/$(EXEC).elf:$(Objects) $(AsmObjects)
 	$(CROSS_COMPILE)gcc -o $@ $^  $(CFLAGS) -T $(LINKSCRIPT)
 
 $(Objects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.c
-	@echo "SDK_PATH="$(SDKPATH)
 	@mkdir -p $(shell dirname $@)
 	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@ 
 
 $(AsmObjects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.s
 	@mkdir -p $(shell dirname $@)
-	echo  "BUILD_DI=" $^
 	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@ 
 
 .DEFAULT_GOAL := all

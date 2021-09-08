@@ -1,4 +1,6 @@
-.word stack_top
+.section .isr_vectors
+
+.word _estack
 .word _start
 
 .global _start

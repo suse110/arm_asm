@@ -30,13 +30,12 @@ $(Objects): $(BUILD_DIR)/%.o : $(SDK_PATH)/%.c
 
 $(AsmObjects): $(BUILD_DIR)/%.o : $(SDK_PATH)/%.s
 	@mkdir -p $(shell dirname $@)
-	echo  "BUILD_DI=" $^
 	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@ 
 
 
 .DEFAULT_GOAL := all
 all:
-	$(CROSS_COMPILE)gcc $(CFLAGS) ${SRC} $(ASMSRC) -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf
+	$(CROSS_COMPILE)gcc $(CFLAGS) $(SRC) $(ASMSRC) -T $(LINKSCRIPT) -o $(BUILD_DIR)/$(EXEC).elf
 	$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
 	$(CROSS_COMPILE)objdump -d -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
 

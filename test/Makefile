@@ -3,7 +3,7 @@ SECTIONS = \
 	arithmetic \
 	branch \
 	mov
-SDKPATH = $(abspath $(shell pwd))
+SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/test
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \
 # $(SECTIONS_Shifting) \
@@ -21,7 +21,7 @@ ifneq ($(LANG),)
 #linux
 .DEFAULT_GOAL := all
 all :
-	@echo "begin compile ALL exercises for assembly samples ......................."
+	@echo "begin compile ALL exercises for assembly samples in linux......................."
 	@for dir in $(SECTIONS); do $(MAKE) SDKPATH=$(SDKPATH) -C $$dir || exit "$$?"; done
 	@echo "compile ALL exercises finished successfully! ......"
 .PHONY : clean
@@ -31,7 +31,7 @@ else
 #windows
 .DEFAULT_GOAL := all
 all :
-	@echo "begin compile ALL exercises for assembly samples ......................."
+	@echo "begin compile ALL exercises for assembly samples in windows......................."
 	@for %%d in ($(SECTIONS)) do $(MAKE) SDKPATH=$(SDKPATH) -C %%d || exit "$$?"
 	@echo "compile ALL exercises finished successfully! ......"
 .PHONY : clean
