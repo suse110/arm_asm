@@ -63,26 +63,3 @@ CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/STM32F4xx_HAL_Driver/inc
 CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/BSP/STM32F4xx-Nucleo
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 
-CFLAGS += -ggdb
-CFLAGS += -O0
-CFLAGS += -Wall
-CFLAGS += -Wextra
-CFLAGS += -Warray-bounds
-CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb
-CFLAGS += -mlittle-endian
-CFLAGS += -mthumb-interwork
-CFLAGS += -mfloat-abi=hard
-CFLAGS += -mfpu=fpv4-sp-d16
-CFLAGS += -DUSE_STDPERIPH_DRIVER
-CFLAGS += -DSTM32F4XX
-CFLAGS += -DSTM32F401xE
-
-
-CFLAGS += -ffunction-sections
-CFLAGS += -fdata-sections
-CFLAGS += -Wl,--gc-sections
-CFLAGS += -ffreestanding
-CFLAGS += -Wno-unused-parameter
-# CFLAGS += -mfloat-abi=soft
-

@@ -327,13 +327,15 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_M
 void exception_init(void)
 {
   g_unaligned_buffer = &s_buffer[1];
-  // SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
+  SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
   // SCB->VTOR = (uint32_t)&pfnVectors & SCB_VTOR_TBLOFF_Msk;
   // SCB->VTOR |= 1<<29;
 
 }
+
 void exception_test(void)
 {
   exception_init();
+  trigger_crash(0);
 }
 

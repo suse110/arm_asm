@@ -2,13 +2,14 @@
 #include "hal.h"
 #include "shell.h"
 
-
+extern void exception_test(void);
 void main(void)
 {
 
     printf("[%s] hello world\n", __func__);
     // shell_start();
     backtrace_test();
+    exception_test();
     // hal_mpu_test();
     while(1);
 }

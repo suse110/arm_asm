@@ -1,5 +1,5 @@
 
-../../../../build/stm32l5xx/main.elf:     file format elf32-littlearm
+J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/main/build/stm32l5xx/main.elf:     file format elf32-littlearm
 
 
 Disassembly of section .text:

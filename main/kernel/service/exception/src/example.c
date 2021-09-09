@@ -115,7 +115,8 @@ int exception_crash_id = 0;
 //  5: Unaligned 8 byte read
 //  6: Bad 4 byte read
 //  7: Illegal EXC_RETURN
-void trigger_crash(int crash_id) {
+void trigger_crash(int crash_id) 
+{
   switch (crash_id) {
     case 0:
       illegal_instruction_execution();      

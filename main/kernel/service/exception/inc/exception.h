@@ -27,5 +27,5 @@ typedef struct
 } exception_vector_t;
 
 void exception_test(void);
-
+extern void trigger_crash(int crash_id);
 #endif // __EXCEPTION_H__

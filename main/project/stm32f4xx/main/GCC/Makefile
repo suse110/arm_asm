@@ -24,9 +24,29 @@ CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Device/ST/STM32F4xx/Include
 CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/main/inc
 
-# CFLAGS += -march=armv7-m 
+CFLAGS += -ggdb
+CFLAGS += -O0
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Warray-bounds
 CFLAGS += -mcpu=cortex-m4
+CFLAGS += -mthumb
+CFLAGS += -mlittle-endian
+CFLAGS += -mthumb-interwork
+CFLAGS += -mfloat-abi=hard
+CFLAGS += -mfpu=fpv4-sp-d16
+CFLAGS += -DUSE_STDPERIPH_DRIVER
+CFLAGS += -DSTM32F4XX
+CFLAGS += -DSTM32F401xE
+
+
+CFLAGS += -ffunction-sections
+CFLAGS += -fdata-sections
+CFLAGS += -Wl,--gc-sections
+CFLAGS += -ffreestanding
+CFLAGS += -Wno-unused-parameter
 # CFLAGS += -mfloat-abi=soft
+
 
 
 include ./feature.mk

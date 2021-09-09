@@ -147,6 +147,7 @@ define unwind_stack
     set $lr=((uint32_t*)$exc_frame))[5]
     set $pc=((uint32_t*)$exc_frame))[6]
 end
+
 target remote localhost:3333
 load
 set disassemble-next-line on
