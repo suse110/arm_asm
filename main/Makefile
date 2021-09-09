@@ -1,5 +1,6 @@
 PROJS = lm3s811/main \
-		stm32f4xx/main
+		stm32f4xx/main \
+		stm32l5xx/main 
 # SDKPATH = $(abspath $(shell pwd))
 SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/main
 
@@ -12,7 +13,6 @@ ifneq ($(LANG),)
 #linux
 .DEFAULT_GOAL := all
 all :
-	@echo "SDKPATH=  "$(SDKPATH)
 	@echo "begin compile ALL exercises for assembly samples in linux......................."
 	@for proj in $(PROJS); do $(MAKE)  SDKPATH=$(SDKPATH)  -C ./project/$$proj/GCC || exit "$$?"; done
 	@echo "compile ALL exercises finished successfully! ......"
@@ -23,7 +23,6 @@ else
 #windows
 .DEFAULT_GOAL := all
 all :
-	@echo "SDKPATH=  "$(SDKPATH)
 	@echo "begin compile ALL exercises for assembly samples in windows......................."
 	@for %%proj in ($(PROJS)) do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/%%proj/GCC || exit "$$?"
 	@echo "compile ALL exercises finished successfully! ......"

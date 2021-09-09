@@ -44,7 +44,7 @@ $(AsmObjects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.s
 all:$(BUILD_DIR)/$(EXEC).elf
 	$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
 	$(CROSS_COMPILE)objdump -d -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
-
+	$(CROSS_COMPILE)size $(BUILD_DIR)/$(EXEC).elf 
 
 
 .PHONY : run

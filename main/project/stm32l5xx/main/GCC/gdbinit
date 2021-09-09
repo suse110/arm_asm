@@ -1,0 +1,156 @@
+display/z $r0
+display/z $r1
+display/z $r2
+display/z $r3
+display/z $r4
+display/z $sp
+display/z $pc
+display/z $lr
+display/z $xpsr
+
+define hook_continue
+    # Enable automatic halt for HardFault Exception using
+    #by setting DEMCR->VC_HARDERR
+    set *((uint32_t*)0xE000EDFC) |= 0x0000400
+end
+
+define fault_regs
+    #MMSR, 1 byte
+    set $MMSR = *(uint32_t*)0xE000ED28
+    #MMAR, 4 byte
+    set $MMAR = *(uint32_t*)0xE000ED34
+    #BFSR, 1 byte
+    set $BFSR = *(uint32_t*)0xE000ED29
+    #BFAR, 4 byte
+    set $BFAR = *(uint32_t*)0xE000ED38
+    #UFSR, 2 byte
+    set $UFSR = *(uint32_t*)0xE000ED2A
+    #HFSR, 4 byte
+    set $HFSR = *(uint32_t*)0xE000ED2C
+    #DFSR, 4 byte
+    set $DFSR = *(uint32_t*)0xE000ED30
+    #AFSR, 4 byte
+    set $AFSR = *(uint32_t*)0xE000ED3C
+
+    set $mem_addr = $MMAR
+    if ($MMSR & 0xFF) != 0
+        printf "$MMSR =0x%02x\n", $MMSR & 0xFF
+        if $MMSR & 0x80
+            printf "$MMAR =0x%08x\n", $mem_addr
+            printf "  MMARVALID  : %d\n", ($MMSR & 0x80) ? 1 :0
+        end
+        if $MMSR & 0x10
+            printf "  MSTKERR    : %d\n", ($MMSR & 0x10) ? 1 :0
+        end
+        if $MMSR & 0x08
+            printf "  MUNSTKERR  : %d\n", ($MMSR & 0x08) ? 1 :0
+        end
+        if $MMSR & 0x02
+            printf "  DACCVIOL   : %d\n", ($MMSR & 0x02) ? 1 :0
+        end
+        if $MMSR & 0x01
+            printf "  IACCVIOL   : %d\n", ($MMSR & 0x01) ? 1 :0
+        end
+    end
+    set $bus_fault_addr = $BFAR
+    if ($BFSR & 0xFF) != 0
+        printf "$BFSR =0x%02x\n", $BFSR & 0xFF
+        if $BFSR & 0x80
+            printf "BusFault Address Valid:0x%08x\n", $bus_fault_addr
+            printf "  BFARVALID   : %d\n", ($BFSR & 0x80 ) ? 1 :0
+        end
+        if $BFSR & 0x10
+            printf "  STKERR      : %d\n", ($BFSR & 0x10) ? 1 :0
+        end
+        if $BFSR & 0x10
+            printf "  STKERR      : %d\n", ($BFSR & 0x10) ? 1 :0
+        end
+        if $BFSR & 0x08
+            printf "  UNSTKERR    : %d\n", ($BFSR & 0x08) ? 1 :0
+        end
+        if $BFSR & 0x04
+            printf "  IMPRECISERR : %d\n", ($BFSR & 0x04) ? 1 :0
+        end
+        if $BFSR & 0x02
+            printf "  PRECISERR   : %d\n", ($BFSR & 0x02) ? 1 :0
+        end
+        if $BFSR & 0x01
+            printf "  IBUSERR     : %d\n", ($BFSR & 0x01) ? 1 :0
+        end
+    end
+
+    if ($UFSR & 0xFFFF) != 0
+        printf "$UFSR =0x%04x\n", $UFSR & 0xFFFF
+        if $UFSR & 0x100
+            printf "  DIVBYZERO   : %d\n", ($UFSR & 0x100) ? 1 :0
+        end
+        if $UFSR & 0x80
+            printf "  UNALIGNED   : %d\n", ($UFSR & 0x80) ? 1 :0
+        end
+        if $UFSR & 0x08
+            printf "  NOCP        : %d\n", ($UFSR & 0x08) ? 1 :0
+        end
+        if $UFSR & 0x04
+            printf "  INVPC       : %d\n", ($UFSR & 0x04) ? 1 :0
+        end
+        if $UFSR & 0x02
+            printf "  INVSTATE    : %d\n", ($UFSR & 0x02) ? 1 :0
+        end
+        if $UFSR & 0x01
+            printf "  UNDEFINSTR  : %d\n", ($UFSR & 0x01) ? 1 :0
+        end
+    end
+
+    if $HFSR != 0
+        printf "$HFSR =0x%08x\n", $HFSR
+        if $HFSR & 0x80000000
+            printf "  DEBUGEVT    : %d\n", ($HFSR & 0x80000000) ? 1 :0
+        end
+        if $HFSR & 0x40000000
+            printf "  FORCED      : %d\n", ($HFSR & 0x40000000) ? 1 :0
+        end
+        if $HFSR & 0x02
+            printf "  VECTBL      : %d\n", ($HFSR & 0x02) ? 1 :0
+        end
+    end
+    
+    if $DFSR != 0
+        printf "$DFSR =0x%08x\n", $DFSR
+        if ($DFSR & 0x10)
+            printf "  EXTERNAL : %d\n", ($DFSR & 0x10) ? 1 :0
+        end
+        if ($DFSR & 0x08)
+            printf "  VCATCH   : %d\n", ($DFSR & 0x08) ? 1 :0
+        end
+        if ($DFSR & 0x04)
+            printf "  DWTTRAP  : %d\n", ($DFSR & 0x04) ? 1 :0
+        end
+        if ($DFSR & 0x02)
+            printf "  BKPT     : %d\n", ($DFSR & 0x02) ? 1 :0
+        end
+        if ($DFSR & 0x01)
+            printf "  HALTED   : %d\n", ($DFSR & 0x01) ? 1 :0
+        end
+    end
+    if $AFSR != 0
+        printf "$AFSR =0x%08x\n", $AFSR
+    end
+end
+
+define unwind_stack
+    #Set registers to their state prior to exception entry
+    #to investigate origin of fault
+    set $exc_frame = ($lr & 0x4) ? $psp : $msp
+    set $stacked_xpsr = ((uint32_t*)$exc_frame)[7]
+    set $exc_frame_len = 32 + (($stacked_xpsr) ? 0x4 : 0x0) + (($lr & 0x10) ? 0 : 72)
+    set $sp=($exc_frame + $exc_frame_len)
+    set $lr=((uint32_t*)$exc_frame))[5]
+    set $pc=((uint32_t*)$exc_frame))[6]
+end
+
+target remote localhost:3333
+load
+set disassemble-next-line on
+set pagination off
+b Reset_Handler
+c
