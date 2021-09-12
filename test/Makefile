@@ -5,6 +5,7 @@ SECTIONS = \
 	mov \
 	cm4 \
 	it \
+	stm \
 	cm33
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \
