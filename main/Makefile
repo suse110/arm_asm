@@ -1,5 +1,6 @@
 PROJS = lm3s811/main \
 		stm32f4xx/main \
+		stm32f4xx/NetduinoPlus2 \
 		stm32l5xx/main 
 
 # 一般情况下，linux是有 LANG这个环境变量 而window没有的，所有通过  ifeq ($(LANG),)  是否为空即可判断操作系统。
