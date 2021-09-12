@@ -2,9 +2,9 @@ EXEC = main
 
 SDKPATH ?= ../../../..
 
-BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)
+BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)/$(EXEC)
 
-APP_DIR=project/$(CHIP_COFNIG)/main
+APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
 
 ASMSRC += $(APP_DIR)/GCC/startup_stm32l552zetxq.s 
 SRC += $(APP_DIR)/src/main.c
@@ -14,13 +14,13 @@ SRC += $(APP_DIR)/src/user/syscalls.c
 SRC += $(APP_DIR)/src/user/sysmem.c
 SRC += $(APP_DIR)/src/system_stm32l5xx.c
 
-LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/main/GCC/STM32L552ZETXQ_FLASH.ld
+LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/STM32L552ZETXQ_FLASH.ld
 
-GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/main/GCC/gdbinit
+GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/gdbinit
 CFLAGS += -I$(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/inc 
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Device/ST/STM32L5xx/Include
-CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/main/inc
+CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/inc
 
 CFLAGS += -ggdb
 CFLAGS += -O0
