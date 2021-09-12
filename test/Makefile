@@ -4,6 +4,7 @@ SECTIONS = \
 	branch \
 	mov \
 	cm4 \
+	it \
 	cm33
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \

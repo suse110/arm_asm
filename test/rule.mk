@@ -1,4 +1,4 @@
-CROSS_COMPILE = arm-none-eabi-
+CROSS_COMPILE ?= arm-none-eabi-
 #"EABI version 0" means the "apcs-gnu" ABI, while "EABI version 4" is the "aapcs-linux", EABI version 5" is aapcs
 CFLAGS += -fno-builtin -g -Wall -static -mlittle-endian \
 		-mthumb -ffreestanding -mabi=aapcs -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
