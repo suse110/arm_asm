@@ -2,9 +2,13 @@ EXEC = main
 
 SDKPATH ?= ../../../..
 
-BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)
+BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)/$(EXEC)
 
-APP_DIR=project/$(CHIP_COFNIG)/main
+APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
+
+include ./feature.mk
+include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
+include $(SDKPATH)/kernel/service/module.mk
 
 ASMSRC += $(APP_DIR)/GCC/startup_stm32f401xe.s 
 SRC += $(APP_DIR)/src/main.c
@@ -16,13 +20,13 @@ SRC += $(APP_DIR)/src/syscalls.c
 SRC += $(APP_DIR)/src/system_stm32f4xx.c
 SRC += $(APP_DIR)/src/hal_log.c
 
-LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/main/GCC/nucleo.ld
+LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/nucleo.ld
 
-GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/main/GCC/gdbinit
+GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/gdbinit
 CFLAGS += -I$(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/inc 
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Device/ST/STM32F4xx/Include
-CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/main/inc
+CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/inc
 
 CFLAGS += -ggdb
 CFLAGS += -O0
@@ -48,11 +52,8 @@ CFLAGS += -Wno-unused-parameter
 # CFLAGS += -mfloat-abi=soft
 
 
+SRC += $(CHIP_DIR)/BSP/STM32F4xx-Nucleo/stm32f4xx_nucleo.c
+CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/BSP/STM32F4xx-Nucleo
 
-include ./feature.mk
-
-
-include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
-include $(SDKPATH)/kernel/service/module.mk
 
 include $(SDKPATH)/rule.mk

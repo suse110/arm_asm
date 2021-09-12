@@ -1,5 +1,9 @@
+@echo off
 
-@REM set ROOT_DIR=%CD%
+set CUR_DIR=%CD%
+cd ..\..\..\..\..
+call setenv.bat
+cd %CUR_DIR%
 
 %OPENOCD_ROOT%\openocd.exe -f .\config\dbg_cfg.cfg
 

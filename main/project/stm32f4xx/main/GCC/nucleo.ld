@@ -69,6 +69,7 @@ SECTIONS
  		*(.dtors)
 
 		*(.rodata*)
+		*(.noinit.crash_info)
 
 		KEEP(*(.eh_frame*))
 

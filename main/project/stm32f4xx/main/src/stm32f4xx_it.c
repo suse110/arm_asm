@@ -56,6 +56,7 @@ void NMI_Handler(void)
   * @param  None
   * @retval None
   */
+#if 0
 void HardFault_Handler(void)
 {
   printf("[%s]\n", __func__);
@@ -73,6 +74,7 @@ void HardFault_Handler(void)
   #endif
   for(;;);
 }
+#endif
 
 /**
   * @brief  This function handles Memory Manage exception.

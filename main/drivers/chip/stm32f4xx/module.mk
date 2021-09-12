@@ -57,9 +57,7 @@ SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_iwdg.c
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_ll_usb.c
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_ltdc.c
 
-SRC += $(CHIP_DIR)/BSP/STM32F4xx-Nucleo/stm32f4xx_nucleo.c
-
 CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/STM32F4xx_HAL_Driver/inc
-CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/BSP/STM32F4xx-Nucleo
+
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 
