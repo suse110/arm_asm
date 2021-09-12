@@ -17,7 +17,10 @@ SECTIONS
 	_exit = .; /*for stdlib*/
     . = 0x20000000;
 	_sdata = .;
-	.data : { *(.data)}
+	.data : { 
+		*(.data)
+		/* *(.noinit.crash_info) */
+	}
 	_edata = .;
 	_sidata = LOADADDR(.data);
 	__bss_start__ = .;/*for stdlib*/
