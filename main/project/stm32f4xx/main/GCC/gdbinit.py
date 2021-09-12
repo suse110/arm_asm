@@ -2305,6 +2305,7 @@ display/z $xpsr
 
 target remote localhost:3333
 load
-set disassemble-next-line on
+#set disassemble-next-line on
 b Reset_Handler
+b HardFault_Handler
 c

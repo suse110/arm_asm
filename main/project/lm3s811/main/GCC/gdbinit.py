@@ -2308,6 +2308,7 @@ load
 set disassemble-next-line on
 
 b Reset_Handler
+b HardFault_Handler
 b backtrace.c:337
 dashboard memory watch 0x20001000 256
 c
