@@ -5,7 +5,6 @@ SECTIONS = \
 	mov \
 	cm4 \
 	cm33
-SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/test
 # $(SECTIONS_Arithmetic) \
 # $(SECTIONS_Logical) \
 # $(SECTIONS_Shifting) \
@@ -21,6 +20,7 @@ SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/test
 # 判断方法  echo %LANG%   解决方案： set LANG=  (只在当前cmd窗口有效)  
 ifneq ($(LANG),)
 #linux
+SDKPATH = $(abspath $(shell pwd))
 .DEFAULT_GOAL := all
 all :
 	@echo "begin compile ALL exercises for assembly samples in linux......................."
@@ -31,6 +31,7 @@ clean:
 	@for dir in $(SECTIONS); do $(MAKE) SDKPATH=$(SDKPATH) -C $$dir clean || exit "$$?"; done
 else
 #windows
+SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/test
 .DEFAULT_GOAL := all
 all :
 	@echo "begin compile ALL exercises for assembly samples in windows......................."
