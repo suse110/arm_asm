@@ -5,7 +5,7 @@ BUILD_DIR = ./build
 ASMSRC = $(EXEC).s 
 SRC = $(EXEC).c
 LINKSCRIPT = $(EXEC).ld
-GDBINIT = ../dbinit
+GDBINIT = ../gdbinit
 #use stdlib
 NOSTDLIB_ENABLE = y
 
