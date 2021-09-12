@@ -77,6 +77,20 @@ typedef struct __attribute__((packed)) ContextStateFrame {
   uint32_t lr;
   uint32_t return_address;
   uint32_t xpsr;
+  uint32_t r4;
+  uint32_t r5;
+  uint32_t r6;
+  uint32_t r7;
+  uint32_t r8;
+  uint32_t r9;
+  uint32_t r10;
+  uint32_t r11;
+  uint32_t psp;
+  uint32_t msp;
+  uint32_t control;
+  uint32_t basepri;
+  uint32_t primask;
+  uint32_t faultmask;
 } sContextStateFrame;
 
 #define CRASH_INFO_MAGIC 0xdead55aa
@@ -86,7 +100,7 @@ typedef struct {
     sContextStateFrame frame;
 } sCrashInfo;
 
-static sCrashInfo s_last_crash_into __attribute__((section(".noinit.crash_info")));
+static sCrashInfo last_crash_info __attribute__((section(".noinit.crash_info")));
 
 
 
@@ -99,46 +113,50 @@ The program counter is *after* the problem, and that the program counter has an
 odd address for ARM Thumb code
 */
 
-#if 1
-#define HARDFAULT_HANDLING_ASM(_x)               \
-  __asm volatile(                                \
-      "tst lr, #4 \n"                            \
-      "ite eq \n"                                \
-      "mrseq r0, msp \n"                         \
-      "mrsne r0, psp \n"                         \
-      "b HardFault_Handler_C \n"                  \
+#define HARDFAULT_HANDLING_ASM(_x)                                    \
+                       __asm volatile(                                \
+/*                    */   "ldr r1, =last_crash_info\n"               \
+/*                    */   "ldr r2, =0xdead55aa\n"                    \
+/*                    */   "str r2, [r1]\n"                           \
+/*                    */   "add r1, r1, #4\n"                         \
+/*                    */   "tst lr, #4 \n"                            \
+/*                    */   "ite eq \n"                                \
+/*                    */   "mrseq r0, msp \n"                         \
+/*                    */   "mrsne r0, psp \n"                         \
+/* load r0            */   "ldr r2, [r0, #0] \n"                      \
+/* store r0           */   "str r2, [r1, #0] \n"                      \
+/* load r1            */   "ldr r2, [r0, #4] \n"                      \
+/* store r1           */   "str r2, [r1, #4] \n"                      \
+/* load r2            */   "ldr r2, [r0, #8] \n"                      \
+/* store r2           */   "str r2, [r1, #8] \n"                      \
+/* load r3            */   "ldr r2, [r0, #12] \n"                     \
+/* store r3           */   "str r2, [r1, #12] \n"                     \
+/* load r12           */   "ldr r2, [r0, #16] \n"                     \
+/* store r12          */   "str r2, [r1, #16] \n"                     \
+/* load lr            */   "ldr r2, [r0, #20] \n"                     \
+/* store lr           */   "str r2, [r1, #20] \n"                     \
+/* load pc            */   "ldr r2, [r0, #24] \n"                     \
+/* store pc           */   "str r2, [r1, #24] \n"                     \
+/* load xpsr          */   "ldr r2, [r0, #28] \n"                     \
+/* store xpsr         */   "str r2, [r1, #28] \n"                     \
+/* add pointer        */   "add r1, r1, #28 \n"                       \
+/* store r4-r11       */   "stmia r1!, {r4-r11} \n"                   \
+/* load psp           */   "mrs r2, psp \n"                           \
+/* store psp          */   "str r2, [r1, #0] \n"                      \
+/* load msp           */   "mrs r2, msp \n"                           \
+/* store msp          */   "str r2, [r1, #4] \n"                      \
+/* load control       */   "mrs r2, control \n"                       \
+/* store control      */   "str r2, [r1, #8] \n"                      \
+/* load basepri       */   "mrs r2, basepri \n"                       \
+/* store basepri      */   "str r2, [r1, #12] \n"                     \
+/* load primask       */   "mrs r2, primask \n"                       \
+/* store primask      */   "str r2, [r1, #16] \n"                     \
+/* load faultmask     */   "mrs r2, faultmask \n"                     \
+/* store faultmask    */   "str r2, [r1, #20] \n"                     \
+/*                    */   "ldr r0, =last_crash_info\n"               \
+/*                    */   "b HardFault_Handler_C \n"                 \
                                                  )
-#else
-#define HARDFAULT_HANDLING_ASM(_x)               \
-    __asm volatile
-    (
-        " tst lr, #4                                          \n"
-        " ite eq                                              \n"
-        " mrseq r0, msp                                       \n"
-        " mrsne r0, psp                                       \n"
-        " ldr r1, [r0, #24]                                   \n"
-        " ldr r2, handler2_address_const                      \n"
-        " bx r2                                               \n"
-        " handler2_address_const: .word HardFault_Handler_C    \n"
-    );
 
-/*
-__asm volatile (
-    " movs r0,#4       \n"
-    " movs r1, lr      \n"
-    " tst r0, r1       \n"
-    " beq _MSP         \n"
-    " mrs r0, psp      \n"
-    " b _HALT          \n"
-  "_MSP:               \n"
-    " mrs r0, msp      \n"
-  "_HALT:              \n"
-    " ldr r1,[r0,#20]  \n"
-    " b HardFault_HandlerC \n"
-    " bkpt #0          \n"
-  );
-*/
-#endif
 
 
 /**
@@ -157,9 +175,9 @@ __asm volatile (
 // Disable optimizations for this function so "frame" argument
 // does not get optimized away
 __attribute__((optimize("O0")))
-void HardFault_Handler_C(sContextStateFrame *frame) {
-    s_last_crash_into.frame = *frame;
-    s_last_crash_into.magic = CRASH_INFO_MAGIC;
+void HardFault_Handler_C(sCrashInfo *sCrashInfo) {
+    sContextStateFrame *frame = &sCrashInfo->frame;
+
   // If and only if a debugger is attached, execute a breakpoint
   // instruction so we can take a look at what triggered the fault
   HALT_IF_DEBUGGING();
@@ -272,7 +290,7 @@ static void NMI_Handler(void) {
 /* The prototype shows it is a naked function - in effect this is just an
 assembly function. */
 __attribute__((naked))
-static void HardFault_Handler(void)
+void HardFault_Handler(void)
 {
   HARDFAULT_HANDLING_ASM();
 }
@@ -327,7 +345,7 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_M
 void exception_init(void)
 {
   g_unaligned_buffer = &s_buffer[1];
-  SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
+  // SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
   // SCB->VTOR = (uint32_t)&pfnVectors & SCB_VTOR_TBLOFF_Msk;
   // SCB->VTOR |= 1<<29;
 
