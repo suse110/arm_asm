@@ -8,6 +8,335 @@ display/z $pc
 display/z $lr
 display/z $xpsr
 
+define hook_continue
+    # Enable automatic halt for HardFault Exception using
+    #by setting DEMCR->VC_HARDERR
+    set *((unsigned int*)0xE000EDFC) |= 0x0000400
+end
+
+define fault_regs
+    #MMSR, 1 byte
+    set $MMSR = (unsigned int*)0xE000ED28
+    #MMAR, 4 byte
+    set $MMAR = (unsigned int*)0xE000ED34
+    #BFSR, 1 byte
+    set $BFSR = (unsigned int*)0xE000ED29
+    #BFAR, 4 byte
+    set $BFAR = (unsigned int*)0xE000ED38
+    #UFSR, 2 byte
+    set $UFSR = (unsigned int*)0xE000ED2A
+    #HFSR, 4 byte
+    set $HFSR = (unsigned int*)0xE000ED2C
+    #DFSR, 4 byte
+    set $DFSR = (unsigned int*)0xE000ED30
+    #AFSR, 4 byte
+    set $AFSR = (unsigned int*)0xE000ED3C
+
+    set $mem_addr = $MMAR
+    if (*$MMSR & 0xFF) != 0
+        printf "$MMSR(0x%08X) = 0x%02x\n", $MMSR, *$MMSR & 0xFF
+        if *$MMSR & 0x80
+            printf "$MMAR =0x%08x\n", $mem_addr
+            printf "  MMARVALID  : %d\n", (*$MMSR & 0x80) ? 1 :0
+        end
+        if *$MMSR & 0x10
+            printf "  MSTKERR    : %d\n", (*$MMSR & 0x10) ? 1 :0
+            printf "  入栈时发生错误(异常响应序列开始时)"
+            printf "  1. 堆栈指针的值被破坏"
+            printf "  2. 堆栈容易过大，已经超出 MPU 允许的 region 范围"
+        end
+        if *$MMSR & 0x08
+            printf "  MUNSTKERR  : %d\n", (*$MMSR & 0x08) ? 1 :0
+        end
+        if *$MMSR & 0x02
+            printf "  DACCVIOL   : %d\n", (*$MMSR & 0x02) ? 1 :0
+        end
+        if *$MMSR & 0x01
+            printf "  IACCVIOL   : %d\n", (*$MMSR & 0x01) ? 1 :0
+        end
+    end
+    set $bus_fault_addr = *$BFAR
+    if (*$BFSR & 0xFF) != 0
+        printf "$BFSR(0x%08X) = 0x%02x\n", $BFSR,*$BFSR & 0xFF
+        if *$BFSR & 0x80
+            printf "BusFault Address Valid:0x%08x\n", $bus_fault_addr
+            printf "  BFARVALID   : %d\n", (*$BFSR & 0x80 ) ? 1 :0
+        end
+        if *$BFSR & 0x10
+            printf "  STKERR      : %d\n", (*$BFSR & 0x10) ? 1 :0
+        end
+        if *$BFSR & 0x10
+            printf "  STKERR      : %d\n", (*$BFSR & 0x10) ? 1 :0
+        end
+        if *$BFSR & 0x08
+            printf "  UNSTKERR    : %d\n", (*$BFSR & 0x08) ? 1 :0
+        end
+        if *$BFSR & 0x04
+            printf "  IMPRECISERR : %d\n", (*$BFSR & 0x04) ? 1 :0
+        end
+        if *$BFSR & 0x02
+            printf "  PRECISERR   : %d\n", (*$BFSR & 0x02) ? 1 :0
+        end
+        if *$BFSR & 0x01
+            printf "  IBUSERR     : %d\n", (*$BFSR & 0x01) ? 1 :0
+        end
+    end
+
+    if (*$UFSR & 0xFFFF) != 0
+        printf "$UFSR(0x%08X) = 0x%04x\n", $UFSR, *$UFSR & 0xFFFF
+        if *$UFSR & 0x100
+            printf "  DIVBYZERO   : %d\n", (*$UFSR & 0x100) ? 1 :0
+        end
+        if *$UFSR & 0x80
+            printf "  UNALIGNED   : %d\n", (*$UFSR & 0x80) ? 1 :0
+        end
+        if *$UFSR & 0x08
+            printf "  NOCP        : %d\n", (*$UFSR & 0x08) ? 1 :0
+        end
+        if *$UFSR & 0x04
+            printf "  INVPC       : %d\n", (*$UFSR & 0x04) ? 1 :0
+        end
+        if *$UFSR & 0x02
+            printf "  INVSTATE    : %d\n", (*$UFSR & 0x02) ? 1 :0
+        end
+        if *$UFSR & 0x01
+            printf "  UNDEFINSTR  : %d\n", (*$UFSR & 0x01) ? 1 :0
+        end
+    end
+
+    if *$HFSR != 0
+        printf "$HFSR(0x%08X) = 0x%08x\n", $HFSR,*$HFSR
+        if *$HFSR & 0x80000000
+            printf "  DEBUGEVT    : %d\n", (*$HFSR & 0x80000000) ? 1 :0
+        end
+        if *$HFSR & 0x40000000
+            printf "  FORCED      : %d\n", (*$HFSR & 0x40000000) ? 1 :0
+        end
+        if *$HFSR & 0x02
+            printf "  VECTBL      : %d\n", (*$HFSR & 0x02) ? 1 :0
+        end
+    end
+    
+    if *$DFSR != 0
+        printf "$DFSR(0x%08X) = 0x%08x\n", $DFSR, *$DFSR
+        if (*$DFSR & 0x10)
+            printf "  EXTERNAL : %d\n", (*$DFSR & 0x10) ? 1 :0
+        end
+        if (*$DFSR & 0x08)
+            printf "  VCATCH   : %d\n", (*$DFSR & 0x08) ? 1 :0
+        end
+        if (*$DFSR & 0x04)
+            printf "  DWTTRAP  : %d\n", (*$DFSR & 0x04) ? 1 :0
+        end
+        if (*$DFSR & 0x02)
+            printf "  BKPT     : %d\n", (*$DFSR & 0x02) ? 1 :0
+        end
+        if (*$DFSR & 0x01)
+            printf "  HALTED   : %d\n", (*$DFSR & 0x01) ? 1 :0
+        end
+    end
+    if *$AFSR != 0
+        printf "*$AFSR =0x%08x\n", *$AFSR
+    end
+end
+
+define unwind_stack
+    #Set registers to their state prior to exception entry
+    #to investigate origin of fault
+    set $exc_frame = ($lr & 0x4) ? $psp : $msp
+    set $stacked_xpsr = ((unsigned int*)$exc_frame)[7]
+    set $exc_frame_len = 32 + (($stacked_xpsr) ? 0x4 : 0x0) + (($lr & 0x10) ? 0 : 72)
+    set $sp=($exc_frame + $exc_frame_len)
+    set $lr=((unsigned int*)$exc_frame))[5]
+    set $pc=((unsigned int*)$exc_frame))[6]
+end
+
+#SCB_Type
+define scb
+    set $CPUID = (unsigned int*)0xE000ED00
+    set $ICSR = (unsigned int*)0xE000ED04
+    set $VTOR = (unsigned int*)0xE000ED08
+    set $AIRCR = (unsigned int*)0xE000ED0C
+    set $SCR = (unsigned int*)0xE000ED10
+    set $CCR = (unsigned int*)0xE000ED14
+    set $pSHP = (unsigned char*)0xE000ED18
+    set $SHCSR = (unsigned int*)0xE000ED24
+
+    printf "CPUID(0x%08X)=0x%08x\n", $CPUID, *$CPUID
+    if *$pSHP != 0
+        printf "MemFaultPri = %d\n", *$pSHP
+    end
+    if *($pSHP+1) != 0
+        printf "UsageFaultPri = %d\n", *($pSHP+1)
+    end
+    if *($pSHP+2) != 0
+        printf "BusFaultPri = %d\n", *($pSHP+2)
+    end
+    if *($pSHP+7) != 0
+        printf "SVCPri = %d\n", *($pSHP+7)
+    end
+    if *($pSHP+8) != 0
+        printf "DebugMonPri = %d\n", *($pSHP+8)
+    end
+    if *($pSHP+10) != 0
+        printf "PendSVPri = %d\n", *($pSHP+10)
+    end
+    if *($pSHP+11) != 0
+        printf "SysTickPri = %d\n", *($pSHP+11)
+    end
+
+    if *$ICSR != 0
+        printf "ICSR(0x%08X) = 0x%08x\n", $ICSR,*$ICSR
+        if (*$ICSR & 0x1F)
+            printf "  VECTACTIVE : %d\n", (*$ICSR & 0x1F)
+        end
+        if (*$ICSR & (1<<9))
+            printf "  RETTOBASE : %d\n", (*$ICSR & (1<<9)) ? 1 : 0
+        end
+        if (*$ICSR & (0x1F<<12))
+            printf "  VECTPENDING : %d\n", (*$ICSR & (0x1F<<12))>>12
+        end
+        if (*$ICSR & (1<<22))
+            printf "  ISRPENDING : %d\n", (*$ICSR & (1<<22)) ? 1 : 0
+        end
+        if (*$ICSR & (1<<23))
+            printf "  ISRPREEMPT : %d\n", (*$ICSR & (1<<23)) ? 1 : 0
+        end
+        if (*$ICSR & (1<<26))
+            printf "  PENDSTSET : %d\n", (*$ICSR & (1<<26)) ? 1 : 0
+        end
+        if (*$ICSR & (1<<28))
+            printf "  PENDSVSET : %d\n", (*$ICSR & (1<<28)) ? 1 : 0
+        end
+        if (*$ICSR & (1<<31))
+            printf "  NMIPENDSET : %d\n", (*$ICSR & (1<<31)) ? 1 : 0
+        end
+    end
+
+    printf "VTOR(0x%08X) = 0x%08x\n", $VTOR, *$VTOR
+    if *$VTOR & 1<<29
+        printf "  Vector table in RAM zone\n"
+    else 
+        printf "  Vector table in Code zone\n"
+    end
+
+    printf "AIRCR(0x%08X) = 0x%08x\n", $AIRCR,*$AIRCR
+    printf "  PRIGROUP : %d\n", (*$AIRCR>>8)&7
+    
+    printf "CCR(0x%08X) = 0x%08x\n", $CCR,*$CCR
+    printf "  STKALIGN       : %d\n", (*$CCR & (1<<9)) ? 1 : 0
+    printf "  BFHFNMIGN      : %d\n", (*$CCR & (1<<8)) ? 1 : 0
+    printf "  DIV_0_TRP      : %d\n", (*$CCR & (1<<4)) ? 1 : 0
+    printf "  UNALIGN_TRP    : %d\n", (*$CCR & (1<<3)) ? 1 : 0
+    printf "  USERSETMPEND   : %d\n", (*$CCR & (1<<1)) ? 1 : 0
+    printf "  NONBASETHRDENA : %d\n", (*$CCR & (1<<0)) ? 1 : 0
+
+    if *$SHCSR !=0
+        printf "SHCSR(0x%08X) = 0x%08x\n", $SHCSR, *$SHCSR
+        #if (*$SHCSR & (1<<18))
+            printf "  USGFAULTENA : %d\n", (*$SHCSR & (1<<18)) ? 1 : 0
+        #end
+        #if (*$SHCSR & (1<<17))
+            printf "  BUSFAULTENA : %d\n", (*$SHCSR & (1<<17)) ? 1 : 0
+        #end
+        #if (*$SHCSR & (1<<16))
+            printf "  MEMFAULTENA : %d\n", (*$SHCSR & (1<<16)) ? 1 : 0
+        #end
+        if (*$SHCSR & (1<<15))
+            printf "  SVCALLPENDED : %d\n", (*$SHCSR & (1<<15)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<14))
+            printf "  BUSFAULTPENDED : %d\n", (*$SHCSR & (1<<14)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<13))
+            printf "  MEMFAULTPENDED : %d\n", (*$SHCSR & (1<<13)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<12))
+            printf "  USGFAULTPENDED : %d\n", (*$SHCSR & (1<<12)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<11))
+            printf "  SYSTICKACT : %d\n", (*$SHCSR & (1<<11)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<10))
+            printf "  PENDSVACT : %d\n", (*$SHCSR & (1<<10)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<8))
+            printf "  MONITORACT : %d\n", (*$SHCSR & (1<<8)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<7))
+            printf "  SVCALLACT : %d\n", (*$SHCSR & (1<<7)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<3))
+            printf "  USGFAULTACT : %d\n", (*$SHCSR & (1<<3)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<1))
+            printf "  BUSFAULTACT : %d\n", (*$SHCSR & (1<<1)) ? 1 : 0
+        end
+        if (*$SHCSR & (1<<0))
+            printf "  MEMFAULTACT : %d\n", (*$SHCSR & (1<<0)) ? 1 : 0
+        end
+    end
+
+end
+
+#debug
+define debug_reg
+    set $DHCSR = *(unsigned int*)0xE000EDF0
+    set $DCRSR = *(unsigned int*)0xE000EDF4
+    set $DCRDR = *(unsigned int*)0xE000EDF8
+    set $DEMCR = *(unsigned int*)0xE000EDFC
+end
+
+#软件触发中断寄存器
+define set_stir
+    set $STIR = *(unsigned int*)0xE000EF00
+    if $argc == 1
+        set $STIR = $arg0
+    else
+        printf "set_stir <irq_number>"
+    end    
+end
+
+define systick
+    set $SYSTICK_CTRL= (unsigned int*)0xE000E010
+    set $SYSTICK_LOAD= (unsigned int*)0xE000E014
+    set $SYSTICK_VAL= (unsigned int*)0xE000E018
+    set $SYSTICK_CALIB= (unsigned int*)0xE000E01C
+
+    set $systick_ctrl = *$SYSTICK_CTRL
+    if $systick_ctrl != 0
+        printf "SYSTICK_CTRL(0x%08X) = 0x%08x\n", $SYSTICK_CTRL, $systick_ctrl
+        if $systick_ctrl & 1
+            printf "  ENABLE : %d\n",  ($systick_ctrl & (1<<0)) ? 1 : 0
+        end
+        if $systick_ctrl & (1<<1)
+            printf "  TICKINT : %d\n",  ($systick_ctrl & (1<<1)) ? 1 : 0
+        end
+        if $systick_ctrl & (1<<2)
+            printf "  CLKSOURCE : %d\n",  ($systick_ctrl & (1<<2)) ? 1 : 0
+        end
+        if $systick_ctrl & (1<<16)
+            printf "  COUNTFLAG : %d\n",  ($systick_ctrl & (1<<16)) ? 1 : 0
+        end
+    end
+    set $systick_load = *$SYSTICK_CTRL
+    if $systick_load != 0
+        printf "SYSTICK_LOAD(0x%08X) = 0x%08x\n", $SYSTICK_LOAD, $systick_load
+    end
+    set $systick_val = *$SYSTICK_VAL
+    if $systick_val != 0
+        printf "SYSTICK_VAL(0x%08X) = 0x%08x\n", $SYSTICK_VAL, $systick_val
+    end
+    set $systick_calib = *$SYSTICK_CALIB
+    if $systick_calib != 0
+        printf "SYSTICK_CALIB(0x%08X) = 0x%08x\n", $SYSTICK_CALIB, $systick_calib
+        printf "  NOREF : %d\n",  ($systick_calib & (1<<31)) ? 1 : 0
+        printf "  SKEW : %d\n",  ($systick_calib & (1<<30)) ? 1 : 0
+        printf "  TENMS : %d\n",  ($systick_calib & 0xFFFFFF)
+    end
+end
+
+
 target remote localhost:1234
 load
 set disassemble-next-line on
