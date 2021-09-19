@@ -2,7 +2,11 @@
 @REM set QEMU_ROOT=D:\workspace\tools\qemu
 @REM set GDB_ROOT=C:\Users\Ophelia\.vscode\extensions\metalcode-eu.windows-arm-none-eabi-0.1.6\bin\
 
-SET HOME=%USERPROFILE%
+@SET HOME=%USERPROFILE%
+
+@REM PYTHONPATH 用于扩充Python查找模块文件的路径
+@set PYTHONPATH=D:\Tools\install\Python\Python27\Lib
+@set PYTHONHOME=D:\Tools\install\Python\Python27
 
 @set ROOT_DIR=%CD%
 @set QEMU_ROOT=%ROOT_DIR%\tools\qemu\win\w64-202107062
@@ -11,4 +15,4 @@ SET HOME=%USERPROFILE%
 @set OPENOCD_ROOT=%ROOT_DIR%\tools\openocd\OpenOCD-20210519-0.11.0\bin
 @set HEXDUMP_ROOT=%ROOT_DIR%\tools\hexdump
 @set TOOL_ROOT=%ROOT_DIR%\tools\
-@set PATH=%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%
+@set PATH=%PYTHONPATH%;%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%
