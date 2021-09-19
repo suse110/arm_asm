@@ -8,3 +8,4 @@ SRC += $(CHIP_DIR)/src/syscalls.c
 endif
 CFLAGS += -I$(SDKPATH)/drivers/chip/lm3s811/inc
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
+CFLAGS += -DHAL_DRIVER_ENABLE

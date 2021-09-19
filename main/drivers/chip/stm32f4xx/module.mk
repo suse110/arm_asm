@@ -60,4 +60,6 @@ SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_ltdc.c
 CFLAGS += -I$(SDKPATH)/drivers/chip/stm32f4xx/STM32F4xx_HAL_Driver/inc
 
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
+CFLAGS += -DHAL_DRIVER_ENABLE
+
 

@@ -103,3 +103,4 @@ SRC += $(CHIP_DIR)/BSP/STM32L5xx_Nucleo/stm32l5xx_nucleo_usbpd_pwr.c
 CFLAGS += -I$(SDKPATH)/drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/inc
 CFLAGS += -I$(SDKPATH)/drivers/chip/stm32l5xx/BSP/STM32L5xx_Nucleo
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
+CFLAGS += -DHAL_DRIVER_ENABLE
