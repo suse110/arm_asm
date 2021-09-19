@@ -53,6 +53,12 @@ run: all
 	@echo "No output, please run 'make debug' to see details"
 	@$(QEMU) $(QFLAGS) -kernel ./$(BUILD_DIR)/$(EXEC).elf -s -S &
 
+run_block: all
+	@echo "Press Ctrl-A and then X to exit QEMU"
+	@echo "------------------------------------"
+	@echo "No output, please run 'make debug' to see details"
+	@$(QEMU) $(QFLAGS) -kernel ./$(BUILD_DIR)/$(EXEC).elf -s -S
+
 .PHONY : debug
 debug: all
 	@echo "Press Ctrl-C and then input 'quit' to exit GDB and QEMU"

@@ -2,7 +2,8 @@ EXEC = test
 
 BUILD_DIR=./build
 
-ASMSRC = $(EXEC).s 
+SRC = $(EXEC).c
+ASMSRC = start.s 
 LINKSCRIPT = $(EXEC).ld
 GDBINIT = ../gdbinit
 #use stdlib
