@@ -1,8 +1,9 @@
 #include "serial.h"
 #include "main.h"
+#ifdef HAL_DRIVER_ENABLE
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
-
+#endif
 #ifdef __GNUC__
   /* With GCC, small printf (option LD Linker->Libraries->Small printf
      set to 'Yes') calls __io_putchar() */
@@ -22,6 +23,7 @@ void serial_init(void)
       - Parity = ODD parity
       - BaudRate = 9600 baud
       - Hardware flow control disabled (RTS and CTS signals) */
+#ifdef HAL_DRIVER_ENABLE
   UartHandle.Instance          = USARTx;
   
   UartHandle.Init.BaudRate     = 921600;

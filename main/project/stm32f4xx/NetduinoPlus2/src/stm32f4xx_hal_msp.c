@@ -34,7 +34,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-
+#ifdef HAL_DRIVER_ENABLE
 /** @defgroup HAL_MSP_Private_Functions
   * @{
   */
@@ -172,7 +172,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
   HAL_NVIC_DisableIRQ(USARTx_DMA_TX_IRQn);
   HAL_NVIC_DisableIRQ(USARTx_DMA_RX_IRQn);
 }
-
+#endif
 /**
   * @}
   */

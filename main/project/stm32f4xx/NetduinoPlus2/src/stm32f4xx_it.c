@@ -41,7 +41,8 @@
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
 /******************************************************************************/
-#if 1
+
+#ifndef EXCEPTION_ENABLE
 /**
   * @brief  This function handles NMI exception.
   * @param  None
@@ -49,6 +50,7 @@
   */
 void NMI_Handler(void)
 {
+  printf("[%s]\n", __func__);
 }
 
 /**
@@ -56,7 +58,7 @@ void NMI_Handler(void)
   * @param  None
   * @retval None
   */
-#if 0
+
 void HardFault_Handler(void)
 {
   printf("[%s]\n", __func__);
@@ -66,15 +68,17 @@ void HardFault_Handler(void)
   //   "MOV     r1, sp\n"                  /* get stack pointer (current is MSP) */
   //   "BL      cm_backtrace_fault\n"
   // );
+ #ifdef BACKTRACE_ENABLE
     //dump_stack()
   printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
   print_call_stack(cmb_get_sp());
+#endif
   #ifdef CM_BACKTRACE_ENABLE
     cm_backtrace_fault(cmb_get_lr(), cmb_get_sp());
   #endif
   for(;;);
 }
-#endif
+
 
 /**
   * @brief  This function handles Memory Manage exception.
@@ -114,7 +118,7 @@ void UsageFault_Handler(void)
   {
   }
 }
-
+#endif
 /**
   * @brief  This function handles SVCall exception.
   * @param  None
@@ -122,6 +126,7 @@ void UsageFault_Handler(void)
   */
 void SVC_Handler(void)
 {
+  printf("[%s] \n", __func__);
 }
 
 /**
@@ -131,6 +136,7 @@ void SVC_Handler(void)
   */
 void DebugMon_Handler(void)
 {
+  
 }
 
 /**
@@ -147,11 +153,11 @@ void DebugMon_Handler(void)
   * @param  None
   * @retval None
   */
-void SysTick_Handler(void)
-{
-  HAL_IncTick();
-}
-#endif
+// void SysTick_Handler(void)
+// {
+//   HAL_IncTick();
+// }
+
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
 /*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */

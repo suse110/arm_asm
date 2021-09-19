@@ -1,20 +1,38 @@
 
 SERVICE_DIR = kernel/service
 
-SRC += $(SERVICE_DIR)/lite_printf/lite_printf.c
+# for printf module
 SRC += $(SERVICE_DIR)/printf/printf.c
-SRC += $(SERVICE_DIR)/rtos/task.c
-
-SRC += $(SERVICE_DIR)/shell/src/shell.c
-SRC += $(SERVICE_DIR)/backtrace/src/backtrace.c
-
-
-CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/rtos
-CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/lite_printf
 CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/printf
-CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/shell/inc
-CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/backtrace/inc
+CFLAGS += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
+CFLAGS += -DPRINTF_DISABLE_SUPPORT_LONG_LONG
+CFLAGS += -DPRINTF_DISABLE_SUPPORT_FLOAT
+CFLAGS += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
+CFLAGS += -D__PRINTF
 
+SRC += $(SERVICE_DIR)/lite_printf/lite_printf.c
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/lite_printf
+
+
+ifeq ($(RTOS_ENABLE),y)
+SRC += $(SERVICE_DIR)/rtos/switch.c
+SRC += $(SERVICE_DIR)/rtos/task_main.c
+ASMSRC+=$(SERVICE_DIR)/rtos/osstart.s
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/rtos
+CFLAGS += -DRTOS_ENABLE
+endif
+
+ifeq ($(SHELL_ENABLE),y)
+SRC += $(SERVICE_DIR)/shell/src/shell.c
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/shell/inc
+CFLAGS += -DSHELL_ENABLE
+endif
+
+ifeq ($(BACKTRACE_ENABLE),y)
+SRC += $(SERVICE_DIR)/backtrace/src/backtrace.c
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/backtrace/inc
+CFLAGS += -DBACKTRACE_ENABLE
+endif
 
 ifeq ($(CM_BACKTRACE_ENABLE),y)
 SRC += $(SERVICE_DIR)/CmBacktrace/cm_backtrace/cm_backtrace.c
@@ -23,11 +41,7 @@ CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/CmBacktrace/cm_backtrace/config
 CFLAGS += -DCM_BACKTRACE_ENABLE
 endif
 
-# for printf module
-CFLAGS += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
-CFLAGS += -DPRINTF_DISABLE_SUPPORT_LONG_LONG
-CFLAGS += -DPRINTF_DISABLE_SUPPORT_FLOAT
-CFLAGS += -DPRINTF_DISABLE_SUPPORT_EXPONENTIAL
-CFLAGS += -D__PRINTF
 
+ifeq ($(EXCEPTION_ENABLE),y)
 include $(SDKPATH)/$(SERVICE_DIR)/exception/module.mk
+endif

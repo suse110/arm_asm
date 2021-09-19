@@ -140,7 +140,7 @@ int main(void)
   }
 }
 
-
+#ifdef HAL_DRIVER_ENABLE
 /**
   * @brief  System Clock Configuration
   *         The system Clock is configured as follow : 
@@ -201,7 +201,7 @@ static void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
+#endif
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

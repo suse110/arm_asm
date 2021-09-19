@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "hal.h"
+#ifdef SHELL_ENABLE
 #include "shell.h"
+#endif
 
 extern void exception_test(void);
 void main(void)
