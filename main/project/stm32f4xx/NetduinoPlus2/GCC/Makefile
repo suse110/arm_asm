@@ -9,7 +9,6 @@ APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
 ASMSRC += $(APP_DIR)/GCC/startup_stm32f405xx.s 
 SRC += $(APP_DIR)/src/main.c
 SRC += $(APP_DIR)/src/serial.c
-SRC += $(APP_DIR)/src/steper.c
 SRC += $(APP_DIR)/src/stm32f4xx_hal_msp.c
 SRC += $(APP_DIR)/src/stm32f4xx_it.c
 SRC += $(APP_DIR)/src/syscalls.c
@@ -19,7 +18,6 @@ SRC += $(APP_DIR)/src/hal_log.c
 LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/STM32F405RGTx_FLASH.ld
 
 GDBINIT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/gdbinit
-CFLAGS += -I$(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/inc 
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Include
 CFLAGS += -I$(SDKPATH)/drivers/CMSIS/Device/ST/STM32F4xx/Include
 CFLAGS += -I$(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/inc
@@ -40,9 +38,6 @@ CFLAGS += -DSTM32F4XX
 CFLAGS += -DSTM32F405xx
 
 
-CFLAGS += -ffunction-sections
-CFLAGS += -fdata-sections
-CFLAGS += -Wl,--gc-sections
 CFLAGS += -ffreestanding
 CFLAGS += -Wno-unused-parameter
 # CFLAGS += -mfloat-abi=soft

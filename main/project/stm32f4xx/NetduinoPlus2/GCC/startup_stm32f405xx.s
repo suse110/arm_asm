@@ -32,7 +32,7 @@
 
 .global  g_pfnVectors
 .global  Default_Handler
-
+.global PendSV_Handler_
 /* start address for the initialization values of the .data section. 
 defined in linker script */
 .word  _sidata
@@ -95,7 +95,7 @@ LoopFillZerobss:
 /* Call the clock system intitialization function.*/
   bl  SystemInit   
 /* Call static constructors */
-    bl __libc_init_array
+    # bl __libc_init_array
 /* Call the application's entry point.*/
   bl  main
   bx  lr    
@@ -112,7 +112,36 @@ LoopFillZerobss:
 Default_Handler:
 Infinite_Loop:
   b  Infinite_Loop
+  bkpt 1
   .size  Default_Handler, .-Default_Handler
+
+.section .text.pendsv_handler,"ax",%progbits
+.type PendSV_Handler, %function
+
+PendSV_Handler:
+mrs r0, psp
+cbz r0, PendSVHandler_nosave
+
+stmdb r0!,{r4-r11}
+
+ldr r1,  =current_task
+ldr r1, [r1] 
+str r0, [r1] //把sp保存在task堆栈里
+
+PendSVHandler_nosave:
+ldr r0,=current_task
+ldr r1,=next_task
+ldr r2,[r1]
+str r2,[r0]
+
+ldr   r0, [r2]
+ldmia R0!,{r4-r11}
+msr psp, r0
+orr lr,lr,#0x04
+bx lr
+.size PendSV_Handler,.-PendSV_Handler
+
+
 /******************************************************************************
 *
 * The minimal vector table for a Cortex M3. Note that the proper constructs
@@ -120,16 +149,13 @@ Infinite_Loop:
 * 0x0000.0000.
 * 
 *******************************************************************************/
-   .section  .isr_vector,"a",%progbits
-  .type  g_pfnVectors, %object
-  .size  g_pfnVectors, .-g_pfnVectors
-    
+  .section  .isr_vector,"a",%progbits
+.type  g_pfnVectors, %object
+.size  g_pfnVectors, .-g_pfnVectors
 
-	
 g_pfnVectors:
   .word  _estack
   .word  Reset_Handler
-
   .word  NMI_Handler
   .word  HardFault_Handler
   .word  MemManage_Handler
@@ -228,8 +254,7 @@ g_pfnVectors:
   .word     0                                 /* Reserved                  */                   
   .word     HASH_RNG_IRQHandler               /* Hash and Rng                 */
   .word     FPU_IRQHandler                    /* FPU                          */
-
-                      
+                    
 /*******************************************************************************
 *
 * Provide weak aliases for each Exception handler to the Default_Handler. 
@@ -258,8 +283,8 @@ g_pfnVectors:
    .weak      DebugMon_Handler
    .thumb_set DebugMon_Handler,Default_Handler
 
-   .weak      PendSV_Handler
-   .thumb_set PendSV_Handler,Default_Handler
+  #  .weak      PendSV_Handler
+  #  .thumb_set PendSV_Handler,Default_Handler
 
    .weak      SysTick_Handler
    .thumb_set SysTick_Handler,Default_Handler              
