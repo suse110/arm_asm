@@ -69,28 +69,62 @@ The first thing we can do is to programmatically trigger a breakpoint when the s
 
 /*define a C struct to represent the register stacking*/
 typedef struct __attribute__((packed)) ContextStateFrame {
-  uint32_t r0;
-  uint32_t r1;
-  uint32_t r2;
-  uint32_t r3;
-  uint32_t r12;
-  uint32_t lr;
-  uint32_t return_address;
-  uint32_t xpsr;
-  uint32_t r4;
-  uint32_t r5;
-  uint32_t r6;
-  uint32_t r7;
-  uint32_t r8;
-  uint32_t r9;
-  uint32_t r10;
-  uint32_t r11;
-  uint32_t psp;
-  uint32_t msp;
-  uint32_t control;
-  uint32_t basepri;
-  uint32_t primask;
-  uint32_t faultmask;
+  /*00*/uint32_t r0;
+  /*01*/uint32_t r1;
+  /*02*/uint32_t r2;
+  /*03*/uint32_t r3;
+  /*04*/uint32_t r12;
+  /*05*/uint32_t lr;
+  /*06*/uint32_t pc;
+  /*07*/uint32_t xpsr;
+  /*08*/uint32_t r4;
+  /*09*/uint32_t r5;
+  /*10*/uint32_t r6;
+  /*11*/uint32_t r7;
+  /*12*/uint32_t r8;
+  /*13*/uint32_t r9;
+  /*14*/uint32_t r10;
+  /*15*/uint32_t r11;
+  /*16*/uint32_t sp;
+  /*17*/uint32_t msp;
+  /*18*/uint32_t psp;
+  /*19*/uint32_t control;
+  /*20*/uint32_t basepri;
+  /*21*/uint32_t primask;
+  /*22*/uint32_t faultmask;
+  /*23*/uint32_t fpscr;
+  /*24*/uint32_t s0;
+  /*25*/uint32_t s1;
+  /*26*/uint32_t s2;
+  /*27*/uint32_t s3;
+  /*28*/uint32_t s4;
+  /*29*/uint32_t s5;
+  /*30*/uint32_t s6;
+  /*31*/uint32_t s7;
+  /*32*/uint32_t s8;
+  /*33*/uint32_t s9;
+  /*34*/uint32_t s10;
+  /*35*/uint32_t s11;
+  /*36*/uint32_t s12;
+  /*37*/uint32_t s13;
+  /*38*/uint32_t s14;
+  /*39*/uint32_t s15;
+  /*40*/uint32_t s16;
+  /*41*/uint32_t s17;
+  /*42*/uint32_t s18;
+  /*43*/uint32_t s19;
+  /*44*/uint32_t s20;
+  /*45*/uint32_t s21;
+  /*46*/uint32_t s22;
+  /*47*/uint32_t s23;
+  /*48*/uint32_t s24;
+  /*49*/uint32_t s25;
+  /*50*/uint32_t s26;
+  /*51*/uint32_t s27;
+  /*52*/uint32_t s28;
+  /*53*/uint32_t s29;
+  /*54*/uint32_t s30;
+  /*55*/uint32_t s31;
 } sContextStateFrame;
 
 #define CRASH_INFO_MAGIC 0xdead55aa
@@ -115,10 +149,13 @@ odd address for ARM Thumb code
 
 #define HARDFAULT_HANDLING_ASM(_x)                                    \
                        __asm volatile(                                \
+/*                    */   "mrs r3, primask\n"               \
+/*                    */   "cpsid i\n"               \
 /*                    */   "ldr r1, =last_crash_info\n"               \
 /*                    */   "ldr r2, =0xdead55aa\n"                    \
 /*                    */   "str r2, [r1]\n"                           \
 /*                    */   "add r1, r1, #4\n"                         \
+/*                    */   "mov r4, lr \n"                            \
 /*                    */   "tst lr, #4 \n"                            \
 /*                    */   "ite eq \n"                                \
 /*                    */   "mrseq r0, msp \n"                         \
@@ -140,7 +177,7 @@ odd address for ARM Thumb code
 /* load xpsr          */   "ldr r2, [r0, #28] \n"                     \
 /* store xpsr         */   "str r2, [r1, #28] \n"                     \
 /* add pointer        */   "add r1, r1, #28 \n"                       \
-/* store r4-r11       */   "stmia r1!, {r4-r11} \n"                   \
+/* store r4-r11       */   "stmia r1!, {r4-r11}\n"                    \
 /* load psp           */   "mrs r2, psp \n"                           \
 /* store psp          */   "str r2, [r1, #0] \n"                      \
 /* load msp           */   "mrs r2, msp \n"                           \
@@ -149,15 +186,17 @@ odd address for ARM Thumb code
 /* store control      */   "str r2, [r1, #8] \n"                      \
 /* load basepri       */   "mrs r2, basepri \n"                       \
 /* store basepri      */   "str r2, [r1, #12] \n"                     \
-/* load primask       */   "mrs r2, primask \n"                       \
-/* store primask      */   "str r2, [r1, #16] \n"                     \
+/* store primask      */   "str r3, [r1, #16] \n"                     \
 /* load faultmask     */   "mrs r2, faultmask \n"                     \
 /* store faultmask    */   "str r2, [r1, #20] \n"                     \
 /*                    */   "ldr r0, =last_crash_info\n"               \
 /*                    */   "b HardFault_Handler_C \n"                 \
                                                  )
 
+__attribute__((optimize("O0")))
+void exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type) {
 
+}
 
 /**
  * HardFaultHandler_C:
@@ -209,7 +248,7 @@ void HardFault_Handler_C(sCrashInfo *sCrashInfo) {
   // Clear any logged faults from the CFSR
   SCB->CFSR |= SCB->CFSR;
   // the instruction we will return to when we exit from the exception
-  frame->return_address = (uint32_t)recover_from_task_fault;
+  frame->pc = (uint32_t)recover_from_task_fault;
   // the function we are returning to should never branch
   // so set lr to a pattern that would fault if it did
   frame->lr = 0xdeadbeef;
@@ -294,31 +333,41 @@ void HardFault_Handler(void)
 {
   HARDFAULT_HANDLING_ASM();
 }
-
-static void MemoryManagement_Handler(void) {
- 
+__attribute__((naked))
+void MemoryManagement_Handler(void) {
+  HARDFAULT_HANDLING_ASM();
 }
-
-static void BusFault_Handler(void) {
-
+__attribute__((naked))
+void BusFault_Handler(void) {
+  HARDFAULT_HANDLING_ASM();
 }
-
-static void UsageFault_Handler(void) {
-
+__attribute__((naked))
+void UsageFault_Handler(void) {
+  HARDFAULT_HANDLING_ASM();
 }
 
 void Irq0_Handler(void) {
-
+  HARDFAULT_HANDLING_ASM();
 }
 
 void Irq1_Handler(void);
 
-
-void SVC_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-
+__attribute__((naked))
+static void SVC_Handler(void) {
+  HARDFAULT_HANDLING_ASM();
+}
+// __attribute__((naked))
+// static void PendSV_Handler(void) {
+//   HARDFAULT_HANDLING_ASM();
+// }
+// __attribute__((naked))
+// static void SysTick_Handler(void) {
+//   HARDFAULT_HANDLING_ASM();
+// }
 extern void Reset_Handler(void);
+extern void PendSV_Handler(void);
+extern void SysTick_Handler(void);
+
 #define IRQ_NUM_MAX 85
 // A minimal vector table for a Cortex M.
 __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_MAX])(void) = {
@@ -357,3 +406,23 @@ void exception_test(void)
   trigger_crash(0);
 }
 
+uint32_t __platform_assert_lr = 0;
+typedef struct {
+  const char* expr;
+  const char* file;
+  uint32_t line;
+} assert_info_t;
+assert_info_t assert_info;
+__attribute__((__section__(".exception.__platform_assert")))
+void __platform_assert(const char *expr, const char *file, uint32_t line)
+{
+  __platform_assert_lr = (uint32_t)__builtin_return_address(0);
+  __disable_irq();
+  assert_info.expr = expr;
+  assert_info.file = file;
+  assert_info.line = line;
+
+  SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk;
+  *((volatile uint32_t*)0xFFFFFFF1) = 1;
+  while(1);
+}
