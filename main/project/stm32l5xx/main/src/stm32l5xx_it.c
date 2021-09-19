@@ -64,7 +64,7 @@
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
-
+#if 0
 /******************************************************************************/
 /*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
@@ -80,7 +80,7 @@ void NMI_Handler(void)
 
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
-#if 0
+
 /**
   * @brief This function handles Hard fault interrupt.
   */
@@ -95,7 +95,7 @@ void HardFault_Handler(void)
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
-#endif
+
 
 /**
   * @brief This function handles Memory management fault.
@@ -142,18 +142,6 @@ void UsageFault_Handler(void)
   }
 }
 
-/**
-  * @brief This function handles System service call via SWI instruction.
-  */
-void SVC_Handler(void)
-{
-  /* USER CODE BEGIN SVCall_IRQn 0 */
-
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
-
-  /* USER CODE END SVCall_IRQn 1 */
-}
 
 /**
   * @brief This function handles Debug monitor.
@@ -166,6 +154,19 @@ void DebugMon_Handler(void)
   /* USER CODE BEGIN DebugMonitor_IRQn 1 */
 
   /* USER CODE END DebugMonitor_IRQn 1 */
+}
+#endif
+/**
+  * @brief This function handles System service call via SWI instruction.
+  */
+void SVC_Handler(void)
+{
+  /* USER CODE BEGIN SVCall_IRQn 0 */
+
+  /* USER CODE END SVCall_IRQn 0 */
+  /* USER CODE BEGIN SVCall_IRQn 1 */
+
+  /* USER CODE END SVCall_IRQn 1 */
 }
 
 /**

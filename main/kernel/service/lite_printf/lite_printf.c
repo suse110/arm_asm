@@ -2,33 +2,10 @@
 #include <stdint.h>
 #include "lite_printf.h"
 
-#ifdef QEMU_DEBUG_ENABLE 
-static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
 
-void _putchar(const char ch)
-{
-    *UART_DR = ch;
-}
-
-char _getchar(void)
-{
-    return(char)*UART_DR;
-}
-
-int __io_putchar(int ch)
-{
-    _putchar(ch);
-    return 0;
-}
-
-int __io_getchar(void)
-{
-    return (int)_getchar();
-}
-
-#else
 extern int __io_putchar(int ch);
 extern int __io_getchar(void);
+
 void _putchar(const char ch)
 {
     __io_putchar(ch);
@@ -38,7 +15,7 @@ char _getchar(void)
 {
     return(char)__io_getchar();
 }
-#endif
+
 void lite_getchar(char *chr)
 {
     do {

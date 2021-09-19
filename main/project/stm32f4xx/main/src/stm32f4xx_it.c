@@ -74,7 +74,7 @@ void HardFault_Handler(void)
   #endif
   for(;;);
 }
-#endif
+
 
 /**
   * @brief  This function handles Memory Manage exception.
@@ -114,7 +114,7 @@ void UsageFault_Handler(void)
   {
   }
 }
-
+#endif
 /**
   * @brief  This function handles SVCall exception.
   * @param  None

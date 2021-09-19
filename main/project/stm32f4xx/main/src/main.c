@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "backtrace.h"
+
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{

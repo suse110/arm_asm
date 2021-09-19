@@ -4,6 +4,20 @@
 #include "shell.h"
 #endif
 
+static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
+
+int __io_putchar(int ch)
+{
+    *UART_DR = ch;
+    return 0;
+}
+
+int __io_getchar(void)
+{
+    return(int)*UART_DR;
+}
+
+
 extern void exception_test(void);
 void main(void)
 {

@@ -6,9 +6,6 @@ BUILD_DIR = $(SDKPATH)/build/$(CHIP_COFNIG)/$(EXEC)
 
 APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
 
-include ./feature.mk
-include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
-include $(SDKPATH)/kernel/service/module.mk
 
 ASMSRC += $(APP_DIR)/GCC/test.s 
 SRC += $(APP_DIR)/test.c
@@ -23,6 +20,11 @@ CFLAGS += -mcpu=cortex-m3
 CFLAGS += -mfloat-abi=soft
 
 QFLAGS += -machine lm3s811evb
+
+
+include ./feature.mk
+include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
+include $(SDKPATH)/kernel/service/module.mk
 
 
 include $(SDKPATH)/rule.mk
