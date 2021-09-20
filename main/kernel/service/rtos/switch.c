@@ -3,7 +3,7 @@
 #include "os.h"
 #include "hal_platform.h"
 
-
+uint8_t sched_lock_count;
 
 uint32_t task_enter_critical(void)
 {

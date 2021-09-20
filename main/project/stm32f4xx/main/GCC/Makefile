@@ -37,6 +37,7 @@ CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb
 CFLAGS += -mlittle-endian
 CFLAGS += -mthumb-interwork
+# CFLAGS += -mfloat-abi=soft
 CFLAGS += -mfloat-abi=hard
 CFLAGS += -mfpu=fpv4-sp-d16
 CFLAGS += -DUSE_STDPERIPH_DRIVER
@@ -49,7 +50,12 @@ CFLAGS += -fdata-sections
 CFLAGS += -Wl,--gc-sections
 CFLAGS += -ffreestanding
 CFLAGS += -Wno-unused-parameter
-# CFLAGS += -mfloat-abi=soft
+# CFLAGS += -nostartfiles
+
+# CFLAGS += -nodefaultlibs
+#This fix undefined reference to `__aeabi_uldivmod'
+# CFLAGS += -lgcc
+
 
 
 SRC += $(CHIP_DIR)/BSP/STM32F4xx-Nucleo/stm32f4xx_nucleo.c

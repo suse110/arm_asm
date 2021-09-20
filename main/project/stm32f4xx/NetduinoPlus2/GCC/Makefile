@@ -31,8 +31,8 @@ CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb
 CFLAGS += -mlittle-endian
 CFLAGS += -mthumb-interwork
-CFLAGS += -mfloat-abi=hard
-CFLAGS += -mfpu=fpv4-sp-d16
+# CFLAGS += -mfloat-abi=hard
+# CFLAGS += -mfpu=fpv4-sp-d16
 CFLAGS += -DUSE_STDPERIPH_DRIVER
 CFLAGS += -DSTM32F4XX
 CFLAGS += -DSTM32F405xx

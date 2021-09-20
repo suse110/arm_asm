@@ -240,7 +240,7 @@ void HardFault_Handler_C(sCrashInfo *sCrashInfo) {
   if (faulted_from_exception || non_usage_fault_occurred) {
     // For any fault within an ISR or non-usage faults
     // let's reboot the system
-    SCB->AIRCR = (0x05FA << 16) | SCB_AIRCR_SYSRESETREQ_Msk;
+    // SCB->AIRCR = (0x05FA << 16) | SCB_AIRCR_SYSRESETREQ_Msk;
     while (1) { } // should be unreachable
   }
   extern void recover_from_task_fault(void);

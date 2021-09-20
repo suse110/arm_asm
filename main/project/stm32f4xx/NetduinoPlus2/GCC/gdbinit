@@ -393,10 +393,11 @@ end
 
 define lr
     printf "LR = 0x%08x\n",$lr
-    printf "  Return to %s\n", ($lr & 0x8) ? "Thread Mode" : "Handler Mode"
-    printf "  Return to %s\n", ($lr & 0x4) ? "PSP" : "MSP"
-    printf "  Return to %s\n", ($lr & 0x1) ? "Thumb" : "ARM,Error!!.Only thumb in CM3/4"
+    printf "  Return to %d. Handler Mode=0,thread Mode=1  : %d\n", ($lr & 0x8) ? 1 : 0, ($lr & 0x8) ? 1 : 0
+    printf "  Return to %d. PSP=1,MSP=0                   : %d\n", ($lr & 0x4) ? 1 : 0, ($lr & 0x4) ? 1 : 0
+    printf "  Should Always be 1 in CM3/4                 : %d\n", ($lr & 0x1) ? 1 : 0
 end
+
 
 target remote localhost:1234
 load
