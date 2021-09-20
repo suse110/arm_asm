@@ -93,7 +93,7 @@ void task_delay(uint32_t delay)
 __attribute__((weak)) uint32_t SystemCoreClock = 24000000;
 void set_systick_period(uint32_t ms)
 {
-    uint32_t ticks = SystemCoreClock/1000;
+    uint32_t ticks = 24000;//SystemCoreClock/1000;
     ticks = ms*ticks;
 
     SysTick_Config(ticks);

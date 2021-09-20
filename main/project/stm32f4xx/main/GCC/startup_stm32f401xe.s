@@ -129,33 +129,33 @@ Infinite_Loop:
   b  Infinite_Loop
   .size  Default_Handler, .-Default_Handler
 
-# .section  .text.PendSV_Handler
-# .weak  PendSV_Handler
-# .type  PendSV_Handler, %function
-# PendSV_Handler:
-#   MRS     R0, PSP                 
-#   CBZ     R0, PendSVHandler_nosave
+.section  .text.PendSV_Handler
+.weak  PendSV_Handler
+.type  PendSV_Handler, %function
+PendSV_Handler:
+  MRS     R0, PSP                 
+  CBZ     R0, PendSVHandler_nosave
 
-#   STMDB   R0!, {R4-R11}           
+  STMDB   R0!, {R4-R11}           
 
-#   LDR     R1, =current_task        
-#   LDR     R1, [R1]                
-#   STR     R0, [R1]                
+  LDR     R1, =current_task        
+  LDR     R1, [R1]                
+  STR     R0, [R1]                
 
-#   PendSVHandler_nosave:                
+  PendSVHandler_nosave:                
 
-#   LDR     R0, =current_task        
-#   LDR     R1, =next_task           
-#   LDR     R2, [R1]                
-#   STR     R2, [R0]                
+  LDR     R0, =current_task        
+  LDR     R1, =next_task           
+  LDR     R2, [R1]                
+  STR     R2, [R0]                
   
-#   LDR     R0, [R2]                
-#   LDMIA   R0!, {R4-R11}           
+  LDR     R0, [R2]                
+  LDMIA   R0!, {R4-R11}           
 
-#   MSR     PSP, R0                 
-#   ORR     LR, LR, #0x04           
-#   BX      LR           
-# .size  PendSV_Handler, .-PendSV_Handler
+  MSR     PSP, R0                 
+  ORR     LR, LR, #0x04           
+  BX      LR           
+.size  PendSV_Handler, .-PendSV_Handler
 
 /******************************************************************************
 *
@@ -295,14 +295,14 @@ g_pfnVectors:
    .weak      UsageFault_Handler
    .thumb_set UsageFault_Handler,Default_Handler
 
-   .weak      SVC_Handler
-   .thumb_set SVC_Handler,Default_Handler
+  #  .weak      SVC_Handler
+  #  .thumb_set SVC_Handler,Default_Handler
 
    .weak      DebugMon_Handler
    .thumb_set DebugMon_Handler,Default_Handler
 
-   .weak      PendSV_Handler
-   .thumb_set PendSV_Handler,Default_Handler
+  #  .weak      PendSV_Handler
+  #  .thumb_set PendSV_Handler,Default_Handler
 
    .weak      SysTick_Handler
    .thumb_set SysTick_Handler,Default_Handler              

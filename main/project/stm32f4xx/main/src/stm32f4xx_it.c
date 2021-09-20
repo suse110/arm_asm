@@ -122,6 +122,7 @@ void UsageFault_Handler(void)
   */
 void SVC_Handler(void)
 {
+  printf("This is [%s]\n", __func__);
 }
 
 /**
