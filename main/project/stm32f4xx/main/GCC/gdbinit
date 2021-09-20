@@ -1,12 +1,12 @@
-display/z $r0
-display/z $r1
-display/z $r2
-display/z $r3
-display/z $r4
-display/z $sp
-display/z $pc
-display/z $lr
-display/z $xpsr
+#display/z $r0
+#display/z $r1
+#display/z $r2
+#display/z $r3
+#display/z $r4
+#display/z $sp
+#display/z $pc
+#display/z $lr
+#display/z $xpsr
 
 define hook_continue
     # Enable automatic halt for HardFault Exception using
@@ -334,6 +334,81 @@ define systick
         printf "  SKEW : %d\n",  ($systick_calib & (1<<30)) ? 1 : 0
         printf "  TENMS : %d\n",  ($systick_calib & 0xFFFFFF)
     end
+end
+
+define nvic
+    set $ISER = (uint32_t*)0xE000E100
+    set $ISPR = (uint32_t*)0xE000E200
+    set $IABR = (uint32_t*)0xE000E300
+    set $IP = (uint8_t*)0xE000E400
+
+    #irq numbers
+    set $IRQ_NUMS = 81
+    set $IRQ_REG_NUMS = ($IRQ_NUMS>>5) + (($IRQ_NUMS&0x1F) ? 1 : 0)
+    set $i = 0
+    while $i < $IRQ_REG_NUMS
+        set $iser = *($ISER  + $i)
+        if $iser !=0
+            printf "ISER[%d](0x%08X) = 0x%08x\n", $i, ($ISER  + $i), $iser
+            set $j = 0
+            while $j < 32
+                if $iser & (1 << $j)
+                    printf "  IRQ%d is enable\n", ($i * 32 + $j)
+                end
+                set $j = $j + 1
+            end
+        end
+        set $i = $i + 1
+    end
+
+    set $i = 0
+    while $i < $IRQ_REG_NUMS
+        set $ispr = *($ISPR  + $i)
+        if $ispr !=0
+            printf "ISPR[%d](0x%08X) = 0x%08x\n", $i, ($ISPR  + $i), $ispr
+            set $j = 0
+            while $j < 32
+                if $ispr & (1 << $j)
+                    printf "  IRQ%d is pending\n", ($i * 32 + $j)
+                end
+                set $j = $j + 1
+            end
+        end
+        set $i = $i + 1
+    end
+
+    set $i = 0
+    while $i < $IRQ_REG_NUMS
+        set $iabr = *($IABR  + $i)
+        if $iabr !=0
+            printf "IABR[%d](0x%08X) = 0x%08x\n", $i, ($IABR  + $i), $iabr
+            set $j = 0
+            while $j < 32
+                if $iabr & (1 << $j)
+                    printf "  IRQ%d is active\n", ($i * 32 + $j)
+                end
+                set $j = $j + 1
+            end
+        end
+        set $i = $i + 1
+    end
+end
+
+define lr
+    printf "LR = 0x%08x\n",$lr
+    printf "  Return to %s\n", ($lr & 0x8) ? "Thread Mode" : "Handler Mode"
+    printf "  Return to %s\n", ($lr & 0x4) ? "PSP" : "MSP"
+    printf "  Return to %s\n", ($lr & 0x1) ? "Thumb" : "ARM,Error!!.Only thumb in CM3/4"
+end
+
+define ss
+    stepi
+    printf "R0 =0x%08X R1=0x%08X R2 =0x%08X R3 =0x%08X \n", $r0,$r1,$r2,$r3
+    printf "R4 =0x%08X R5=0x%08X R6 =0x%08X R7 =0x%08X \n", $r4,$r5,$r6,$r7
+    printf "R8 =0x%08X R9=0x%08X R10=0x%08X R11=0x%08X \n", $r8,$r9,$r10,$r11
+    printf "R12=0x%08X SP=0x%08X LR =0x%08X PC =0x%08X \n", $r12,$sp,$lr,$pc
+    set $__xpsr = $xpsr
+    printf "xPSR=0x%08X \n",$__xpsr
 end
 
 target remote localhost:3333
