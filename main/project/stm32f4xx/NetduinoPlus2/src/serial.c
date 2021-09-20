@@ -13,8 +13,11 @@ UART_HandleTypeDef UartHandle;
   #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
 
-#define USART1_base_ADDR 0x40011000
-#define USART_DR   0x04
+#define USART1_BASE_ADDR 0x40011000
+#define USART2_BASE_ADDR 0x40004400
+#define USART_DR_OFFSET   0x04
+
+#define USART_DR_ADDR (USART1_BASE_ADDR+USART_DR_OFFSET)
 
 void serial_init(void) 
 {
@@ -54,7 +57,7 @@ PUTCHAR_PROTOTYPE
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
   // HAL_UART_Transmit(&UartHandle, (uint8_t *)&ch, 1, 0xFFFF); 
-  *(volatile unsigned char*)(USART1_base_ADDR + USART_DR) = ch;
+  *(volatile unsigned char*)(USART_DR_ADDR) = ch;
   return ch;
 }
 GETCHAR_PROTOTYPE
@@ -63,6 +66,6 @@ GETCHAR_PROTOTYPE
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
   // HAL_UART_Receive(&UartHandle, (uint8_t *)&ch, 1, 0xFFFF); 
-  ch = *(volatile unsigned char*)(USART1_base_ADDR + USART_DR);
+  ch = *(volatile unsigned char*)(USART_DR_ADDR);
   return ch;
 }
