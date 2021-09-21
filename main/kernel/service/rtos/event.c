@@ -34,7 +34,7 @@ task_t *event_wakeup(event_t *event, void *msg, uint32_t result)
     if((node = list_remove_first(&event->wait_list)) != (node_t *)0) {
       // 转换为相应的任务结构
         task = (task_t *)NODE_PARENT(node, task_t, link_node);
-        os_printf("wakeup task:%s\n", task->name);
+        // os_printf("wakeup task:%s\n", task->name);
         // 设置收到的消息、结构，清除相应的等待标志位
         task->event_wait = (event_t *)0;
         task->event_msg = msg;
@@ -49,7 +49,7 @@ task_t *event_wakeup(event_t *event, void *msg, uint32_t result)
         // 将任务加入就绪队列
         task_sched_ready(task);
     }
-    os_printf("bitmap=0x%x\n", bitmap_get_value(&task_priority_bitmap));
+    // os_printf("bitmap=0x%x\n", bitmap_get_value(&task_priority_bitmap));
     task_exit_critical(status);
 
     return task;
@@ -75,10 +75,9 @@ void event_remove_task (task_t * task, void * msg, uint32_t result)
 
 uint32_t event_remove_all (event_t * event, void * msg, uint32_t result)
 {
-   node_t  * node;
+    node_t  * node;
     uint32_t count;
 
-    // 进入临界区
     uint32_t status = task_enter_critical();
 
     // 获取等待中的任务数量
@@ -104,7 +103,6 @@ uint32_t event_remove_all (event_t * event, void * msg, uint32_t result)
         task_sched_ready(task);
     }
 
-    // 退出临界区
     task_exit_critical(status);
 
     return  count;

@@ -6,8 +6,12 @@
 #define OS_TASK_STATE_SUSPEND               (1 << 2)
 
 #define OS_TASK_WAIT_MASK                   (0xFF << 16)
+#define OS_PRO_COUNT                32
 
 #define OS_SLICE_MAX                10                        // 每个任务最大运行的时间片计数
+#define OS_IDLETASK_STACK_SIZE		1024					// 空闲任务的堆栈单元数
+#define OS_TIMERTASK_STACK_SIZE		1024					// 定时器任务的堆栈单元数
+#define OS_TIMERTASK_PRIO           1                       // 定时器任务的优先级
 
 typedef uint32_t task_stack_t;
 // struct event_s;

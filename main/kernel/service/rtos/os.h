@@ -12,6 +12,7 @@
 #include "mbox.h"
 #include "memblock.h"
 #include "event_group.h"
+#include "ostimer.h"
 
 typedef enum {
     ERROR_NO_ERROR = 0,
@@ -24,7 +25,7 @@ typedef enum {
 extern task_t *current_task;
 extern task_t *next_task;
 extern bitmap_t task_priority_bitmap;
-#define OS_PRO_COUNT                32
+
 uint32_t task_get_ticks(void);
 #define os_printf(fmt, ...) printf("[%05d][%s] " fmt, task_get_ticks(), __func__, ##__VA_ARGS__)
 
@@ -41,11 +42,12 @@ void task_sched_ready(task_t *task);
 void task_sched_not_ready(task_t *task);
 void task_sched_remove (task_t * task);
 void task_delay(uint32_t delay);
+void task_delay_init(void);
 void task_time_wait(task_t *task, uint32_t ticks);
 //将task从延时队列唤醒
 void task_time_wakeup(task_t *task);
 void task_time_remove(task_t *task);
 
 void task_systick_handler(void);
-
+void set_systick_period(uint32_t ms);
 #endif // __OS_H__

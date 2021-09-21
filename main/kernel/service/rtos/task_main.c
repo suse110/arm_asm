@@ -79,15 +79,51 @@ void task_entry_3(void* param)
     }
 }
 int task4_flag;
+ostimer_t timer0;
+ostimer_t timer1;
+ostimer_t timer2;
+
+uint32_t timer_count[3] = {0};
+void timer_func (void * arg)
+{
+    uint32_t idx = (uint32_t)arg;
+    os_printf("This is timer %d, count=%d\n", idx, timer_count[idx]);
+    timer_count[idx]++;
+}
+timer_info_t timer_info;
 void task_entry_4(void* param)
 {
     os_printf("start\n");
+    uint32_t destroyed = 0;
+
+    // 定时器1：100个tick后启动，以后每10个tick启动一次
+    timer_init(&timer0, 100, 10, timer_func, (void *)0, TIMER_CONFIG_TYPE_HARD);
+    timer_start(&timer0);
+
+    // 定时器2：200个tick后启动，以后每20个tick启动一次
+    timer_init(&timer1, 200, 20, timer_func, (void *)1, TIMER_CONFIG_TYPE_HARD);
+    timer_start(&timer1);
+
+    // 定时器1：300个tick后启动，启动之后关闭
+    timer_init(&timer2, 300, 0, timer_func, (void *)2, TIMER_CONFIG_TYPE_HARD);
+    timer_start(&timer2);
     for(;;) {
         os_printf("runing 1\n");
         task4_flag = 1;
         task_delay(500);
         task4_flag = 0;
         task_delay(500);
+
+        // 200个tick后，手动销毁定时器1
+        if (destroyed == 0)
+        {
+            task_delay(200);
+            timer_destroy(&timer1);
+            destroyed = 1;
+        }
+
+        // 获取定时器2的信息
+        timer_get_info(&timer2, &timer_info);
     }
 }
 
@@ -110,7 +146,7 @@ void task_start(void)
 {
     task_sched_init();
     task_delay_init();
-
+    timer_module_init();
     user_task_entry();
 
     task_create("task_idle",&task_idle, task_entry_idle, (void*)0, OS_PRO_COUNT - 1,&idletask_env[1024]);

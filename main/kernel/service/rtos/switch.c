@@ -145,20 +145,22 @@ void task_time_remove(task_t *task)
 void task_systick_handler(void)
 {
     node_t *node;
-
+    
     int i;
     uint32_t status = task_enter_critical();
     for (node = task_delay_list.head_node.next_node; node != &task_delay_list.head_node; \
         node = node->next_node) {
         task_t *task = NODE_PARENT(node, task_t, delay_node);
         // os_printf("%s delay_ticks=%d ,curtask=%s slice=%d\n", task->name, \
-            task->delay_ticks,current_task->name, current_task->slice);
+        //     task->delay_ticks,current_task->name, current_task->slice);
+
         if (task->delay_ticks > 0) {
             if (--task->delay_ticks == 0) {
                 task_time_wakeup(task);
                 task_sched_ready(task);
             }
         } else {
+            // os_printf("[%s] ready\n", task->name);
             task_sched_ready(task);
         }
     }
@@ -175,7 +177,8 @@ void task_systick_handler(void)
         }
     }
     task_exit_critical(status);
-
+    // 通知定时器模块节拍事件
+    timer_module_tick_notify();
     task_sched();
 }
 
