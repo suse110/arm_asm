@@ -8,6 +8,7 @@ typedef enum {
     EVENT_TYPE_SEM      = 1,
     EVENT_TYPE_MBOX     = 2,
     EVENT_TYPE_MEMBLOCK = 3,
+    EVENT_TYPE_EVENT_GROUP = 3,
 } event_type_t;
 
 typedef struct event_s {

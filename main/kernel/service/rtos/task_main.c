@@ -13,9 +13,8 @@ task_t task_idle;
 uint32_t idletask_env[1024];
 
 int task1_flag;
-// 20个100字节大小存储块
-uint8_t mem1[20][100];
-memblock_t memblock1;
+event_group_t event_group;
+
 
 typedef uint8_t (*block_t)[100];
 
@@ -27,22 +26,15 @@ void task_entry_1(void* param)
     uint32_t result;
     block_t block[20];
     set_systick_period(10);
-    // 初始化存储块
-    memblock_init(&memblock1, (uint8_t *)mem1, 100, 20);
+    // 初始化事件标志
+    event_group_init(&event_group, 0xFF);
 
-	for (i = 0; i < 20; i++)
-	{
-        result = memblock_wait(&memblock1, (uint8_t **)&block[i], 0);
-        os_printf("wait [block:%d]0x%x, result=%d\n",i,(uint32_t)block[i], result);
-	}
+    // 故意延时，让task2有时间运行
+    task_delay(1000);
+    os_printf("start destroy\n");
 
-    task_delay(200);
-    for (i = 0; i < 20; i++) {
-    	memset(block[i], i, 100);
-    	memblock_notify(&memblock1, (uint8_t *)block[i]);
-        os_printf("send [block:%d]0x%x\n",i,(uint32_t)&block[i]);
-        task_delay(2);
-	}
+    // 删除事件标志
+    event_group_destroy(&event_group);
 
     for(;;) {
         task1_flag = 1;
@@ -55,16 +47,23 @@ void task_entry_1(void* param)
 int task2_flag;
 void task_entry_2(void* param)
 {
-    sem_info_t sem_info;
-    int i = 0;
-    uint32_t result;
-    os_printf("start\n");
+    uint32_t result_flags = 0;
+    event_group_info_t info;
+    os_printf("start wait event group\n");
+
+    // 等待并查询状态
+    event_group_wait(&event_group, EVENT_GROUP_SET_ALL | EVENT_GROUP_CONSUME, 0x1, &result_flags, 0);
+    event_group_get_info(&event_group, &info);
+
+    // 等待相同的状态，会一直等下去，直到event_group被销毁
+    event_group_wait(&event_group, EVENT_GROUP_SET_ALL | EVENT_GROUP_CONSUME, 0x1, &result_flags, 0);
+
+    os_printf("wait done\n");
     for(;;) {
-    	block_t block;
-    	result = memblock_wait(&memblock1, (uint8_t **)&block, 0);
-        os_printf("wait [block:%d]0x%x, result=%d\n", i, (uint32_t)block, result);
-        i++;
-        task2_flag = *(uint8_t *)block;;
+        task2_flag = 1;
+        task_delay(500);
+        task2_flag = 0;
+        task_delay(500);
 
     }
 }

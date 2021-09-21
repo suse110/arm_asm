@@ -11,6 +11,7 @@
 #include "sem.h"
 #include "mbox.h"
 #include "memblock.h"
+#include "event_group.h"
 
 typedef enum {
     ERROR_NO_ERROR = 0,

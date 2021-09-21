@@ -22,6 +22,7 @@ SRC += $(SERVICE_DIR)/rtos/event.c
 SRC += $(SERVICE_DIR)/rtos/sem.c
 SRC += $(SERVICE_DIR)/rtos/mbox.c
 SRC += $(SERVICE_DIR)/rtos/memblock.c
+SRC += $(SERVICE_DIR)/rtos/event_group.c
 SRC += $(SERVICE_DIR)/rtos/task.c
 SRC += $(SERVICE_DIR)/rtos/bitmap.c
 SRC += $(SERVICE_DIR)/rtos/list.c

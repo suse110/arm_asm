@@ -34,6 +34,11 @@ typedef struct {
     void *event_msg;
     uint32_t event_wait_result;
     const char* name;
+    // 等待的事件方式
+    uint32_t waitFlagsType;
+
+    // 等待的事件标志
+    uint32_t eventFlags;
 } task_t;
 
 typedef struct {
