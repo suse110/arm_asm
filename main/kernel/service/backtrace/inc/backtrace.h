@@ -73,4 +73,8 @@ __attribute__( ( always_inline ) ) static inline uint32_t cmb_get_pc(void) {
     __asm volatile ("MOV %0, pc\n" : "=r" (result) );
     return(result);
 }
+
+void backtrace_dump_stack(uint32_t sp);
+void backtrace_print_callstack(uint32_t sp);
+void backtrace_init(void);
 #endif // __BACKTRACE_H__

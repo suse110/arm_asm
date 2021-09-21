@@ -88,6 +88,10 @@ void dump_stack(uint32_t stack_start_addr, size_t stack_size, uint32_t *stack_po
     printf("[%s] ====================================\n", __func__);
 }
 
+void backtrace_dump_stack(uint32_t sp)
+{
+    dump_stack(stack_start_addr, stack_size, (uint32_t *)sp);
+}
 
 enum {
 PRINT_MAIN_STACK_CFG_ERROR,
@@ -98,8 +102,8 @@ PRINT_THREAD_STACK_INFO,
 PRINT_MAIN_STACK_INFO,
 PRINT_THREAD_STACK_OVERFLOW,
 PRINT_MAIN_STACK_OVERFLOW,
-PRINT_CALL_STACK_INFO,
-PRINT_CALL_STACK_ERR,
+backtrace__INFO,
+backtrace__ERR,
 PRINT_FAULT_ON_THREAD,
 PRINT_FAULT_ON_HANDLER,
 PRINT_REGS_TITLE,
@@ -140,8 +144,8 @@ static const char * const print_info[] = {
             [PRINT_MAIN_STACK_INFO]       = "====== Main stack information ======",
             [PRINT_THREAD_STACK_OVERFLOW] = "Error: Thread stack(%08x) was overflow",
             [PRINT_MAIN_STACK_OVERFLOW]   = "Error: Main stack(%08x) was overflow",
-            [PRINT_CALL_STACK_INFO]       = "Show more call stack info by run: addr2line -e %s%s -a -f %.*s",
-            [PRINT_CALL_STACK_ERR]        = "Dump call stack has an error",
+            [backtrace__INFO]       = "Show more call stack info by run: addr2line -e %s%s -a -f %.*s",
+            [backtrace__ERR]        = "Dump call stack has an error",
             [PRINT_FAULT_ON_THREAD]       = "Fault on thread %s",
             [PRINT_FAULT_ON_HANDLER]      = "Fault on interrupt or bare metal(no OS) environment",
             [PRINT_REGS_TITLE]            = "=================== Registers information ====================",
@@ -179,8 +183,8 @@ static const char * const print_info[] = {
 [PRINT_MAIN_STACK_INFO]       = "============ 主堆栈信息 ============",
 [PRINT_THREAD_STACK_OVERFLOW] = "错误：线程栈(%08x)发生溢出",
 [PRINT_MAIN_STACK_OVERFLOW]   = "错误：主栈(%08x)发生溢出",
-[PRINT_CALL_STACK_INFO]       = "查看更多函数调用栈信息，请运行：addr2line -e %s%s -a -f %.*s",
-[PRINT_CALL_STACK_ERR]        = "获取函数调用栈失败",
+[backtrace__INFO]       = "查看更多函数调用栈信息，请运行：addr2line -e %s%s -a -f %.*s",
+[backtrace__ERR]        = "获取函数调用栈失败",
 [PRINT_FAULT_ON_THREAD]       =  "在线程(%s)中发生错误异常",
 [PRINT_FAULT_ON_HANDLER]      = "在中断或裸机环境下发生错误异常",
 [PRINT_REGS_TITLE]            = "========================= 寄存器信息 =========================",
@@ -319,7 +323,8 @@ uint32_t i = 0;
 return depth;
 }
 
-void print_call_stack(uint32_t sp) {
+void backtrace_print_callstack(uint32_t sp) 
+{
     size_t i, cur_depth = 0;
     uint32_t call_stack_buf[CMB_CALL_STACK_MAX_DEPTH] = {0};
     printf("[%s] ====================================\n", __func__);
@@ -333,10 +338,10 @@ void print_call_stack(uint32_t sp) {
     }
 
     if (cur_depth) {
-        cmb_println(print_info[PRINT_CALL_STACK_INFO], "./build/test", CMB_ELF_FILE_EXTENSION_NAME, cur_depth * (8 + 1),
+        cmb_println(print_info[backtrace__INFO], "./build/test", CMB_ELF_FILE_EXTENSION_NAME, cur_depth * (8 + 1),
                     call_stack_info);
     } else {
-        cmb_println(print_info[PRINT_CALL_STACK_ERR]);
+        cmb_println(print_info[backtrace__ERR]);
     }
 }
 void BackTraceSub(unsigned long sp);
@@ -345,7 +350,7 @@ void backtrace_level_3(void)
     printf("[%s]\n", __func__);
     dump_stack(stack_start_addr, stack_size, (uint32_t*)cmb_get_sp());
 
-    print_call_stack(cmb_get_sp());
+    backtrace_(cmb_get_sp());
     BackTraceSub(cmb_get_sp());
 }
 void backtrace_level_2(void)
@@ -364,17 +369,8 @@ void backtrace_level_1(void)
 #ifdef CM_BACKTRACE_ENABLE
 #include <cm_backtrace.h>
 #endif
-void backtrace_test(void)
+void backtrace_init(void)
 {
-    int bt1 = 0xAA;
-    int bt2 = 0x55;
-    int bt3 = 0x77;
-    (void)bt1;
-    (void)bt2;
-    (void)bt3;
-#ifdef CM_BACKTRACE_ENABLE
-    cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
-#endif
     code_start_addr = (uint32_t)&_stext;
     code_end_addr = (uint32_t)&_etext;
     code_size = code_end_addr - code_start_addr;
@@ -391,6 +387,19 @@ void backtrace_test(void)
     printf("[%s] heap_start_addr=0x%lx heap_end_addr=0x%lx heap_size=%ld<0x%lx>\n", \
     __func__, heap_start_addr, heap_end_addr, heap_size, heap_size);
 
+}
+void backtrace_test(void)
+{
+    int bt1 = 0xAA;
+    int bt2 = 0x55;
+    int bt3 = 0x77;
+    (void)bt1;
+    (void)bt2;
+    (void)bt3;
+#ifdef CM_BACKTRACE_ENABLE
+    cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);
+#endif
+    backtrace_init();
 
     /* CmBacktrace initialize */
     // cm_backtrace_init("CmBacktrace", HARDWARE_VERSION, SOFTWARE_VERSION);

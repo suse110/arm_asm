@@ -1,7 +1,9 @@
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 #include "hal_platform.h"
-
+#ifdef BACKTRACE_ENABLE
+#include "backtrace.h"
+#endif
 /*Determining Which Exception Handler is Executing*/
 #define EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER (SCB->ICSR&SCB_ICSR_VECTACTIVE_Msk)
 #define EXCEPTION_CURRENT_VECTACTIVE_ISR_NUMBER (EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER - 16)

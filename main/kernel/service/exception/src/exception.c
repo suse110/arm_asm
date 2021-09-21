@@ -241,6 +241,10 @@ void HardFault_Handler_C(sCrashInfo *sCrashInfo) {
     // For any fault within an ISR or non-usage faults
     // let's reboot the system
     // SCB->AIRCR = (0x05FA << 16) | SCB_AIRCR_SYSRESETREQ_Msk;
+#ifdef BACKTRACE_ENABLE
+    backtrace_dump_stack(frame->sp);
+    backtrace_print_callstack(frame->sp);
+#endif
     while (1) { } // should be unreachable
   }
   extern void recover_from_task_fault(void);

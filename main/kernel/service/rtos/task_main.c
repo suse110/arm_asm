@@ -16,40 +16,9 @@ uint8_t sched_lock_count;
 bitmap_t task_priority_bitmap;
 list_t task_delay_list;
 
-typedef void (*task_entry_t)(void* param);
 
 #define GET_TICKS() tick_counter
 
-void task_create(task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack)
-{
-    *(--stack) = (unsigned long)(1<<24);                // XPSR, 设置了Thumb模式，恢复到Thumb状态而非ARM状态运行
-    *(--stack) = (unsigned long)entry;                  // 程序的入口地址
-    *(--stack) = (unsigned long)0x14;                   // R14(LR), 任务不会通过return xxx结束自己，所以未用
-    *(--stack) = (unsigned long)0x12;                   // R12, 未用
-    *(--stack) = (unsigned long)0x3;                    // R3, 未用
-    *(--stack) = (unsigned long)0x2;                    // R2, 未用
-    *(--stack) = (unsigned long)0x1;                    // R1, 未用
-    *(--stack) = (unsigned long)param;                  // R0 = param, 传给任务的入口函数
-    *(--stack) = (unsigned long)0x11;                   // R11, 未用
-    *(--stack) = (unsigned long)0x10;                   // R10, 未用
-    *(--stack) = (unsigned long)0x9;                    // R9, 未用
-    *(--stack) = (unsigned long)0x8;                    // R8, 未用
-    *(--stack) = (unsigned long)0x7;                    // R7, 未用
-    *(--stack) = (unsigned long)0x6;                    // R6, 未用
-    *(--stack) = (unsigned long)0x5;                    // R5, 未用
-    *(--stack) = (unsigned long)0x4;                    // R4, 未用
-    task->stack = stack;
-    task->delay_ticks = 0;
-    task->priority = priority;
-    task->state = OS_TASK_STATE_RDY;
-    task->slice = OS_SLICE_MAX;
-
-    node_init(&task->delay_node);
-    node_init(&task->link_node);
-    list_add_last(&task_table[priority], &task->link_node);
-    // task_table[priority] = task;
-    bitmap_set_bit(&task_priority_bitmap, priority);
-}
 task_t * task_highest_ready (void)
 {
     uint32_t highest_priority = bitmap_get_first(&task_priority_bitmap);
@@ -90,7 +59,6 @@ void task_sched_enable(void)
 
 void task_sched_ready(task_t *task)
 {
-    // task_table[task->priority] = task;
     list_add_last(&task_table[task->priority], &task->link_node);
     bitmap_set_bit(&task_priority_bitmap, task->priority);
 }
@@ -100,6 +68,15 @@ void task_sched_not_ready(task_t *task)
     list_remove(&task_table[task->priority], &task->link_node);
     //同一优先级可能有多个任务
     if (list_count(&task_table[task->priority]) == 0) {
+        bitmap_clear_bit(&task_priority_bitmap, task->priority);
+    }
+}
+void task_sched_remove (task_t * task)
+{
+    list_remove(&task_table[task->priority], &(task->link_node));
+	
+    if (list_count(&task_table[task->priority]) == 0) 
+    {
         bitmap_clear_bit(&task_priority_bitmap, task->priority);
     }
 }
@@ -170,7 +147,10 @@ void task_time_wakeup(task_t *task)
     list_remove(&task_delay_list, &task->delay_node);
     task->state &= ~OS_TASK_STATE_DELAYED;
 }
-
+void task_time_remove(task_t *task)
+{
+    list_remove(&task_delay_list, &task->delay_node);
+}
 void task_systick_handler(void)
 {
     node_t *node;
@@ -179,12 +159,10 @@ void task_systick_handler(void)
     uint32_t status = task_enter_critical();
     for (node = task_delay_list.head_node.next_node; node != &task_delay_list.head_node; node = node->next_node) {
         task_t *task = NODE_PARENT(node, task_t, delay_node);
-        // if (task != NULL) {
-            if (--task->delay_ticks == 0) {
-                task_time_wakeup(task);
-                task_sched_ready(task);
-            }
-        // }
+        if (--task->delay_ticks == 0) {
+            task_time_wakeup(task);
+            task_sched_ready(task);
+        }
 
     }
 
@@ -202,14 +180,6 @@ void task_systick_handler(void)
 }
 
 
-void task_delay(uint32_t delay) 
-{
-    uint32_t status = task_enter_critical();
-    task_time_wait(current_task, delay);
-    task_sched_not_ready(current_task);
-    task_sched();
-    task_exit_critical(status);
-}
 
 void SysTick_Handler (void) 
 {
@@ -230,11 +200,29 @@ void set_systick_period(uint32_t ms)
 }
 
 
+task_t task1;
+task_t task2;
+task_t task3;
+task_t task4;
+uint32_t task1_env[1024];
+uint32_t task2_env[1024];
+uint32_t task3_env[1024];
+uint32_t task4_env[1024];
+
+task_t task_idle;
+uint32_t idletask_env[1024];
+
 int share_count;
 int task1_flag;
 int first_set;
+void task1_destroy_func (void * param) 
+{
+    task1_flag = 0;
+        printf("[%05d][%s] deleted by someone\n", GET_TICKS(), __func__);
+}
 void task_entry_1(void* param)
 {
+    // printf("[%05d][%s] start\n", GET_TICKS(), __func__);
     bitmap_t bitmap;
     int i;
     bitmap_init(&bitmap);
@@ -256,43 +244,66 @@ void task_entry_1(void* param)
         first_set = bitmap_get_first(&bitmap);
     }
     set_systick_period(10);
+    task_set_clean_callback(current_task, task1_destroy_func, NULL);
     for(;;) {
         int var;
         task_sched_disable();
-        printf("[%05d] This is %s. share_count=%d\n", GET_TICKS(), __func__, share_count);
+        printf("[%05d][%s] share_count=%d\n", GET_TICKS(), __func__, share_count);
         var = share_count;
         task1_flag = 1;
         task_delay(500);
         var++;
         share_count = var;
         task_sched_enable();
+        printf("[%05d][%s] suspend current task 1th.\n", GET_TICKS(), __func__);
+        task_suspend(current_task);
+
         task1_flag = 0;
         task_delay(500);
+        printf("[%05d][%s] suspend current task, 2th.\n", GET_TICKS(), __func__);
+        task_suspend(current_task);
     }
 }
 int task2_flag;
 void task_entry_2(void* param)
 {
+    // printf("[%05d][%s] start\n", GET_TICKS(), __func__);
+    int task1_deleted = 0;
     for(;;) {
         task_delay(500);
         task_sched_disable();
-        printf("[%05d] This is %s. share_count=%d\n", GET_TICKS(), __func__, share_count);
+        printf("[%05d][%s] share_count=%d\n", GET_TICKS(), __func__, share_count);
         share_count++;
         task_sched_enable();
+        printf("[%05d][%s] resume task1, 1th.\n", GET_TICKS(), __func__);
+        task_resume(&task1);
 
         task2_flag = 1;
         task_delay(500);
         task2_flag = 0;
-        // task_delay(500);
+        printf("[%05d][%s] resume task1, 2th.\n", GET_TICKS(), __func__);
+        task_resume(&task1);
+
+        if (!task1_deleted) {
+            printf("[%05d][%s] delete task1\n", GET_TICKS(), __func__);
+            task1_deleted = 1;
+            task_force_delete(&task1);
+        }
     }
 }
 int task3_flag;
 void task_entry_3(void* param)
 {
+    // printf("[%05d][%s] start\n", GET_TICKS(), __func__);
     for(;;) {
+        if (task_is_request_delete()) {
+            task3_flag = 0;
+            printf("[%05d][%s] delete self\n", GET_TICKS(), __func__);
+            task_delete_self();
+        }
         task_delay(500);
         task_sched_disable();
-        printf("[%05d] This is %s. share_count=%d\n", GET_TICKS(), __func__, share_count);
+        printf("[%05d][%s] share_count=%d\n", GET_TICKS(), __func__, share_count);
         share_count++;
         task_sched_enable();
 
@@ -300,6 +311,27 @@ void task_entry_3(void* param)
         task_delay(500);
         task3_flag = 0;
         // task_delay(500);
+    }
+}
+int task4_flag;
+void task_entry_4(void* param)
+{
+    int task3_deleted = 0;
+    // printf("[%05d][%s] start\n", GET_TICKS(), __func__);
+    for(;;) {
+
+        task_sched_disable();
+        printf("[%05d][%s] share_count=%d\n", GET_TICKS(), __func__, share_count);
+        share_count++;
+        task_sched_enable();
+
+        task4_flag = 1;
+        task_delay(500);
+        task4_flag = 0;
+        if (!task3_deleted) {
+            task_request_delete(&task3);
+            task3_deleted = 1;
+        }
     }
 }
 
@@ -311,16 +343,6 @@ void task_entry_idle(void* param)
 }
 
 
-task_t task1;
-task_t task2;
-task_t task3;
-uint32_t task1_env[1024];
-uint32_t task2_env[1024];
-uint32_t task3_env[1024];
-
-task_t task_idle;
-uint32_t idletask_env[1024];
-
 
 void task_start(void)
 {
@@ -329,7 +351,8 @@ void task_start(void)
 
     task_create(&task1, task_entry_1, (void*)0x11111111, 0, &task1_env[1024]);
     task_create(&task2, task_entry_2, (void*)0x22222222, 1, &task2_env[1024]);
-    task_create(&task3, task_entry_3, (void*)0x33333333, 1, &task3_env[1024]);
+    task_create(&task3, task_entry_3, (void*)0x33333333, 0, &task3_env[1024]);
+    task_create(&task4, task_entry_4, (void*)0x44444444, 1, &task4_env[1024]);
     // current_task = &task1;
 
     // task_table[0] = &task1;
