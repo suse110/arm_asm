@@ -9,12 +9,14 @@
 #include "task.h"
 #include "event.h"
 #include "sem.h"
+#include "mbox.h"
 
 typedef enum {
     ERROR_NO_ERROR = 0,
     ERROR_TIMEOUT,
-    ERROR_RESOURCE_UNAVALIABLE,                 		// 资源不可用
-    ERROR_DELETE,										// 被删除
+    ERROR_RESOURCE_UNAVALIABLE,
+    ERROR_DELETE,
+    ERROR_RESOURCE_FULL,
 } error_t;
 
 extern task_t *current_task;

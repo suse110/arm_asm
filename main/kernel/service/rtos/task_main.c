@@ -11,23 +11,39 @@ uint32_t task4_env[1024];
 
 task_t task_idle;
 uint32_t idletask_env[1024];
-event_t event_wait_timeout;
-event_t event_wait_normal;
 
 int task1_flag;
-int first_set;
-sem_t sem1;
-sem_t sem2;
+mbox_t mbox1;
+mbox_t mbox2;
+void * mbox1_msg_buffer[20];
+void * mbox2_msg_buffer[20];
+uint32_t msg[20];
+
 
 void task_entry_1(void* param)
 {
     os_printf("start\n");
-    sem_init(&sem1, 1, 10);
+    mbox_init(&mbox1, mbox1_msg_buffer, 20);
     set_systick_period(10);
-    event_init(&event_wait_normal, EVENT_UNKNOWN_TYPE);
+
     for(;;) {
-        uint32_t status = sem_wait(&sem1, 10000);
-        os_printf("runing sem1 status=%d\n", status);
+        mbox_info_t mbox_info;
+        int i = 0;
+        for (i = 0; i < 20; i++) {
+            msg[i] = i;
+            mbox_notify(&mbox1, &msg[i], MBOX_SEND_NORMAL);
+            mbox_get_info(&mbox1, &mbox_info);
+        }
+        task_delay(500);
+        // 后发的消息具有更高优先级
+        // 也许你会期望task2~task3得到的消息值会从19/18/...1递减
+        // 但是如果队列中已经存在等待任务的话，每发一次消息，都会消耗掉该消息
+        // 导致最开始的顺序会有所变化
+        for (i = 20; i < 40; i++) {
+            msg[i] = i;
+            mbox_notify(&mbox1, &msg[i], MBOX_SEND_FRONT);
+            mbox_get_info(&mbox1, &mbox_info);
+        }
 
         task_delay(500);
         task1_flag = 0;
@@ -42,14 +58,13 @@ void task_entry_2(void* param)
 
     os_printf("start\n");
     for(;;) {
-        os_printf("runing 1\n");
-        task2_flag = 1;
-        task_delay(500);
-        task2_flag = 0;
-        task_delay(500);
-        sem_get_info(&sem1, &sem_info);
-        os_printf("notify sem1\n");
-        sem_notify(&sem1);
+        void *msg;
+        uint32_t err = mbox_wait(&mbox1, &msg, 100);
+        if (err == ERROR_NO_ERROR) {
+            uint32_t value = *(uint32_t*)msg;
+            os_printf("value = %d\n", value);
+            task_delay(100);
+        }
     }
 }
 int task3_flag;
@@ -57,17 +72,11 @@ void task_entry_3(void* param)
 {
     os_printf("start\n");
     // 不限信号量计数，初始值为0
-    sem_init(&sem2, 0, 0);
+    mbox_init(&mbox2, mbox2_msg_buffer, 20);
     for(;;) {
-        os_printf("sem wait start\n");
-        // 超时等待
-        if (ERROR_NO_ERROR == sem_wait(&sem2, 100)) {
-            os_printf("sem wait done\n");
-        } else {
-            os_printf("sem wait timeout\n");
-        }
+        void * msg;
+        mbox_wait(&mbox2, &msg, 100);
         
-
         task3_flag = 1;
         task_delay(500);
         task3_flag = 0;
