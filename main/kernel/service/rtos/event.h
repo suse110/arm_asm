@@ -4,7 +4,8 @@
 #include "task.h"
 
 typedef enum {
-    EVENT_UNKNOWN_TYPE = 0,
+    EVENT_UNKNOWN_TYPE  = 0,
+    EVENT_TYPE_SEM      = 1
 } event_type_t;
 
 typedef struct event_s {

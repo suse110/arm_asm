@@ -8,10 +8,13 @@
 #include "list.h"
 #include "task.h"
 #include "event.h"
+#include "sem.h"
 
 typedef enum {
     ERROR_NO_ERROR = 0,
-    ERROR_TIMEOUT
+    ERROR_TIMEOUT,
+    ERROR_RESOURCE_UNAVALIABLE,                 		// 资源不可用
+    ERROR_DELETE,										// 被删除
 } error_t;
 
 extern task_t *current_task;
@@ -39,6 +42,6 @@ void task_time_wait(task_t *task, uint32_t ticks);
 void task_time_wakeup(task_t *task);
 void task_time_remove(task_t *task);
 
-
+void task_systick_handler(void);
 
 #endif // __OS_H__

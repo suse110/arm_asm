@@ -19,6 +19,7 @@ SRC += $(SERVICE_DIR)/rtos/switch.c
 SRC += $(SERVICE_DIR)/rtos/task_main.c
 SRC += $(SERVICE_DIR)/rtos/time.c
 SRC += $(SERVICE_DIR)/rtos/event.c
+SRC += $(SERVICE_DIR)/rtos/sem.c
 SRC += $(SERVICE_DIR)/rtos/task.c
 SRC += $(SERVICE_DIR)/rtos/bitmap.c
 SRC += $(SERVICE_DIR)/rtos/list.c
