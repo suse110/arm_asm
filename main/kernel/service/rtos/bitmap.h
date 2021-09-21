@@ -1,5 +1,5 @@
-#ifndef __BIT_MAP_H__
-#define __BIT_MAP_H__
+#ifndef __BITMAP_H__
+#define __BITMAP_H__
 
 #include <stdint.h>
 
@@ -13,4 +13,5 @@ uint32_t bitmap_pos_count(void);
 void bitmap_set_bit(bitmap_t *bitmap, uint32_t pos);
 void bitmap_clear_bit(bitmap_t *bitmap, uint32_t pos);
 uint32_t bitmap_get_first(bitmap_t *bitmap);
-#endif // __BIT_MAP_H__
+uint32_t bitmap_get_value(bitmap_t *bitmap);
+#endif // __BITMAP_H__

@@ -2,7 +2,7 @@
 
 
 
-void task_create(task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack)
+void task_create(const char *name, task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack)
 {
     *(--stack) = (unsigned long)(1<<24);                // XPSR, 设置了Thumb模式，恢复到Thumb状态而非ARM状态运行
     *(--stack) = (unsigned long)entry;                  // 程序的入口地址
@@ -20,6 +20,7 @@ void task_create(task_t * task, task_entry_t entry, void *param, uint32_t priori
     *(--stack) = (unsigned long)0x6;                    // R6, 未用
     *(--stack) = (unsigned long)0x5;                    // R5, 未用
     *(--stack) = (unsigned long)0x4;                    // R4, 未用
+    task->name = name;
     task->stack = stack;
     task->delay_ticks = 0;
     task->priority = priority;

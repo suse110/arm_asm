@@ -18,6 +18,10 @@ void bitmap_clear_bit(bitmap_t *bitmap, uint32_t pos)
     bitmap->bitmap &= ~(1 << pos);
 }
 
+uint32_t bitmap_get_value(bitmap_t *bitmap)
+{
+    return bitmap->bitmap;
+}
 uint32_t bitmap_get_first(bitmap_t *bitmap)
 {
 	static const uint8_t quick_find_table[] =     

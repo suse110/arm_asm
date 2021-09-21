@@ -402,6 +402,7 @@ end
 target remote localhost:1234
 load
 set disassemble-next-line on
+set print pretty on
 set pagination off
 b Reset_Handler
 b HardFault_Handler
