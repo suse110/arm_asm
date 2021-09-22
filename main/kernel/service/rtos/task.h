@@ -12,6 +12,7 @@
 #define OS_IDLETASK_STACK_SIZE		1024					// 空闲任务的堆栈单元数
 #define OS_TIMERTASK_STACK_SIZE		1024					// 定时器任务的堆栈单元数
 #define OS_TIMERTASK_PRIO           1                       // 定时器任务的优先级
+#define IDLE_TASK_STACK_SIZE 1024
 
 typedef uint32_t task_stack_t;
 // struct event_s;
@@ -72,5 +73,8 @@ void task_request_delete(task_t *task);
 uint8_t task_is_request_delete(void);
 void task_delete_self(void);
 void task_get_info(task_t *task, task_info_t *info);
-
+void task_scheduler_start(void);
+void cpu_usage_stat_init (void);
+void cpu_usage_check (void);
+float cpu_usage_get (void);
 #endif // __TASK_H__

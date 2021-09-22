@@ -17,6 +17,7 @@ uint8_t sched_lock_count;
 bitmap_t task_priority_bitmap;
 list_t task_delay_list;
 
+
 uint32_t task_enter_critical(void)
 {
     uint32_t primask = __get_PRIMASK();
@@ -46,6 +47,10 @@ void task_switch(void)
 uint32_t task_get_ticks(void)
 {
     return tick_counter;
+}
+void task_ticks_init(void)
+{
+    tick_counter = 0;
 }
 task_t * task_highest_ready (void)
 {
@@ -178,6 +183,9 @@ void task_systick_handler(void)
             current_task->slice = OS_SLICE_MAX;
         }
     }
+    tick_counter++;
+
+    cpu_usage_check();
     task_exit_critical(status);
     // 通知定时器模块节拍事件
     timer_module_tick_notify();
@@ -189,7 +197,6 @@ void task_systick_handler(void)
 void SysTick_Handler (void) 
 {
     HAL_IncTick();
-    tick_counter++;
     if (is_scheduler_ready) {
         task_systick_handler();
     }

@@ -14,6 +14,9 @@
 #include "event_group.h"
 #include "ostimer.h"
 
+#define OS_SYSTICK_MS               10
+#define TICKS_PER_SEC               (1000 / OS_SYSTICK_MS)
+
 typedef enum {
     ERROR_NO_ERROR = 0,
     ERROR_TIMEOUT,
@@ -50,4 +53,6 @@ void task_time_remove(task_t *task);
 
 void task_systick_handler(void);
 void set_systick_period(uint32_t ms);
+void task_ticks_init(void);
+
 #endif // __OS_H__

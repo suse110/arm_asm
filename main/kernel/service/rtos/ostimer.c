@@ -197,6 +197,10 @@ void timer_module_init(void)
     list_init(&timer_soft_list);
     sem_init(&timer_protect_sem, 1, 1);
     sem_init(&timer_tick_sem, 0, 0);
+}
+
+void timer_task_init(void)
+{
 
 #if OS_TIMERTASK_PRIO >= (OS_PRO_COUNT - 1)
 #error "The proprity of timer task must be greater then (OS_PRO_COUNT - 1)"

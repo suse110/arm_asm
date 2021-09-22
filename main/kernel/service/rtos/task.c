@@ -1,5 +1,10 @@
 #include "os.h"
 
+static float cpu_usage;                      // cpu使用率统计
+static uint32_t enable_cpu_usage_stat;         // 是否使能cpu统计
+// 空闲任务计数与最大计数
+uint32_t idle_count;
+uint32_t idle_max_count;
 
 
 void task_create(const char *name, task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack, uint32_t size)
@@ -167,4 +172,95 @@ void task_get_info(task_t *task, task_info_t *info)
 
     // 退出临界区
     task_exit_critical(status); 
+}
+
+static task_t task_idle;
+static uint32_t idletask_env[IDLE_TASK_STACK_SIZE];
+extern void user_task_main(void);
+void task_entry_idle(void *param)
+{
+    task_sched_disable();
+    user_task_main();
+    timer_task_init();
+    set_systick_period(OS_SYSTICK_MS);
+    cpu_usage_sync_with_systick();
+    for (;;)
+    {
+        uint32_t status = task_enter_critical();
+        idle_count++;
+        task_exit_critical(status);    
+    }
+}
+
+void task_scheduler_start(void)
+{
+    task_create("task_idle", &task_idle, task_entry_idle, (void *)0, OS_PRO_COUNT - 1, idletask_env, sizeof(idletask_env));
+
+    next_task = task_highest_ready();
+    run_first_task();    
+}
+
+
+
+void cpu_usage_stat_init (void)
+{
+    idle_count = 0;
+    idle_max_count = 0;
+    cpu_usage = 0;
+    enable_cpu_usage_stat = 0;
+}
+
+void cpu_usage_check (void)
+{
+    
+    // 与空闲任务的cpu统计同步
+    if (enable_cpu_usage_stat == 0)
+    {
+        enable_cpu_usage_stat = 1;
+        task_ticks_init();
+        os_printf("enable_cpu_usage_stat = 1\n");
+        return;
+    }
+
+    if (task_get_ticks() == TICKS_PER_SEC)
+    {
+        // 统计最初1s内的最大计数值
+        idle_max_count = idle_count;
+        idle_count = 0;
+        os_printf("--------idle_max_count = %d\n", idle_max_count);
+
+        // 计数完毕，开启调度器，允许切换到其它任务
+        task_sched_enable();
+    }
+    else if (task_get_ticks() % TICKS_PER_SEC == 0)
+    {
+        // 之后每隔1s统计一次，同时计算cpu利用率
+        cpu_usage = 100 - (idle_count * 100.0 / idle_max_count);
+        os_printf("cpu_usage=%f tick_counter=%d idle_count=%d idle_max_count=%d\n", \
+            cpu_usage, task_get_ticks(), idle_count, idle_max_count);
+        idle_count = 0;
+    }
+}
+
+void cpu_usage_sync_with_systick (void)
+{
+    // 等待与时钟节拍同步
+    os_printf("start\n");
+    while (enable_cpu_usage_stat == 0)
+    {
+        ;;
+    }
+    os_printf("done\n");
+}
+
+float cpu_usage_get (void)
+{
+    float usage = 0;
+
+    uint32_t status = task_enter_critical();
+    usage = cpu_usage;
+        os_printf("2 cpu_usage=%f\n", usage);
+    task_exit_critical(status);
+
+    return usage;
 }

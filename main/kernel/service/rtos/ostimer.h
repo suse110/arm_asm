@@ -74,6 +74,7 @@ void timer_destroy(ostimer_t *timer);
 void timer_get_info(ostimer_t *timer, timer_info_t *info);
 void timer_module_tick_notify(void);
 void timer_module_init(void);
+void timer_task_init(void);
 #else
 #error "timer redef"
 #endif // __OSTIMER_H__
