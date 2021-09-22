@@ -4,25 +4,28 @@ task_t task1;
 task_t task2;
 task_t task3;
 task_t task4;
-uint32_t task1_env[1024];
-uint32_t task2_env[1024];
-uint32_t task3_env[1024];
-uint32_t task4_env[1024];
+#define TASK_STACK_SIZE 1024
+uint32_t task1_env[TASK_STACK_SIZE];
+uint32_t task2_env[TASK_STACK_SIZE];
+uint32_t task3_env[TASK_STACK_SIZE];
+uint32_t task4_env[TASK_STACK_SIZE];
+task_info_t taskinfo1;
+task_info_t taskinfo2;
+task_info_t taskinfo3;
+task_info_t taskinfo4;
 
 task_t task_idle;
-uint32_t idletask_env[1024];
+uint32_t idletask_env[TASK_STACK_SIZE];
 
 int task1_flag;
 event_group_t event_group;
 
-
 typedef uint8_t (*block_t)[100];
 
-
-void task_entry_1(void* param)
+void task_entry_1(void *param)
 {
     os_printf("start\n");
-	uint8_t i;
+    uint8_t i;
     uint32_t result;
     block_t block[20];
     set_systick_period(10);
@@ -36,16 +39,18 @@ void task_entry_1(void* param)
     // 删除事件标志
     event_group_destroy(&event_group);
 
-    for(;;) {
+    for (;;)
+    {
         task1_flag = 1;
         task_delay(500);
         task1_flag = 0;
         task_delay(500);
-
+        task_get_info(current_task, &taskinfo1);
+        os_printf("stacksize=%d stackfree=%d\n", taskinfo1.stack_size, taskinfo1.stack_free);
     }
 }
 int task2_flag;
-void task_entry_2(void* param)
+void task_entry_2(void *param)
 {
     uint32_t result_flags = 0;
     event_group_info_t info;
@@ -59,23 +64,28 @@ void task_entry_2(void* param)
     event_group_wait(&event_group, EVENT_GROUP_SET_ALL | EVENT_GROUP_CONSUME, 0x1, &result_flags, 0);
 
     os_printf("wait done\n");
-    for(;;) {
+    for (;;)
+    {
         task2_flag = 1;
         task_delay(500);
         task2_flag = 0;
         task_delay(500);
-
+        task_get_info(current_task, &taskinfo2);
+        os_printf("stacksize=%d stackfree=%d\n", taskinfo2.stack_size, taskinfo2.stack_free);
     }
 }
 int task3_flag;
-void task_entry_3(void* param)
+void task_entry_3(void *param)
 {
     os_printf("start\n");
-    for(;;) {       
+    for (;;)
+    {
         task3_flag = 1;
         task_delay(500);
         task3_flag = 0;
         task_delay(500);
+        task_get_info(current_task, &taskinfo3);
+        os_printf("stacksize=%d stackfree=%d\n", taskinfo3.stack_size, taskinfo3.stack_free);
     }
 }
 int task4_flag;
@@ -84,18 +94,18 @@ ostimer_t timer1;
 ostimer_t timer2;
 
 uint32_t timer_count[3] = {0};
-void timer_func (void * arg)
+void timer_func(void *arg)
 {
     uint32_t idx = (uint32_t)arg;
     os_printf("This is timer %d, count=%d\n", idx, timer_count[idx]);
     timer_count[idx]++;
 }
 timer_info_t timer_info;
-void task_entry_4(void* param)
+void task_entry_4(void *param)
 {
     os_printf("start\n");
     uint32_t destroyed = 0;
-
+#if 0
     // 定时器1：100个tick后启动，以后每10个tick启动一次
     timer_init(&timer0, 100, 10, timer_func, (void *)0, TIMER_CONFIG_TYPE_HARD);
     timer_start(&timer0);
@@ -107,12 +117,16 @@ void task_entry_4(void* param)
     // 定时器1：300个tick后启动，启动之后关闭
     timer_init(&timer2, 300, 0, timer_func, (void *)2, TIMER_CONFIG_TYPE_HARD);
     timer_start(&timer2);
-    for(;;) {
+#endif
+    for (;;)
+    {
         os_printf("runing 1\n");
         task4_flag = 1;
         task_delay(500);
         task4_flag = 0;
         task_delay(500);
+        task_get_info(current_task, &taskinfo4);
+        os_printf("stacksize=%d stackfree=%d\n", taskinfo4.stack_size, taskinfo4.stack_free);
 
         // 200个tick后，手动销毁定时器1
         if (destroyed == 0)
@@ -127,19 +141,20 @@ void task_entry_4(void* param)
     }
 }
 
-void task_entry_idle(void* param)
+void task_entry_idle(void *param)
 {
-    for(;;) {
+    for (;;)
+    {
         // printf("This is %s\n", __func__);
     }
 }
 
 void user_task_entry(void)
 {
-    task_create("task1",&task1, task_entry_1, (void*)0x11111111, 0, &task1_env[1024]);
-    task_create("task2",&task2, task_entry_2, (void*)0x22222222, 1, &task2_env[1024]);
-    task_create("task3",&task3, task_entry_3, (void*)0x33333333, 1, &task3_env[1024]);
-    task_create("task4",&task4, task_entry_4, (void*)0x44444444, 1, &task4_env[1024]);
+    task_create("task1", &task1, task_entry_1, (void *)0x11111111, 0, task1_env, sizeof(task1_env));
+    task_create("task2", &task2, task_entry_2, (void *)0x22222222, 1, task2_env, sizeof(task2_env));
+    task_create("task3", &task3, task_entry_3, (void *)0x33333333, 1, task3_env, sizeof(task3_env));
+    task_create("task4", &task4, task_entry_4, (void *)0x44444444, 1, task4_env, sizeof(task4_env));
 }
 
 void task_start(void)
@@ -149,10 +164,10 @@ void task_start(void)
     timer_module_init();
     user_task_entry();
 
-    task_create("task_idle",&task_idle, task_entry_idle, (void*)0, OS_PRO_COUNT - 1,&idletask_env[1024]);
+    task_create("task_idle", &task_idle, task_entry_idle, (void *)0, OS_PRO_COUNT - 1, idletask_env, sizeof(idletask_env));
 
     next_task = task_highest_ready();
     run_first_task();
-    while(1);
+    while (1)
+        ;
 }
-

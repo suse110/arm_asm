@@ -21,7 +21,7 @@ typedef enum {
     ERROR_DELETE,
     ERROR_RESOURCE_FULL,
 } error_t;
-
+#define NEW_STACK
 extern task_t *current_task;
 extern task_t *next_task;
 extern bitmap_t task_priority_bitmap;

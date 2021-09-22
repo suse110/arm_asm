@@ -49,6 +49,8 @@ uint32_t task_get_ticks(void)
 }
 task_t * task_highest_ready (void)
 {
+    // os_printf("bitmap_value=%x\n", bitmap_get_value(&task_priority_bitmap));
+
     uint32_t highest_priority = bitmap_get_first(&task_priority_bitmap);
     node_t * node = list_first(&task_table[highest_priority]);
     return (task_t*)NODE_PARENT(node, task_t, link_node);

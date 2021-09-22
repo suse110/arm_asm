@@ -202,5 +202,5 @@ void timer_module_init(void)
 #error "The proprity of timer task must be greater then (OS_PRO_COUNT - 1)"
 #endif
     task_create("timer_task", &timer_task, timer_soft_task, (void *)0,
-                OS_TIMERTASK_PRIO, &timer_task_stack[OS_TIMERTASK_STACK_SIZE]);
+                OS_TIMERTASK_PRIO, timer_task_stack, OS_TIMERTASK_STACK_SIZE);
 }

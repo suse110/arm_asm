@@ -17,6 +17,10 @@ typedef uint32_t task_stack_t;
 // struct event_s;
 typedef struct {
     task_stack_t *stack;
+    // 堆栈的起即地址
+    uint32_t * stack_base;
+    // 堆栈的总容量
+    uint32_t stack_size;
     uint32_t delay_ticks;//任务延时计数
     uint32_t priority;
     node_t delay_node;
@@ -51,12 +55,15 @@ typedef struct {
     uint32_t state;
     uint32_t slice;
     uint32_t suspend_count;
+    // 堆栈的总容量
+    uint32_t stack_size;
+    // 堆栈空余量
+    uint32_t stack_free;
 } task_info_t;
 
 typedef void (*task_entry_t)(void* param);
 
-
-void task_create(const char* name, task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack);
+void task_create(const char* name, task_t * task, task_entry_t entry, void *param, uint32_t priority, uint32_t* stack, uint32_t size);
 void task_suspend(task_t * task);
 void task_resume(task_t * task);
 void task_set_clean_callback(task_t *task, void (*clean)(void *parm), void *param);
