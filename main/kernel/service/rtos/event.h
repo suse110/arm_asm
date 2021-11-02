@@ -4,11 +4,12 @@
 #include "task.h"
 
 typedef enum {
-    EVENT_UNKNOWN_TYPE  = 0,
-    EVENT_TYPE_SEM      = 1,
-    EVENT_TYPE_MBOX     = 2,
-    EVENT_TYPE_MEMBLOCK = 3,
-    EVENT_TYPE_EVENT_GROUP = 3,
+    EVENT_UNKNOWN_TYPE     = 0,
+    EVENT_TYPE_SEM         = 1,
+    EVENT_TYPE_MBOX        = 2,
+    EVENT_TYPE_MEMBLOCK    = 3,
+    EVENT_TYPE_EVENT_GROUP = 4,
+    EVENT_TYPE_MUTEX       = 5,
 } event_type_t;
 
 typedef struct event_s {

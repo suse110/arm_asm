@@ -16,6 +16,7 @@
 
 #define OS_SYSTICK_MS               10
 #define TICKS_PER_SEC               (1000 / OS_SYSTICK_MS)
+#include "mutex.h"
 
 typedef enum {
     ERROR_NO_ERROR = 0,
@@ -23,6 +24,7 @@ typedef enum {
     ERROR_RESOURCE_UNAVALIABLE,
     ERROR_DELETE,
     ERROR_RESOURCE_FULL,
+    ERROR_OWNER,
 } error_t;
 #define NEW_STACK
 extern task_t *current_task;

@@ -6,14 +6,7 @@ void event_group_init (event_group_t* event_group, uint32_t flags)
 	event_group->flags = flags;
 }
 
-/**********************************************************************************************************
-** Function name        :   event_group_check_and_consume
-** Descriptions         :   辅助函数。检查并消耗掉事件标志
-** parameters           :   event_group 等待初始化的事件标志组
-** parameters           :   type 事件标志检查类型
-** parameters           :   flags 待检查事件标志存储地址和检查结果存储位置
-** Returned value       :   ERROR_NO_ERROR 事件匹配；ERROR_RESOURCE_UNAVALIABLE 事件未匹配
-***********************************************************************************************************/
+// 辅助函数。检查并消耗掉事件标志
 static uint32_t event_group_check_and_consume (event_group_t* event_group, uint32_t type, uint32_t * flags)
 {
     uint32_t src_flags = *flags;
@@ -93,15 +86,6 @@ uint32_t event_group_wait (event_group_t* event_group, uint32_t wait_type, uint3
 	return result;
 }
 
-/**********************************************************************************************************
-** Function name        :   event_group_nowaitget
-** Descriptions         :   获取事件标志组中特定的标志
-** parameters           :   event_group 获取的事件标志组
-** parameters           :   wait_type 获取的事件类型
-** parameters           :   requst_flag 请求的事件标志
-** parameters           :   result_flag 等待标志结果
-** Returned value       :   获取结果,ERROR_RESOURCE_UNAVALIABLE.ERROR_NO_ERROR
-***********************************************************************************************************/
 uint32_t event_group_no_wait_get (event_group_t* event_group, uint32_t wait_type, uint32_t request_flag, uint32_t * result_flag)
 {
     uint32_t flags = request_flag;
@@ -114,13 +98,7 @@ uint32_t event_group_no_wait_get (event_group_t* event_group, uint32_t wait_type
 	return status;
 }
 
-/**********************************************************************************************************
-** Function name        :   event_group_notify
-** Descriptions         :   通知事件标志组中的任务有新的标志发生
-** parameters           :   event_group 事件标志组
-** parameters           :   is_set 是否是设置事件标志
-** parameters           :   flags 产生的事件标志
-***********************************************************************************************************/
+// 通知事件标志组中的任务有新的标志发生
 void event_group_notify (event_group_t* event_group, uint8_t is_set, uint32_t flags)
 {
     list_t *wait_list;
@@ -163,13 +141,6 @@ void event_group_notify (event_group_t* event_group, uint8_t is_set, uint32_t fl
     task_exit_critical(status);
 }
 
-/**********************************************************************************************************
-** Function name        :   event_group_getinfo
-** Descriptions         :   查询事件标志组的状态信息
-** parameters           :   event_group 事件标志组
-** parameters           :   info 状态查询存储的位置
-** Returned value       :   无
-***********************************************************************************************************/
 void event_group_get_info (event_group_t* event_group, event_group_info_t * info)
 {
     uint32_t status = task_enter_critical();
@@ -181,12 +152,6 @@ void event_group_get_info (event_group_t* event_group, event_group_info_t * info
     task_exit_critical(status);
 }
 
-/**********************************************************************************************************
-** Function name        :   event_group_destroy
-** Descriptions         :   销毁事件标志组
-** parameters           :   event_group 事件标志组
-** Returned value       :   因销毁该存储控制块而唤醒的任务数量
-***********************************************************************************************************/
 uint32_t event_group_destroy (event_group_t* event_group)
 {
     uint32_t status = task_enter_critical();

@@ -20,58 +20,46 @@ event_group_t event_group;
 
 typedef uint8_t (*block_t)[100];
 float cpu_usage = 0.0;
+mutex_t mutex;
 
 void task_entry_1(void *param)
 {
-    os_printf("start\n");
-    uint8_t i;
-    uint32_t result;
-    block_t block[20];
-    // 初始化事件标志
-    event_group_init(&event_group, 0xFF);
+	mutex_init(&mutex);
 
-    // 故意延时，让task2有时间运行
-    task_delay(1000);
-    os_printf("start destroy\n");
-
-    // 删除事件标志
-    event_group_destroy(&event_group);
-
-    for (;;)
-    {
+    for(;;) {
+        os_printf("muxtex take start\n");
+        mutex_take(&mutex, 0);
+        // mutex_take(&mutex, 0);
+        os_printf("muxtex take done\n");
         task1_flag = 1;
-        task_delay(500);
+        // task_delay(500);
         task1_flag = 0;
-        task_delay(500);
-        task_get_info(current_task, &taskinfo1);
-        cpu_usage = cpu_usage_get();
-        os_printf("stacksize=%d stackfree=%d cpu_usage=%f\n", \
-            taskinfo1.stack_size, taskinfo1.stack_free, cpu_usage);
+        task_delay(5);
+        os_printf("muxtex give start\n");
+        mutex_give(&mutex);
+        // mutex_give(&mutex);
+        os_printf("muxtex give done\n");
     }
 }
 int task2_flag;
 void task_entry_2(void *param)
 {
-    uint32_t result_flags = 0;
-    event_group_info_t info;
-    os_printf("start wait event group\n");
-
-    // 等待并查询状态
-    event_group_wait(&event_group, EVENT_GROUP_SET_ALL | EVENT_GROUP_CONSUME, 0x1, &result_flags, 0);
-    event_group_get_info(&event_group, &info);
-
-    // 等待相同的状态，会一直等下去，直到event_group被销毁
-    event_group_wait(&event_group, EVENT_GROUP_SET_ALL | EVENT_GROUP_CONSUME, 0x1, &result_flags, 0);
-
-    os_printf("wait done\n");
-    for (;;)
-    {
+    for(;;) {
+        os_printf("muxtex take start\n");
+        mutex_take(&mutex, 0);
+        // mutex_take(&mutex, 0);
+        os_printf("muxtex take done\n");
+        // 当运行至此处时，由于互斥信号量的优先级继承机制
+        // task2的优先级由1变成0
         task2_flag = 1;
         task_delay(500);
         task2_flag = 0;
         task_delay(500);
-        task_get_info(current_task, &taskinfo2);
-        os_printf("stacksize=%d stackfree=%d\n", taskinfo2.stack_size, taskinfo2.stack_free);
+        os_printf("muxtex give start\n");
+        // mutex_give(&mutex);
+        mutex_give(&mutex);
+        os_printf("muxtex give done\n");
+
     }
 }
 int task3_flag;
@@ -148,8 +136,6 @@ void user_task_main(void)
     task_create("task3", &task3, task_entry_3, (void *)0x33333333, 1, task3_env, sizeof(task3_env));
     task_create("task4", &task4, task_entry_4, (void *)0x44444444, 1, task4_env, sizeof(task4_env));
 }
-
-
 
 void task_start(void)
 {
