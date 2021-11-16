@@ -42,7 +42,7 @@ typedef struct spi_master {
 struct spi_transfer {
 	const void	*tx_buf;
 	void		*rx_buf;
-	unsigned	len;
+	uint32_t	len;
 	unsigned	cs_change:1;
 	uint16_t	delay_usecs;
 } spi_transfer_t;

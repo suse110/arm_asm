@@ -198,4 +198,19 @@ spim_xfer_t spim_xfer[4][2] = {
     {spim_xfer_mode3_lsb, spim_xfer_mode3_msb},
 };
 
-uint32_t 
+uint32_t spim_transfer(struct spi_master *spi, struct spi_transfer *trans)
+{
+	spim_xfer_t xfer;
+	uint32_t i = 0;
+	uint8_t *tx_buf = trans->tx_buf;
+	uint8_t *rx_buf = trans->rx_buf;
+	xfer = spim_xfer[spi->mode & (SPIM_MODE_CPHA|SPIM_MODE_CPOL)][spi->mode&SPIM_MODE_LSB_FIRST?0:1];
+	spim_set_cs(spi, 1);
+	for (i = 0; i < trans->len; i++) {
+		rx_buf[i] = xfer(spi, trans->delay_usecs, tx_buf[i], 8);
+	}
+	if (trans->cs_change) {
+		spim_set_cs(spi, 0);
+	}
+	return trans->len;
+}
