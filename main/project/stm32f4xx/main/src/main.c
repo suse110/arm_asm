@@ -96,11 +96,45 @@ extern uint32_t	__shell_command_end;
 // };
 // shell_command_t* shell_command_help __attribute__((section(".shell_command"))) = &shell_help;
 // p (*(shell_command_t*)*(uint32_t*)(&__shell_command_start)).name
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
+static GPIO_InitTypeDef  GPIO_InitStruct;
+
+void gpio_test(void)
+{
+  /* -1- Enable GPIOA Clock (to be able to program the configuration registers) */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  
+  /* -2- Configure PA05 IO in output push-pull mode to
+         drive external LED */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct); 
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct); 
+  /* -3- Toggle PA05 IO in an infinite loop */  
+  uint32_t count = 1;
+  uint32_t val = 1;
+  while (1)
+  {
+      HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, val);
+      // HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+  //   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+  //   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_3);
+  //   HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
+    // HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+      val ^= 1;
+    /* Insert delay 100 ms */
+    HAL_Delay(100);
+    if (count-- == 0) {
+      break;
+    }
+  }
+}
 int main(void)
 {
  /* This sample code shows how to use STM32F4xx GPIO HAL API to toggle PA05 IOs 
@@ -127,6 +161,8 @@ int main(void)
     // shell_command_t * scmd = &__shell_command_start;
 
 //  BSP_LED_Init(LED2);
+  gpio_test();
+  spim_test();
 #ifdef RTOS_ENABLE
   void task_start(void);
   task_start();

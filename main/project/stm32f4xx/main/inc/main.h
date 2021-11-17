@@ -27,13 +27,13 @@
 #include "stm32f401xe.h"
 #include "stdio.h"
 #include "serial.h"
-#include "steper.h"
 #include "hal.h"
 #include "hal_platform.h"
 
 #ifdef BACKTRACE_ENABLE
 #include "backtrace.h"
 #endif
+#include "sw_spi_master.h"
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* User can use this section to tailor USARTx/UARTx instance used and associated 
