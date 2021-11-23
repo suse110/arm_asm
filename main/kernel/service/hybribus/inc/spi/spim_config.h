@@ -15,7 +15,10 @@
 
 
 typedef struct {
-    int cs;
+    int cs0;
+    int cs1;
+    int cs2;
+    int cs3;
     int sck;
     int mosi;
     int miso;

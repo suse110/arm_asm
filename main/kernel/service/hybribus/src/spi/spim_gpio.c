@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "spim_gpio.h"
 
 static inline void spim_set_sck(const struct spim_dev *spi, int val)
@@ -7,21 +9,22 @@ static inline void spim_set_sck(const struct spim_dev *spi, int val)
 
 static void spim_set_cs(struct spim_dev *spi, int active)
 {
-	int cs = spi->pins.cs;
+	int *cs = (int*)&spi->pins;
+	cs += spi->csn;
 
 	/* set initial clock polarity */
 	if (active)
 		spim_set_sck(spi, spi->mode & SPIM_MODE_CPOL);
 
-	if (cs != SPIM_NO_PIN) {
+	if (*cs != SPIM_NO_PIN) {
 		/* SPI is normally active-low */
-		GPIO_SET_VAL(cs, (spi->mode & SPIM_MODE_CS_HIGH) ? active : !active);
+		GPIO_SET_VAL(*cs, (spi->mode & SPIM_MODE_CS_HIGH) ? active : !active);
 	}
 }
 
-
 static inline void spim_set_mosi(const struct spim_dev *spi, int val)
 {
+	printf("[%s] val=%d\r\n", __func__, !!val);
 	GPIO_SET_VAL(spi->pins.mosi, !!val);
 }
 
@@ -68,6 +71,7 @@ static inline uint32_t spim_xfer_cpha0_msb(struct spim_dev *spi,
     unsigned nsecs, unsigned cpol, uint32_t word, uint8_t bits)
 {
 	/* if (cpol == 0) this is SPI_MODE_0; else this is SPI_MODE_2 */
+	printf("[%s] word=%x cpol=%d\r\n", __func__, word, cpol);
 
 	/* clock starts at inactive polarity */
 	for (word <<= (32 - bits); bits; bits--) {
@@ -91,6 +95,7 @@ static inline uint32_t spim_xfer_cpha1_msb(struct spim_dev *spi,
     unsigned nsecs, unsigned cpol, uint32_t word, uint8_t bits)
 {
 	/* if (cpol == 0) this is SPI_MODE_1; else this is SPI_MODE_3 */
+	printf("[%s] word=%x cpol=%d\r\n", __func__, word, cpol);
 
 	/* clock starts at inactive polarity */
 	for (word <<= (32 - bits); bits; bits--) {
@@ -113,6 +118,8 @@ static inline uint32_t spim_xfer_cpha1_msb(struct spim_dev *spi,
 static inline uint32_t spim_xfer_cpha0_lsb(struct spim_dev *spi,
     unsigned nsecs, unsigned cpol, uint32_t word, uint8_t bits)
 {
+		printf("[%s] word=%x cpol=%d\r\n", __func__, word, cpol);
+
 	/* if (cpol == 0) this is SPI_MODE_0; else this is SPI_MODE_2 */
     uint32_t __bits = bits;
 	/* clock starts at inactive polarity */
@@ -136,6 +143,8 @@ static inline uint32_t spim_xfer_cpha0_lsb(struct spim_dev *spi,
 static inline uint32_t spim_xfer_cpha1_lsb(struct spim_dev *spi,
     unsigned nsecs, unsigned cpol, uint32_t word, uint8_t bits)
 {
+		printf("[%s] word=%x cpol=%d\r\n", __func__, word, cpol);
+
 	/* if (cpol == 0) this is SPI_MODE_1; else this is SPI_MODE_3 */
     uint32_t __bits = bits;
 	/* clock starts at inactive polarity */
@@ -143,7 +152,7 @@ static inline uint32_t spim_xfer_cpha1_lsb(struct spim_dev *spi,
 
 		/* setup LSB (to slave) on leading edge */
 		spim_set_sck(spi, !cpol);
-		spim_set_mosi(spi, word & (1 << 31));
+		spim_set_mosi(spi, word & 1);
 		SPIM_DELAY(nsecs); /* T(setup) */
 
 		spim_set_sck(spi, cpol);
@@ -199,10 +208,16 @@ spim_xfer_t spim_xfer[4][2] = {
     {spim_duplex_xfer_mode3_lsb, spim_duplex_xfer_mode3_msb},
 };
 
-void spim_init(struct spim_dev *spi, uint32_t mode, spi_pins_t *pins)
+void spim_init(struct spim_dev *spi, uint32_t mode, spi_pins_t *pins, uint32_t csn)
 {
 	spi->mode = mode;
+	spi->csn = csn;
 	memcpy(&spi->pins, pins, sizeof(spi_pins_t));
+}
+
+void spim_select_cs(struct spim_dev *spi, uint32_t csn)
+{
+	spi->csn = csn;
 }
 
 uint32_t spim_duplex_transfer(struct spim_dev *spi, struct spi_transfer *trans)
@@ -211,9 +226,9 @@ uint32_t spim_duplex_transfer(struct spim_dev *spi, struct spi_transfer *trans)
 	uint32_t i = 0;
 	uint8_t tx_data = 0xFF;
 	uint8_t rx_data = 0xFF;
-	uint8_t *txbuf = trans->txbuf;
+	const uint8_t *txbuf = trans->txbuf;
 	uint8_t *rxbuf = trans->rxbuf;
-	xfer = spim_xfer[spi->mode & (SPIM_MODE_CPHA|SPIM_MODE_CPOL)][(spi->mode&SPIM_MODE_LSB_FIRST)?0:1];
+	xfer = spim_xfer[spi->mode & (SPIM_MODE_CPHA|SPIM_MODE_CPOL)][(spi->mode&SPIM_MODE_MSB_FIRST)?1:0];
 	spim_set_cs(spi, 1);
 	for (i = 0; i < trans->len; i++) {
 		if (txbuf) {
@@ -242,6 +257,7 @@ uint32_t spim_send(struct spim_dev *spi, uint8_t *data, uint32_t len)
 	trans.txbuf = data;
 	return spim_duplex_transfer(spi, &trans);
 }
+
 uint32_t spim_recv(struct spim_dev *spi, uint8_t *data, uint32_t len)
 {
 	struct spi_transfer trans;
