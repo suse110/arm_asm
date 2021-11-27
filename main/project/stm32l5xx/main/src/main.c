@@ -43,7 +43,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart2;
+UART_HandleTypeDef hlpuart1;
 
 /* USER CODE BEGIN PV */
 __IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
@@ -52,7 +52,8 @@ __IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
+static void MX_ICACHE_Init(void);
+static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 #if defined(__ARMCC_VERSION) || defined(__ICCARM__)
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
@@ -105,11 +106,13 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
+  MX_ICACHE_Init();
+  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
   /* Configure LED2 and LED3 */
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
+
 
   /* Output a message on Hyperterminal using printf function */
   printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
@@ -119,32 +122,11 @@ int main(void)
 
   /* Wait for User push-button press before starting the Communication.
      In the meantime, LED2 is blinking */
-  while (UserButtonStatus == 0)
+  while (1)
   {
     /* Toggle LED2*/
     BSP_LED_Toggle(LED2);
     HAL_Delay(100);
-  }
-
-  BSP_LED_Off(LED2);
-    BSP_LED_On(LED2);
-    HAL_Delay(100);
-    BSP_LED_Off(LED2);
-    HAL_Delay(100);
-    BSP_LED_On(LED2);
-    HAL_Delay(100);
-    BSP_LED_Off(LED2);
-    HAL_Delay(500);
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
   }
   /* USER CODE END 3 */
 }
@@ -167,13 +149,12 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
-  RCC_OscInitStruct.MSIState = RCC_MSI_ON;
-  RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
-  RCC_OscInitStruct.PLL.PLLM = 1;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 4;
   RCC_OscInitStruct.PLL.PLLN = 55;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
@@ -198,50 +179,70 @@ void SystemClock_Config(void)
 }
 
 /**
-  * @brief USART2 Initialization Function
+  * @brief ICACHE Initialization Function
   * @param None
   * @retval None
   */
-static void MX_USART2_UART_Init(void)
+static void MX_ICACHE_Init(void)
 {
 
-  /* USER CODE BEGIN USART2_Init 0 */
+  /* USER CODE BEGIN ICACHE_Init 0 */
 
-  /* USER CODE END USART2_Init 0 */
+  /* USER CODE END ICACHE_Init 0 */
 
-  /* USER CODE BEGIN USART2_Init 1 */
+  /* USER CODE BEGIN ICACHE_Init 1 */
 
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 921600;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
+  /* USER CODE END ICACHE_Init 1 */
+  /** Enable instruction cache in 1-way (direct mapped cache)
+  */
+  if (HAL_ICACHE_ConfigAssociativityMode(ICACHE_1WAY) != HAL_OK)
   {
     Error_Handler();
   }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart2, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
+  if (HAL_ICACHE_Enable() != HAL_OK)
   {
     Error_Handler();
   }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart2, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART2_Init 2 */
+  /* USER CODE BEGIN ICACHE_Init 2 */
 
-  /* USER CODE END USART2_Init 2 */
+  /* USER CODE END ICACHE_Init 2 */
+
+}
+
+/**
+  * @brief LPUART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LPUART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN LPUART1_Init 0 */
+
+  /* USER CODE END LPUART1_Init 0 */
+
+  /* USER CODE BEGIN LPUART1_Init 1 */
+
+  /* USER CODE END LPUART1_Init 1 */
+  hlpuart1.Instance = LPUART1;
+  hlpuart1.Init.BaudRate = 9600;
+  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
+  hlpuart1.Init.StopBits = UART_STOPBITS_1;
+  hlpuart1.Init.Parity = UART_PARITY_NONE;
+  hlpuart1.Init.Mode = UART_MODE_TX_RX;
+  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  //hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  //hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  //hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  //hlpuart1.FifoMode = UART_FIFOMODE_DISABLE;
+  hlpuart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&hlpuart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LPUART1_Init 2 */
+
+  /* USER CODE END LPUART1_Init 2 */
 
 }
 
@@ -255,7 +256,9 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
-
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  HAL_PWREx_EnableVddIO2();
 }
 
 /* USER CODE BEGIN 4 */
@@ -268,7 +271,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the USART3 and Loop until the end of transmission */
-  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_UART_Transmit(&hlpuart1, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
 }
@@ -278,7 +281,7 @@ GETCHAR_PROTOTYPE
   char ch;
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_UART_Receive(&huart2, (uint8_t *)&ch, 1, 0xFFFF); 
+  HAL_UART_Receive(&hlpuart1, (uint8_t *)&ch, 1, 0xFFFF); 
 
   return ch;
 }
@@ -292,9 +295,10 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  /* Turn LED3 on */
-  BSP_LED_On(LED3);
-  while (1);
+  while (1){
+    BSP_LED_Toggle(LED3);
+    HAL_Delay(1000);
+  };
   /* USER CODE END Error_Handler_Debug */
 }
 

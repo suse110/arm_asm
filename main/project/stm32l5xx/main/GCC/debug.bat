@@ -19,6 +19,6 @@ tasklist | findstr /i openocd.exe > NUL
 if ErrorLevel == 1 (
     @echo "openocd start fail"
 ) else (
-    arm-none-eabi-gdb %ROOT_DIR%\main\build\stm32l5xx\main.elf -q -x gdbinit
+    arm-none-eabi-gdb %ROOT_DIR%\main\build\stm32l5xx\main\main.elf -q -x gdbinit
 )
 
