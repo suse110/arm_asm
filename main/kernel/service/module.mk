@@ -57,4 +57,4 @@ ifeq ($(EXCEPTION_ENABLE),y)
 include $(SDKPATH)/$(SERVICE_DIR)/exception/module.mk
 endif
 
-include $(SDKPATH)/$(SERVICE_DIR)/superbus/module.mk
+# include $(SDKPATH)/$(SERVICE_DIR)/hibribus/module.mk

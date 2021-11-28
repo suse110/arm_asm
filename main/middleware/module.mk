@@ -1,3 +1,3 @@
 MIDDLEWARE_DIR = middleware
 
-include $(SDKPATH)/$(MIDDLEWARE_DIR)/fifo/module.mk
+include $(SDKPATH)/$(MIDDLEWARE_DIR)/ringbuffer/module.mk

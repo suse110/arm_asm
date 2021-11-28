@@ -6,8 +6,8 @@ SRC += ../../kernel/third/unit-test/cutest/CuTest.c
 CFLAGS += -I../../kernel/third/unit-test/cutest/
 
 all:
-	gcc  $(BUILD_DIR)/$(SRC) $(CFLAGS) -o fifo
+	gcc  $(BUILD_DIR)/$(SRC) $(CFLAGS) -o ringbuffer
 
 
 clean:
-	rm fifo
+	rm ringbuffer
