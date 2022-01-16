@@ -92,6 +92,7 @@ valid_bit  tag(22-2 bit)        cache                            块号        �
                               *------*                                      *------*
     ```
     主存块0和4都映射到了set 0
+    以上, S = 4(4个cache set), E = 2(一个cache set里有2个cache line)
 ### cache
 
 cache hit
