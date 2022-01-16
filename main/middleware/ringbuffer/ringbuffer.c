@@ -179,7 +179,7 @@ wptr' = wptr & (size - 1)
         data size = wptr - rptr = 0 - 0xFFFFFFFB = 5
 
 5. How to calculate the data size and the free size at a contingous space of the ring buffer?
-    case 1:
+case 1:
     data size = wptr - rptr
     tail free size = size - wptr' = size - (wptr & (size - 1))
 
@@ -221,7 +221,7 @@ wptr' = wptr & (size - 1)
     rb->wptr += len;
 
 
-    case 2:
+case 2:
     data size = size - rptr = size - (rptr' & (size - 1))
     free size = rptr - wptr = (rptr' & (size - 1) - (wptr' & (size - 1)
     0   1   2   3   4   5   6   7
@@ -250,7 +250,7 @@ wptr' = wptr & (size - 1)
     rb->wptr += len;
 
 
-支持多个user同时写入，多个user同时读取
+## 支持多个user同时写入，多个user同时读取
 
     将rptr 用 r_head和r_tail代替，当r_head等于r_tail时，读操作完毕
     将wptr 用 w_head和w_tail代替，当w_head等于w_tail时，写操作完毕
@@ -419,6 +419,7 @@ wptr' = wptr & (size - 1)
 
 问题:
     第二个user要等第一个user写入完毕才能完成写操作
+    
 */
 
 
@@ -429,14 +430,18 @@ wptr' = wptr & (size - 1)
 #include <stdlib.h>
 #include "ringbuffer.h"
 
+#if RB_ADDRESS_POWER_OF_2
 static bool is_power_of_2(uint32_t x);
 static uint32_t roundup_pow_of_two(uint32_t x);
+#endif
 
 ringbuffer_t *rb_init(uint8_t *buffer, uint32_t size)
 {
     ringbuffer_t *rb;
+#if RB_ADDRESS_POWER_OF_2
     /* size must be a power of 2 */
     RB_ASSERT(!is_power_of_2(size));
+#endif
     rb = (ringbuffer_t *)RB_MALLOC(sizeof(ringbuffer_t));
     if (!rb)
         return NULL;
@@ -450,12 +455,14 @@ ringbuffer_t *rb_alloc(uint32_t size)
 {
     uint8_t *buffer;
     ringbuffer_t *ret;
+#if RB_ADDRESS_POWER_OF_2
     //rb->size的值总是在调用者传进来的size参数的基础上向2的幂扩展
     //对rb->size取模运算可以转化为与运算.rb->wptr % rb->size 可以转化为 rb->wptr & (rb->size – 1)
     if (!is_power_of_2(size)) {
         RB_ASSERT(size > 0x80000000);
         size = roundup_pow_of_two(size);
     }
+#endif
     buffer = (uint8_t *)RB_MALLOC(size);
     if (!buffer)
         return NULL;
@@ -525,7 +532,7 @@ uint32_t __rb_write(ringbuffer_t *rb, const uint8_t *buffer, uint32_t len)
     smp_wmb();
     // printf("[%s] 1 wptr=%d len=%d\n", __func__, rb->wptr, len);
     //kringbuffer的巧妙之处在于in和out定义为无符号类型，在write和read时，in和out都是增加，当达到最大值时，产生溢出，使得从0开始，进行循环使用
-    rb->wptr += len; //每次累加，到达最大值后溢出，自动转为0
+    RB_UPDATE_WPTR(rb, len);
     // printf("[%s] 2 wptr=%d len=%d\n", __func__, rb->wptr, len);
     return len;
 }
@@ -557,7 +564,7 @@ uint32_t __rb_read(ringbuffer_t *rb, uint8_t *buffer, uint32_t len)
      */
     smp_mb();
     // printf("[%s] 1 rptr=%d len=%d\n", __func__, rb->rptr, len);
-    rb->rptr += len; //每次累加，到达最大值后溢出，自动转为0
+    RB_UPDATE_RPTR(rb, len);
     // printf("[%s] 2 rptr=%d len=%d\n", __func__, rb->rptr, len);
     return len;
 }

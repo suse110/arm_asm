@@ -13,14 +13,31 @@
 #define smp_rmb()
 #define smp_wmb()
 
-
+#define RB_ADDRESS_POWER_OF_2 1
+#if RB_ADDRESS_POWER_OF_2
 //物理读指针位置
 #define RB_PHY_RPTR(rb) (rb->rptr & (rb->size - 1))
 //物理写指针位置
 #define RB_PHY_WPTR(rb) (rb->wptr & (rb->size - 1))
 
+#define RB_UPPDATE_RPTR(rb, len) (rb->rptr += len) //每次累加，到达最大值后溢出，自动转为0
+#define RB_UPPDATE_WPTR(rb, len) (rb->wptr += len) //每次累加，到达最大值后溢出，自动转为0
 //ringbuffer 中总共有多少数据
 #define RB_TOTAL_DATA_SIZE(rb) (rb->wptr - rb->rptr)
+
+#else
+//物理读指针位置
+#define RB_PHY_RPTR(rb) (rb->rptr)
+//物理写指针位置
+#define RB_PHY_WPTR(rb) (rb->wptr)
+
+#define RB_UPPDATE_RPTR(rb, len) (rb->rptr = (rb->rptr + len) % rb->size) 
+#define RB_UPPDATE_WPTR(rb, len) (rb->wptr = (rb->wptr + len) % rb->size) 
+//ringbuffer 中总共有多少数据
+#define RB_TOTAL_DATA_SIZE(rb) ((rb->wptr - rb->rptr + rb->size) % rb->size)
+
+#endif
+
 //ringbuffer 中总共有多少空闲空间
 #define RB_TOTAL_FREE_SPACE_SIZE(rb) (rb->size - RB_TOTAL_DATA_SIZE(rb))
 
@@ -29,12 +46,13 @@
     rb->wptr - rb->rptr : (rb->size - RB_PHY_RPTR(rb)))
 //ringbuffer中，wptr开始，地址连续的空闲空间长度
 #define RB_CONTIGUOUS_FREE_SPAPCE_SIZE(rb) ((RB_PHY_WPTR(rb) > RB_PHY_RPTR(rb)) ? \
-    (rb->size - RB_PHY_WPTR(rb)) | rb->rptr - rb->wptr)
+    (rb->size - RB_PHY_WPTR(rb)) : rb->rptr - rb->wptr)
 
 //ringbuffer中，rptr 位置所在的地址
 #define RB_CONTIGUOUS_DATA_START_ADDR(rb) (rb->buffer + RB_PHY_RPTR(rb))
 //ringbuffer中，wptr 位置所在的地址
 #define RB_CONTIGUOUS_FREE_SPACE_START_ADDR(rb) (rb->buffer + RB_PHY_WPTR(rb))
+
 
 typedef struct
 {
