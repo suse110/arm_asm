@@ -1,12 +1,12 @@
 #include "mt_ringbuffer.h"
-
+#include "hexdump.h"
 
 #if RB_ADDRESS_POWER_OF_2
 static bool is_power_of_2(uint32_t x);
 static uint32_t roundup_pow_of_two(uint32_t x);
 #endif
 
-bool ringbuffer_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t size)
+bool ringbuffer_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t len)
 {
 #if RB_ADDRESS_POWER_OF_2
     /* size must be a power of 2 */
@@ -15,9 +15,10 @@ bool ringbuffer_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t size)
     if (!rb || !buffer) 
         return false;
     rb->buffer = buffer;
-    rb->size = size;
+    rb->size = 0;
+    rb->capacity = len;
 #if RB_ADDRESS_POWER_OF_2
-    rb->mask = size - 1;
+    rb->mask = len - 1;
 #endif
     rb->wptr.head = 0;
     rb->wptr.tail = 0;
@@ -27,17 +28,17 @@ bool ringbuffer_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t size)
     return true;
 }
 
-bool ringbuffer_alloc(ringbuffer_t *rb, uint32_t size)
+bool ringbuffer_alloc(ringbuffer_t *rb, uint32_t len)
 {
 #if RB_ADDRESS_POWER_OF_2
     //rb->size的值总是在调用者传进来的size参数的基础上向2的幂扩展
     //对rb->size取模运算可以转化为与运算.rb->wptr % rb->size 可以转化为 rb->wptr & (rb->size – 1)
-    if (!is_power_of_2(size)) {
-        RB_ASSERT(size > 0x80000000);
-        size = roundup_pow_of_two(size);
+    if (!is_power_of_2(len)) {
+        RB_ASSERT(len > 0x80000000);
+        len = roundup_pow_of_two(len);
     }
 #endif
-    return ringbuffer_init(rb, RB_MALLOC(size), size);;
+    return ringbuffer_init(rb, RB_MALLOC(len), len);;
 }
 
 void ringbuffer_reset(ringbuffer_t *rb)
@@ -82,12 +83,13 @@ uint32_t ringbuffer_write(ringbuffer_t *rb, uint8_t *data, uint32_t len)
     } while(!cas(&rb->wptr.head, old_head, new_head));
     
     /* step 2: copy 数据到ring buffer */
-    RB_WRITE_DATA(rb, data, write_len);
+    RB_WRITE_DATA(rb, data, write_len, old_head);
     /* step 3: 更新tail，表示数据已经写入ring buffer. 更新tail之前要先看old_head是否等于tail，相等就说明上一个
     task已经将数据写入ring buffer */
     while(!cas(&rb->wptr.tail, old_head, new_head));
     return write_len;
 }
+
 
 
 uint32_t ringbuffer_read(ringbuffer_t *rb, uint8_t *data, uint32_t len)
@@ -116,14 +118,29 @@ uint32_t ringbuffer_read(ringbuffer_t *rb, uint8_t *data, uint32_t len)
     } while(!cas(&rb->rptr.head, old_head, new_head));
     
     /* step 2:从ring buffer copy 数据 */
-    RB_READ_DATA(rb, data, read_len);
+    RB_READ_DATA(rb, data, read_len, old_head);
     /* step 3: 更新tail，表示数据已经写入ring buffer. 更新tail之前要先看old_head是否等于tail，相等就说明上一个
     task已经将数据写入ring buffer */
     while(!cas(&rb->rptr.tail, old_head, new_head));
 
     return read_len;
 }
+void ringbuffer_dump(ringbuffer_t *rb)
+{
+    rb->size = RB_TOTAL_DATA_SIZE(rb);
+    printf("capacity     = %d\n", rb->capacity);
+    printf("size         = %d\n", rb->size);
+    printf("mask         = %d\n", rb->mask);
+    printf("[l]wptr.head = %4d, wptr.tail = %4d\n", rb->wptr.head, rb->wptr.tail);
+    printf("[p]wptr.head = %4d, wptr.tail = %4d\n", rb->wptr.head & rb->mask, rb->wptr.tail & rb->mask);
+    printf("[l]rptr.head = %4d, rptr.tail = %4d\n", rb->rptr.head, rb->rptr.tail);
+    printf("[p]rptr.head = %4d, rptr.tail = %4d\n", rb->rptr.head & rb->mask, rb->rptr.tail & rb->mask);
 
+    uint32_t read_len_head;
+    read_len_head = min(rb->size, rb->size - RB_PHY_RPTR_TAIL(rb));
+    hexdump(rb->buffer + RB_PHY_RPTR_TAIL(rb), read_len_head);
+    hexdump(rb->buffer, rb->size - read_len_head);
+}
 #if RB_ADDRESS_POWER_OF_2
 /**
   * @brief  Determine whether some value is a power of two.
