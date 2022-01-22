@@ -4,3 +4,9 @@
 [submodule "main/kernel/service/CmBacktrace"]
 	path = main/kernel/service/CmBacktrace
 	url = https://github.com/suse110/CmBacktrace.git
+[submodule "main/middleware/multi_core_sim/CSerialPortg"]
+	path = main/middleware/multi_core_sim/CSerialPortg
+	url = https://github.com/suse110/CSerialPort.git
+[submodule "main/middleware/multi_core_sim/CSerialPort"]
+	path = main/middleware/multi_core_sim/CSerialPort
+	url = https://github.com/suse110/CSerialPort.git
