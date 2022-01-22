@@ -1,0 +1,1 @@
+@set PATH=%PATH%;D:\Tools\msys64\mingw64\bin\
