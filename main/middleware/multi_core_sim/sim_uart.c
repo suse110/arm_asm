@@ -7,23 +7,32 @@
 5. mbuf中的数据通过dma搬到uart vfifo
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include<stdlib.h>
-#include<stdio.h>
-#include<sys/types.h>
-#include<sys/sysinfo.h>
-#include<unistd.h>
-
-#define __USE_GNU
-#include<sched.h>
-#include<ctype.h>
-#include<string.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
+#include <string.h>
+#if defined(linux) || defined(__CYGWIN__)
+#include <sys/types.h>
+#include <sys/sysinfo.h>
+#include <unistd.h>
+#define __USE_GNU
+#include <sched.h>
+#include <ctype.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#endif
+
+#ifdef win32
+#endif
+
 #include "sim_uart.h"
+#include "ser_bridge.h"
 
 // share memory : https://blog.csdn.net/ababab12345/article/details/102931841
 // thread : https://blog.csdn.net/networkhunter/article/details/100218945
@@ -64,6 +73,7 @@ static void sim_init_send(int signo)
 
 void set_thread(int n, char *name)
 {
+#if !defined(__CYGWIN__)
     cpu_set_t mask;  //CPU核的集合
     cpu_set_t get;   //获取在集合中的CPU
     int core_number = n;
@@ -82,7 +92,7 @@ void set_thread(int n, char *name)
     } else {
         printf("this thread %s is bot running processor : %d\n", name, core_number);
     }
-
+#endif
 }
 
 void * uart_tx_thread(void *arg)
@@ -104,29 +114,30 @@ void * uart_tx_thread(void *arg)
     
     // sim_isr(0);
     while (1) {
-    read_bytes = ringbuffer_read(&su->txbuf, rxbuff, sizeof(rxbuff));
-    if (read_bytes > 0) {
-        write_bytes = write(su->tx_fd, rxbuff, read_bytes);
-        if (write_bytes <= 0) {
-            perror("write fail\n");
+        read_bytes = ringbuffer_read(&su->txbuf, rxbuff, sizeof(rxbuff));
+        if (read_bytes > 0) {
+            write_bytes = write(su->tx_fd, rxbuff, read_bytes);
+            if (write_bytes <= 0) {
+                perror("write fail\n");
+            }
+        } else {
+            pthread_mutex_lock(&su->mutex);
+            if (su->callback) {
+                su->callback(SIM_UART_EVENT_REDY_TO_WRITE, su);
+            }
+            pthread_mutex_unlock(&su->mutex);
+            //等待ringbuffer write的signal
+            // printf("wait signal\n");
+            // pthread_mutex_lock(&su->cond_wait_mutex);
+            // pthread_cond_wait(&su->tx_data_ready, &su->cond_wait_mutex);
+            // pthread_mutex_unlock(&su->cond_wait_mutex);
+            // printf("receive signal\n");
+            // sleep(0.1);
         }
-    } else {
-        pthread_mutex_lock(&su->mutex);
-        if (su->callback) {
-            su->callback(SIM_UART_EVENT_REDY_TO_WRITE, su);
-        }
-        pthread_mutex_unlock(&su->mutex);
-        //等待ringbuffer write的signal
-        // printf("wait signal\n");
-        // pthread_mutex_lock(&su->cond_wait_mutex);
-        // pthread_cond_wait(&su->tx_data_ready, &su->cond_wait_mutex);
-        // pthread_mutex_unlock(&su->cond_wait_mutex);
-        // printf("receive signal\n");
-        // sleep(0.1);
-    }
     }
     return NULL;
 }
+
 void * uart_rx_thread(void *arg)
 {
     char rxbuff[1000]; 
@@ -149,8 +160,7 @@ void * uart_rx_thread(void *arg)
             if (write_bytes == 0) {
                 printf("fifo is full\n");
                 sleep(1);
-            } else {
-                //
+            } else {                                            
                 pthread_mutex_lock(&su->mutex);
                 if (su->callback) {
                     su->callback(SIM_UART_EVENT_REDY_TO_READ, su);
@@ -171,7 +181,7 @@ void tx_hook(void *arg)
 }
 
 
-bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size, uint32_t com_port, uart_callback_t callback)
+bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size, uint32_t com_port, const char *dev, uart_callback_t callback)
 {
     MC_ASSERT(su);
     MC_ASSERT(com_port < 2);
@@ -205,7 +215,7 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
     su->shm_fd = shm_open("posixsm", O_CREAT|O_RDWR, 0777);
     if (su->shm_fd < 0) {
         perror("shm_open failed!\n");
-        return -1;
+        return false;
     }
     
     // act.sa_handler = NULL;
@@ -234,8 +244,15 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
     pthread_attr_setschedpolicy(&su->attr, SCHED_RR);
     pthread_create(&su->tx_thread, &su->attr, uart_tx_thread, su);
     pthread_create(&su->rx_thread, &su->attr, uart_rx_thread, su);
-
-
+    // pthread_join(su->tx_thread, NULL);
+    // pthread_join(su->rx_thread, NULL);
+    if (dev) {
+        if (!ser_bridge_init(&su->sb, dev, 921600, &su->txbuf, &su->rxbuf)) {
+            printf("[%s] %s init fail\n", __func__, dev);
+            perror("");
+            return false;
+        }
+    }
     return true;
 }
 
@@ -249,3 +266,6 @@ bool sim_uart_deinit(struct sim_uart *su)
     munmap(su->shm_addr, su->shm_size);
     shm_unlink("posixsm");
 }
+#ifdef __cplusplus
+}
+#endif
