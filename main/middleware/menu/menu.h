@@ -40,5 +40,12 @@ void print_menu();
 
 extern int current_level; 
 extern menu_node_item_t header; 
+extern int __io_getchar(void);
+#define GET_MENU_ID()\
+({\
+    char cmd_idx;\
+    scanf("%c", &cmd_idx);\
+    cmd_idx;\
+})
 
 #endif

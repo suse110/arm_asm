@@ -1,7 +1,7 @@
-# FIFO_DIR=middleware/fifo
-FIFO_DIR=.
+MENU_DIR=middleware/menu
+# MENU_DIR=.
 
-SRC += $(FIFO_DIR)/menu.c
-SRC += $(FIFO_DIR)/test.c
+SRC += $(MENU_DIR)/menu.c
+SRC += $(MENU_DIR)/test.c
 
-CFLAGS += -I$(SDKPATH)/$(FIFO_DIR)
+CFLAGS += -I$(SDKPATH)/$(MENU_DIR)

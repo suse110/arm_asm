@@ -4,6 +4,9 @@ BUILD_DIR=$(shell pwd)
 
 SRC += ../../kernel/third/unit-test/cutest/CuTest.c
 CFLAGS += -I../../kernel/third/unit-test/cutest/
+
+CFLAGS += -DPC_TEST
+
 TARGET=menu
 all:
 	gcc  $(BUILD_DIR)/$(SRC) $(CFLAGS) -o $(TARGET)

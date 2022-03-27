@@ -32,13 +32,17 @@ menu_node_item_t time_menus[] = {
             LEVEL(3,"test_sleep_millisecond",default_action)
             LEVEL(3,"test_sleep_microsecond",default_action)
             LEVEL(3,"test_sleep_nanosecond",default_action)
-            LEVEL(3,"test_sleep_nanosecond_clock",default_action)
+            LEVEL(3,"test_action",test_action)
         LEVEL(2,"timer",default_action)
             LEVEL(3,"test_alarm_signal_timer",default_action)
         LEVEL(2,"test_action",test_action)
 };
-
-int main(int argc,char *argv[]){
+#ifdef PC_TEST
+int main(int argc,char *argv[])
+#else
+int menu_test(void)
+#endif
+{
     init_menu();
 
     ADD_MENU(log_menus);
