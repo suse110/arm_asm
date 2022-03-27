@@ -1,0 +1,24 @@
+python
+
+
+import ast
+import io
+import itertools
+import math
+import os
+import re
+import struct
+import traceback
+
+set history save
+set verbose off
+set print pretty on
+set print array off
+set print array-indexes on
+set python print-stack full
+
+target remote localhost:3333
+load
+set disassemble-next-line on
+b Reset_Handler
+c
