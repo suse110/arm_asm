@@ -8,6 +8,8 @@ tools/qemu/win/w64-202107062
 tools/arm-none-eabi/Sourcery_CodeBench_Lite_for_ARM_EABI
 **/*.asm
 **/*.hex
+**/*.pyc
+**/*.python-version
 main/**/*.exe
 **/CSerialPort
 **/cutest
