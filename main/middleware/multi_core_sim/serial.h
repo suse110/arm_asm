@@ -29,7 +29,7 @@ int  serial_init(serial_t *ser, const char *dev, int bps);
 int  serial_open(serial_t *ser);
 void serial_close(serial_t *ser);
 void serial_clear(serial_t *ser);
-int  serial_read(serial_t *ser, char *s, int ln);
+int  serial_read(serial_t *ser, char *s, int ln, int timeout);
 int  serial_write(serial_t *ser, char *s, int ln);
 
 #ifdef __cplusplus

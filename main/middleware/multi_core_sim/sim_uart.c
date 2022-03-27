@@ -33,6 +33,7 @@ extern "C" {
 
 #include "sim_uart.h"
 #include "ser_bridge.h"
+#include "hexdump.h"
 
 // share memory : https://blog.csdn.net/ababab12345/article/details/102931841
 // thread : https://blog.csdn.net/networkhunter/article/details/100218945
@@ -47,6 +48,42 @@ static void sim_uart_isr(int signo, siginfo_t *info, void *content)
 
 static struct sim_uart g_sim_uart;
 
+void uart_isr_callback(int event, void *arg)
+{
+    struct sim_uart *su = (struct sim_uart *)arg;
+    char buff[128];
+    uint32_t read_bytes;
+    uint32_t write_bytes;
+    switch(event) {
+    case SIM_UART_EVENT_REDY_TO_READ :
+        printf("[%s] recv SIM_UART_EVENT_REDY_TO_READ\n", __func__);
+        // su->hb_callback(su->uart_port, event, su);
+        read_bytes = ringbuffer_read(su->rxbuf, buff, sizeof(buff));
+        if (read_bytes > 0) {
+            hexdump(buff, read_bytes);
+        } else {
+            printf("[%s] recv SIM_UART_EVENT_REDY_TO_READ, but no data can be read\n", __func__);
+        }
+        break;
+    case SIM_UART_EVENT_REDY_TO_WRITE:
+        printf("[%s] recv SIM_UART_EVENT_REDY_TO_WRITE\n", __func__);
+        // su->hb_callback(su->uart_port, event, su);
+        char buff[32];
+        for (uint32_t i = 0; i< sizeof(buff); i++) {
+            buff[i] = i;
+        }
+        write_bytes = ringbuffer_write(su->txbuf, buff, sizeof(buff));
+        if (write_bytes > 0) {
+            printf("[%s] wirte_bytes=%d\n", __func__, write_bytes);
+        } else {
+            printf("[%s] buff full, write_bytes=%d\n", __func__, write_bytes);
+            ringbuffer_dump(su->txbuf, __func__);
+        }
+        break;
+    default:
+        printf("error event:%d\n", event);
+    }
+}
 static void sim_isr(int signo)
 {
     sim_uart_deinit(&g_sim_uart);
@@ -61,7 +98,7 @@ static void sim_init_send(int signo)
     for (uint32_t i = 0; i< sizeof(buff); i++) {
         buff[i] = i;
     }
-    write_bytes = ringbuffer_write(&g_sim_uart.txbuf, buff, sizeof(buff));
+    write_bytes = ringbuffer_write(g_sim_uart.txbuf, buff, sizeof(buff));
     if (write_bytes > 0) {
         printf("[%s] wirte_bytes=%d\n", __func__, write_bytes);
     } else {
@@ -100,7 +137,11 @@ void * uart_tx_thread(void *arg)
 
     struct sim_uart *su = (struct sim_uart *)arg;
     // pthread_mutex_tyrlock(&sim_uart->mutex);
-    printf("[%s] fd=%d\n", __func__, su->tx_fd);
+#ifdef SIM_UART_NAME_FIFO_ENABLE
+    printf("[%s] fd=%d\n", __func__, su->rx_fd);
+#else
+    printf("[%s] fd=%d\n", __func__, su->dual_chip_ser.fd);
+#endif
     char txbuff[1000];
     char rxbuff[100];
     int len;
@@ -114,16 +155,22 @@ void * uart_tx_thread(void *arg)
     
     // sim_isr(0);
     while (1) {
-        read_bytes = ringbuffer_read(&su->txbuf, rxbuff, sizeof(rxbuff));
+        read_bytes = ringbuffer_read(su->txbuf, rxbuff, sizeof(rxbuff));
         if (read_bytes > 0) {
+            printf("[%s] recv %d bytes from rxringbuf, serial write to dual_chip\n",\
+            __func__, read_bytes);
+#ifdef SIM_UART_NAME_FIFO_ENABLE
             write_bytes = write(su->tx_fd, rxbuff, read_bytes);
+#else
+            write_bytes = serial_write(&su->dual_chip_ser, rxbuff, read_bytes);
+#endif
             if (write_bytes <= 0) {
                 perror("write fail\n");
             }
         } else {
             pthread_mutex_lock(&su->mutex);
-            if (su->callback) {
-                su->callback(SIM_UART_EVENT_REDY_TO_WRITE, su);
+            if (su->uart_callback) {
+                su->uart_callback(SIM_UART_EVENT_REDY_TO_WRITE, su);
             }
             pthread_mutex_unlock(&su->mutex);
             //等待ringbuffer write的signal
@@ -132,7 +179,7 @@ void * uart_tx_thread(void *arg)
             // pthread_cond_wait(&su->tx_data_ready, &su->cond_wait_mutex);
             // pthread_mutex_unlock(&su->cond_wait_mutex);
             // printf("receive signal\n");
-            // sleep(0.1);
+            sleep(1);
         }
     }
     return NULL;
@@ -144,26 +191,36 @@ void * uart_rx_thread(void *arg)
     int read_bytes;
     uint32_t write_bytes;
     struct sim_uart *su = (struct sim_uart *)arg;
+#ifdef SIM_UART_NAME_FIFO_ENABLE
+    printf("[%s] fd=%d\n", __func__, su->rx_fd);
+#else
+    printf("[%s] fd=%d\n", __func__, su->dual_chip_ser.fd);
+#endif
     if (su->com_port == 0) {
         set_thread(1, "P0 RX");
     } else {
         set_thread(3, "P1 RX");
     }
-    printf("[%s] fd=%d\n", __func__, su->rx_fd);
     while (1) {
+#ifdef SIM_UART_NAME_FIFO_ENABLE
         read_bytes = read(su->rx_fd, rxbuff, sizeof(rxbuff));
+#else
+        read_bytes = serial_read(&su->dual_chip_ser, rxbuff, sizeof(rxbuff), 1000000);
+        printf("[%s] read dev %s %d bytes done\n", __func__, su->dual_chip_ser.port, read_bytes);
+#endif
         if (read_bytes <= 0) {
             perror("read fail\n");
-            sleep(1);
         } else {
-            write_bytes = ringbuffer_write(&su->rxbuf, rxbuff, read_bytes);
+            printf("[%s] dev %s recv %d bytes, write to rxbuf[0x%lx]\n",\
+                 __func__, su->dual_chip_ser.port, read_bytes, (uintptr_t)su->rxbuf);
+            write_bytes = ringbuffer_write(su->rxbuf, rxbuff, read_bytes);
             if (write_bytes == 0) {
                 printf("fifo is full\n");
                 sleep(1);
             } else {                                            
                 pthread_mutex_lock(&su->mutex);
-                if (su->callback) {
-                    su->callback(SIM_UART_EVENT_REDY_TO_READ, su);
+                if (su->uart_callback) {
+                    su->uart_callback(SIM_UART_EVENT_REDY_TO_READ, su);
                 }
                 pthread_mutex_unlock(&su->mutex);
 
@@ -181,17 +238,24 @@ void tx_hook(void *arg)
 }
 
 
-bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size, uint32_t com_port, const char *dev, uart_callback_t callback)
+bool sim_uart_init(struct sim_uart *su, ringbuffer_t *txbuf, ringbuffer_t *rxbuf, uint32_t uart_port, uint32_t com_port, const char *dev, hb_callback_t callback)
 {
     MC_ASSERT(su);
     MC_ASSERT(com_port < 2);
     // struct sigaction act;
     memcpy(&g_sim_uart, su, sizeof(struct sim_uart));
+#ifdef SHM_ENABLE
     su->shm_size = 1024*1024;
+#endif
     su->com_port = com_port;
-    su->callback = callback;
-    MC_ASSERT(ringbuffer_alloc(&su->txbuf, txbuf_size));
-    MC_ASSERT(ringbuffer_alloc(&su->rxbuf, rxbuf_size));
+    su->com_port = uart_port;
+    su->uart_callback = uart_isr_callback;
+    su->hb_callback = callback;
+    su->txbuf = txbuf;
+    su->rxbuf = rxbuf;
+
+    #define MC_CHECK_FD(fd) if (fd < 0) {perror("open fifo error\n"); exit(0);}
+#ifdef SIM_UART_NAME_FIFO_ENABLE
     if(mkfifo("/tmp/uart0", 0666) < 0) {
         perror("mkfifo /tmp/uart0\n");
     }
@@ -199,7 +263,6 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
         perror("mkfifo /tmp/uart1\n");
     }
     
-    #define MC_CHECK_FD(fd) if (fd < 0) {perror("open fifo error\n"); exit(0);}
     if (com_port == 0) {
         su->rx_fd = open("/tmp/uart1", O_RDONLY|O_TRUNC );
         MC_CHECK_FD(su->rx_fd);
@@ -212,12 +275,30 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
         MC_CHECK_FD(su->rx_fd);
     }
     printf("open fifo done\n");
+#else
+    char *ser_name = NULL;
+    if (com_port == 0)  {
+        ser_name = "/dev/pts/0"; 
+    } else {
+        ser_name = "/dev/pts/3"; 
+    }
+    printf("open %s\n", ser_name);
+    serial_init(&su->dual_chip_ser, ser_name, 921600);
+    if (serial_open(&su->dual_chip_ser) < 0) {
+        printf("[%s] open %s fail\n", __func__, ser_name);
+        perror("");
+        exit(0);
+    } else {
+        printf("[%s] open %s ok\n", __func__, ser_name);
+    }
+#endif
+#ifdef SHM_ENABLE
     su->shm_fd = shm_open("posixsm", O_CREAT|O_RDWR, 0777);
     if (su->shm_fd < 0) {
         perror("shm_open failed!\n");
         return false;
     }
-    
+#endif
     // act.sa_handler = NULL;
     // act.sa_mask = 0;
     // act.sa_flags = SA_SIGINFO|SA_RESTART;
@@ -225,15 +306,15 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
     // sigaction(SIM_UART_EVENT_REDY_TO_READ, &act, NULL);
     // sigaction(SIM_UART_EVENT_REDY_TO_WRITE, &act, NULL);
 
-    if(SIG_ERR == signal(SIGINT, sim_isr))
-    // perror("SIGINT install err\n");
+    if(SIG_ERR == signal(SIGINT, sim_isr)) perror("SIGINT install err\n");
     // su->txbuf.wdhook.hook = tx_hook;
     // su->txbuf.wdhook.arg = su;
 
+#ifdef SHM_ENABLE
     ftruncate(su->shm_fd, su->shm_size);
     su->shm_addr = mmap(NULL, su->shm_size, PROT_READ|PROT_WRITE, MAP_SHARED, su->shm_fd, 0);
     MC_ASSERT(su->shm_addr);
-
+#endif
     pthread_cond_init(&su->tx_data_ready, NULL);
     pthread_mutex_init(&su->mutex, NULL);
     pthread_mutex_init(&su->cond_wait_mutex, NULL);
@@ -247,7 +328,7 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
     // pthread_join(su->tx_thread, NULL);
     // pthread_join(su->rx_thread, NULL);
     if (dev) {
-        if (!ser_bridge_init(&su->sb, dev, 921600, &su->txbuf, &su->rxbuf)) {
+        if (!ser_bridge_init(&su->sb, dev, 921600, su->txbuf, su->rxbuf)) {
             printf("[%s] %s init fail\n", __func__, dev);
             perror("");
             return false;
@@ -259,12 +340,17 @@ bool sim_uart_init(struct sim_uart *su, uint32_t txbuf_size, uint32_t rxbuf_size
 bool sim_uart_deinit(struct sim_uart *su)
 {
     pthread_attr_destroy(&su->attr);
+#ifdef SIM_UART_NAME_FIFO_ENABLE
     close(su->tx_fd);
     close(su->rx_fd);
-    ringbuffer_free(&su->txbuf);
-    ringbuffer_free(&su->rxbuf);
+#else
+    serial_close(&su->dual_chip_ser);
+#endif
+    ringbuffer_free(su->txbuf);
+    ringbuffer_free(su->rxbuf);
     munmap(su->shm_addr, su->shm_size);
     shm_unlink("posixsm");
+    ser_bridge_deinit(&su->sb);
 }
 #ifdef __cplusplus
 }

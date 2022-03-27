@@ -532,7 +532,7 @@ uint32_t __rb_write(ringbuffer_t *rb, const uint8_t *buffer, uint32_t len)
     smp_wmb();
     // printf("[%s] 1 wptr=%d len=%d\n", __func__, rb->wptr, len);
     //kringbuffer的巧妙之处在于in和out定义为无符号类型，在write和read时，in和out都是增加，当达到最大值时，产生溢出，使得从0开始，进行循环使用
-    RB_UPDATE_WPTR(rb, len);
+    // RB_UPDATE_WPTR(rb, len);
     // printf("[%s] 2 wptr=%d len=%d\n", __func__, rb->wptr, len);
     return len;
 }
@@ -564,7 +564,7 @@ uint32_t __rb_read(ringbuffer_t *rb, uint8_t *buffer, uint32_t len)
      */
     smp_mb();
     // printf("[%s] 1 rptr=%d len=%d\n", __func__, rb->rptr, len);
-    RB_UPDATE_RPTR(rb, len);
+    // RB_UPDATE_RPTR(rb, len);
     // printf("[%s] 2 rptr=%d len=%d\n", __func__, rb->rptr, len);
     return len;
 }

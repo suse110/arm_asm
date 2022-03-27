@@ -65,7 +65,7 @@ extern "C" {
 #include "mt_ringbuffer.h"
 #include "serial.h"
 #include "ser_bridge.h"
-
+#include "hexdump.h"
 #if defined(linux) || defined(__CYGWIN__)
 #include <pthread.h>
 #endif
@@ -100,8 +100,10 @@ void * ser_bridge_rx_thread(void *arg)
     uint32_t read_bytes;
     uint32_t write_bytes;
     while (1) {
-        read_bytes = serial_read(&sb->ser, buf, read_bytes);
+        read_bytes = serial_read(&sb->ser, buf, read_bytes, 1000000);
         if (read_bytes > 0) {
+            printf("[%s] dev %s recv %d bytes, write to txbuff[0x%lx]\n",
+                __func__, sb->ser.port, read_bytes, (uintptr_t)sb->txbuf);
             write_bytes = ringbuffer_write(sb->txbuf, buf, sizeof(buf));
             if (write_bytes <= 0) {
                 perror("write fail\n");                                                                                                                                       
@@ -131,9 +133,9 @@ bool ser_bridge_init(struct serial_bridge *sb, const char *dev, uint32_t bps, ri
     pthread_attr_setdetachstate(&sb->attr, PTHREAD_CREATE_DETACHED);
     // 有三个取值：SCHED_RR（轮询）、SCHED_FIFO（先进先出）和SCHED_OTHER
     pthread_attr_setschedpolicy(&sb->attr, SCHED_RR);
-    pthread_create(&sb->tx_thread, &sb->attr, ser_bridge_tx_thread, sb);
+    // pthread_create(&sb->tx_thread, &sb->attr, ser_bridge_tx_thread, sb);
     pthread_create(&sb->rx_thread, &sb->attr, ser_bridge_rx_thread, sb);
-
+    return true;
 }
 
 void ser_bridge_deinit(struct serial_bridge *sb)

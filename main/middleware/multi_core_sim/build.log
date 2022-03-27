@@ -1,0 +1,478 @@
+gcc -I../mt_ringbuffer -I../../kernel/service/lite_printf -std=gnu99 -ggdb3 ../mt_ringbuffer/mt_ringbuffer.c ./mc.c ./sim_uart.c ./serial.c ./ser_bridge.c -lrt -pthread -o mca -DCOM_PORT_0
+In file included from ../mt_ringbuffer/mt_ringbuffer.c:1:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ../mt_ringbuffer/mt_ringbuffer.c:2:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+../mt_ringbuffer/mt_ringbuffer.c: In function ‘ringbuffer_dump’:
+../mt_ringbuffer/mt_ringbuffer.c:93:42: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   93 |     printf("[%s] rb = 0x%x\n", __func__, (unsigned int)rb);
+      |                                          ^
+../mt_ringbuffer/mt_ringbuffer.c:104:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  104 |     printf("[%s] buffer      = %x\n", __func__, (unsigned int)rb->buffer );
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c:105:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  105 |     printf("[%s] buffer_end  = %x\n", __func__, (unsigned int)rb->buffer_end );
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c:107:9: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  107 |     if ((uint32_t)(start_addr + readable_len) > (uint32_t)rb->buffer_end) {
+      |         ^
+../mt_ringbuffer/mt_ringbuffer.c:107:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  107 |     if ((uint32_t)(start_addr + readable_len) > (uint32_t)rb->buffer_end) {
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c: In function ‘ringbuffer_write_buffer’:
+../mt_ringbuffer/mt_ringbuffer.c:265:32: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  265 |     uint32_t src_start_addr  = (uint32_t)(rb_src->buffer + (r_old_head & rb_src->mask));
+      |                                ^
+../mt_ringbuffer/mt_ringbuffer.c:266:32: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  266 |     uint32_t dest_start_addr = (uint32_t)(rb_dest->buffer + (w_old_head & rb_dest->mask));
+      |                                ^
+../mt_ringbuffer/mt_ringbuffer.c:275:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  275 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:275:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  275 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:276:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  276 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:276:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  276 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:277:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  277 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:277:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  277 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:278:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  278 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 3) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 3) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:278:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  278 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 3) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 3) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:283:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  283 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:283:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  283 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:285:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  285 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:285:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  285 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:287:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  287 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:287:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  287 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |                                                                                      ^
+In file included from ./mc.c:25:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./mc.c:28:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./mc.c: In function ‘parase_package’:
+./mc.c:93:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   93 |                 printf("[%s] write to rxbuf[0x%x] %d bytes\n", __func__, (unsigned int)rb, pkg_len_need_to_recv);
+      |                                                                          ^
+In file included from ./sim_uart.h:15,
+                 from ./sim_uart.c:34:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./sim_uart.c:36:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./sim_uart.c: In function ‘uart_rx_thread’:
+./sim_uart.c:214:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  214 |                  __func__, su->dual_chip_ser.port, read_bytes, (unsigned int)su->rxbuf);
+      |                                                                ^
+In file included from ./ser_bridge.c:65:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./ser_bridge.c:68:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./ser_bridge.c: In function ‘ser_bridge_rx_thread’:
+./ser_bridge.c:106:53: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  106 |                 __func__, sb->ser.port, read_bytes, (unsigned int)sb->txbuf);
+      |                                                     ^
+gcc -I../mt_ringbuffer -I../../kernel/service/lite_printf -std=gnu99 -ggdb3 ../mt_ringbuffer/mt_ringbuffer.c ./mc.c ./sim_uart.c ./serial.c ./ser_bridge.c -lrt -pthread -o mcb -DCOM_PORT_1
+In file included from ../mt_ringbuffer/mt_ringbuffer.c:1:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ../mt_ringbuffer/mt_ringbuffer.c:2:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+../mt_ringbuffer/mt_ringbuffer.c: In function ‘ringbuffer_dump’:
+../mt_ringbuffer/mt_ringbuffer.c:93:42: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   93 |     printf("[%s] rb = 0x%x\n", __func__, (unsigned int)rb);
+      |                                          ^
+../mt_ringbuffer/mt_ringbuffer.c:104:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  104 |     printf("[%s] buffer      = %x\n", __func__, (unsigned int)rb->buffer );
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c:105:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  105 |     printf("[%s] buffer_end  = %x\n", __func__, (unsigned int)rb->buffer_end );
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c:107:9: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  107 |     if ((uint32_t)(start_addr + readable_len) > (uint32_t)rb->buffer_end) {
+      |         ^
+../mt_ringbuffer/mt_ringbuffer.c:107:49: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  107 |     if ((uint32_t)(start_addr + readable_len) > (uint32_t)rb->buffer_end) {
+      |                                                 ^
+../mt_ringbuffer/mt_ringbuffer.c: In function ‘ringbuffer_write_buffer’:
+../mt_ringbuffer/mt_ringbuffer.c:265:32: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  265 |     uint32_t src_start_addr  = (uint32_t)(rb_src->buffer + (r_old_head & rb_src->mask));
+      |                                ^
+../mt_ringbuffer/mt_ringbuffer.c:266:32: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  266 |     uint32_t dest_start_addr = (uint32_t)(rb_dest->buffer + (w_old_head & rb_dest->mask));
+      |                                ^
+../mt_ringbuffer/mt_ringbuffer.c:275:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  275 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:275:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  275 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:276:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  276 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:276:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  276 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:277:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  277 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:277:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  277 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:278:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  278 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 3) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 3) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:278:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  278 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 3) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 3) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:283:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  283 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:283:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  283 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i    ) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i    ) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:285:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  285 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:285:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  285 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 1) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 1) && src_addr_mask_l));
+      |                                                                                      ^
+../mt_ringbuffer/mt_ringbuffer.c:287:10: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  287 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |          ^
+../mt_ringbuffer/mt_ringbuffer.c:287:86: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
+  287 |         *(uint8_t*)(dest_addr_h + ((dest_start_addr + i + 2) & dest_addr_mask_l)) = *(uint8_t*)(src_addr_h + ((src_start_addr + i + 2) && src_addr_mask_l));
+      |                                                                                      ^
+In file included from ./mc.c:25:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./mc.c:28:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./mc.c: In function ‘parase_package’:
+./mc.c:93:74: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   93 |                 printf("[%s] write to rxbuf[0x%x] %d bytes\n", __func__, (unsigned int)rb, pkg_len_need_to_recv);
+      |                                                                          ^
+In file included from ./sim_uart.h:15,
+                 from ./sim_uart.c:34:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./sim_uart.c:36:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./sim_uart.c: In function ‘uart_rx_thread’:
+./sim_uart.c:214:64: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  214 |                  __func__, su->dual_chip_ser.port, read_bytes, (unsigned int)su->rxbuf);
+      |                                                                ^
+In file included from ./ser_bridge.c:65:
+../mt_ringbuffer/mt_ringbuffer.h:48: warning: "RB_MALLOC" redefined
+   48 | #define RB_MALLOC(size) malloc(size)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:43: note: this is the location of the previous definition
+   43 | #define RB_MALLOC(x) malloc(x)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:49: warning: "RB_FREE" redefined
+   49 | #define RB_FREE(ptr) free(ptr)
+      | 
+../mt_ringbuffer/mt_ringbuffer.h:44: note: this is the location of the previous definition
+   44 | #define RB_FREE(x) free(x)
+      | 
+In file included from ./ser_bridge.c:68:
+../../kernel/service/lite_printf/hexdump.h: In function ‘get_time’:
+../../kernel/service/lite_printf/hexdump.h:22:28: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                        ~~~~^                     ~~~~~~~~~~~~~~
+      |                            |                                |
+      |                            long unsigned int                int
+      |                        %02u
+../../kernel/service/lite_printf/hexdump.h:22:34: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 4 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                              ~~~~^                               ~~~~~~~~~
+      |                                  |                                |
+      |                                  long unsigned int                int
+      |                              %02u
+../../kernel/service/lite_printf/hexdump.h:22:40: warning: format ‘%lu’ expects argument of type ‘long unsigned int’, but argument 5 has type ‘int’ [-Wformat=]
+   22 |     sprintf(time_str, "%02lu:%02lu:%02lu-%-6lu", p->tm_hour + 8, p->tm_min, p->tm_sec, get_sys_tick());
+      |                                    ~~~~^                                    ~~~~~~~~~
+      |                                        |                                     |
+      |                                        long unsigned int                     int
+      |                                    %02u
+../../kernel/service/lite_printf/hexdump.h: In function ‘_hexdump’:
+../../kernel/service/lite_printf/hexdump.h:36:26: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   36 |     uint32_t base_addr = (uint32_t)data;
+      |                          ^
+../../kernel/service/lite_printf/hexdump.h:87:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+   87 |         base_addr = (uint32_t)data1;
+      |                     ^
+./ser_bridge.c: In function ‘ser_bridge_rx_thread’:
+./ser_bridge.c:106:53: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+  106 |                 __func__, sb->ser.port, read_bytes, (unsigned int)sb->txbuf);
+      |                                                     ^

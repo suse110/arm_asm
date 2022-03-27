@@ -15,22 +15,35 @@ typedef struct {
     uint32_t head;
     uint32_t tail;
 } ringbuffer_node_t;
+typedef void (*hook_t)(void* arg);
+typedef struct {
+    hook_t hook;
+    void *arg;
+} ringbuffer_hook_t;
 
 typedef struct {
     ringbuffer_node_t wptr;
     ringbuffer_node_t rptr;
 
+    ringbuffer_hook_t wdhook;
+    ringbuffer_hook_t rdhook;
+
+    uint32_t flags;
     uint32_t size; /*ring buffer 里数据长度*/
     uint32_t mask /*计算掩码*/;
+    uint32_t addr_mask_l;
+    uint32_t addr_mask_h;
     uint32_t capacity; /*ring buffer 大小*/
     uint32_t esize; /*ring buffer中一个数据的大小*/
     uint8_t *buffer;
+    uint8_t *buffer_end;
 } ringbuffer_t;
 
 #define RB_ASSERT(x)
 #define RB_MALLOC(x) malloc(x)
 #define RB_FREE(x) free(x)
 #define min(a, b) (((a) < (b)) ? (a) : (b))
+#define RB_MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 #define RB_ADDRESS_POWER_OF_2 1
 #if RB_ADDRESS_POWER_OF_2
@@ -47,7 +60,8 @@ typedef struct {
 //ringbuffer 中总共有多少数据,写完的减去还没读走
 #define RB_TOTAL_DATA_SIZE(rb) (rb->wptr.tail - rb->rptr.head)
 
-
+#define RB_START_ADDRESS(rb) (rb->buffer)
+#define RB_END_ADDRESS(rb) (rb->buffer_end)
 /* 先copy rptr到buffer末尾这段, 再copy buffer开头剩余部分 */
 #define RB_READ_DATA(rb, data, read_len, old_head)\
 {\
@@ -70,6 +84,7 @@ typedef struct {
 #define RB_IS_FULL(rb) ((rb->capacity == RB_TOTAL_DATA_SIZE(rb)) ? true : false)
 
 #else
+#error "RB_ADDRESS_POWER_OF_2 must be 1 now!!"
 //物理读指针位置
 #define RB_PHY_RPTR_HEAD(rb) (rb->rptr.head)
 #define RB_PHY_RPTR_TAIL(rb) (rb->rptr.tail)
@@ -88,25 +103,32 @@ typedef struct {
 #define RB_TOTAL_FREE_SPACE_SIZE(rb) (rb->capacity - RB_TOTAL_DATA_SIZE(rb))
 
 //ringbuffer中，rptr开始，地址连续的数据长度
-#define RB_CONTIGUOUS_DATA_SIZE(rb) ((RB_PHY_WPTR(rb) >= RB_PHY_RPTR(rb)) ? \
-    rb->wptr - rb->rptr : (rb->capacity - RB_PHY_RPTR(rb)))
+#define RB_CONTIGUOUS_DATA_SIZE(rb) ((RB_PHY_WPTR_TAIL(rb) >= RB_PHY_RPTR_HEAD(rb)) ? \
+   RB_PHY_WPTR_TAIL(rb) - RB_PHY_RPTR_HEAD(rb) : (rb->capacity - RB_PHY_RPTR_HEAD(rb)))
 //ringbuffer中，wptr开始，地址连续的空闲空间长度
-#define RB_CONTIGUOUS_FREE_SPAPCE_SIZE(rb) ((RB_PHY_WPTR(rb) > RB_PHY_RPTR(rb)) ? \
-    (rb->capacity - RB_PHY_WPTR(rb)) : rb->rptr - rb->wptr)
+#define RB_CONTIGUOUS_FREE_SPAPCE_SIZE(rb) ((RB_PHY_WPTR_TAIL(rb) > RB_PHY_RPTR_HEAD(rb)) ? \
+    (rb->capacity - RB_PHY_WPTR_TAIL(rb)) : RB_PHY_RPTR_HEAD(rb)- RB_PHY_WPTR_TAIL(rb) )
 
 //ringbuffer中，rptr 位置所在的地址
-#define RB_CONTIGUOUS_DATA_START_ADDR(rb) (rb->buffer + RB_PHY_RPTR(rb))
+#define RB_CONTIGUOUS_DATA_START_ADDR(rb) (rb->buffer + RB_PHY_RPTR_HEAD(rb))
 //ringbuffer中，wptr 位置所在的地址
-#define RB_CONTIGUOUS_FREE_SPACE_START_ADDR(rb) (rb->buffer + RB_PHY_WPTR(rb))
+#define RB_CONTIGUOUS_FREE_SPACE_START_ADDR(rb) (rb->buffer + RB_PHY_WPTR_TAIL(rb))
 
 bool ringbuffer_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t capacity);
 bool ringbuffer_alloc(ringbuffer_t *rb, uint32_t capacity);
 uint32_t ringbuffer_write(ringbuffer_t *rb, uint8_t *buffer, uint32_t len);
+uint32_t ringbuffer_write_buffer(ringbuffer_t *rb_src, ringbuffer_t *rb_dest, uint32_t len);
 uint32_t ringbuffer_read(ringbuffer_t *rb, uint8_t *buffer, uint32_t len);
 void ringbuffer_reset(ringbuffer_t *rb);
 void ringbuffer_free(ringbuffer_t *rb);
+void ringbuffer_dump(ringbuffer_t *rb, const char* file_name);
 
-void ringbuffer_dump(ringbuffer_t *rb);
+typedef struct {
+    uint8_t *buffer;
+    uint32_t length;
+} rb_buffer_t;
+
+bool ringbuffer_get_data_buffer(ringbuffer_t *rb, rb_buffer_t *buffer, uint32_t *buffer_count);
 
 static inline bool ringbuffer_full(ringbuffer_t *rb)
 {
