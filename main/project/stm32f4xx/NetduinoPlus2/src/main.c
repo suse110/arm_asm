@@ -121,13 +121,13 @@ int main(void)
   serial_init();
   /* Output a message on Hyperterminal using printf function */
  printf("\n\r -- UART Printf Example: retarget the C library printf function to the UART, %d\n\r", 10/3);
-  __asm("svc 0");
+  // __asm("svc 0");
 
     //   printf("&__shell_command_start=0x%x &__shell_command_end=0x%x\r\n",\
         &__shell_command_start, &__shell_command_end);
     // shell_command_t * scmd = &__shell_command_start;
 
-  task_start();
+  // task_start();
   // exception_test();
   // backtrace_test();
   while (1) {

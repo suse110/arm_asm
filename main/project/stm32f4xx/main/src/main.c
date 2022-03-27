@@ -165,7 +165,7 @@ int main(void)
   spim_test();
 #ifdef RTOS_ENABLE
   void task_start(void);
-  task_start();
+  // task_start();
 #endif
 #ifdef EXCEPTION_ENABLE
   exception_test();

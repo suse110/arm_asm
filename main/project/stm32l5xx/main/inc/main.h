@@ -35,7 +35,7 @@ extern "C" {
 #include <stdio.h>
 #include "stm32l5xx_nucleo.h"
 /* USER CODE END Includes */
-
+#include "serial.h"
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 

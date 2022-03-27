@@ -43,7 +43,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef hlpuart1;
 
 /* USER CODE BEGIN PV */
 __IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
@@ -53,16 +52,8 @@ __IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ICACHE_Init(void);
-static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#elif defined(__GNUC__)
-/* With GCC, small printf (option LD Linker->Libraries->Small printf
-   set to 'Yes') calls __io_putchar() */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#define GETCHAR_PROTOTYPE int __io_getchar(void)
-#endif
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -107,7 +98,8 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ICACHE_Init();
-  MX_LPUART1_UART_Init();
+  HAL_ICACHE_Disable();
+  serial_init();
   /* USER CODE BEGIN 2 */
   /* Configure LED2 and LED3 */
   BSP_LED_Init(LED2);
@@ -127,6 +119,9 @@ int main(void)
     /* Toggle LED2*/
     BSP_LED_Toggle(LED2);
     HAL_Delay(100);
+    int chr = __io_getchar();
+    printf("chr=%d\n", chr);
+    
   }
   /* USER CODE END 3 */
 }
@@ -210,43 +205,6 @@ static void MX_ICACHE_Init(void)
 }
 
 /**
-  * @brief LPUART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_LPUART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN LPUART1_Init 0 */
-
-  /* USER CODE END LPUART1_Init 0 */
-
-  /* USER CODE BEGIN LPUART1_Init 1 */
-
-  /* USER CODE END LPUART1_Init 1 */
-  hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 9600;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
-  hlpuart1.Init.StopBits = UART_STOPBITS_1;
-  hlpuart1.Init.Parity = UART_PARITY_NONE;
-  hlpuart1.Init.Mode = UART_MODE_TX_RX;
-  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  //hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  //hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  //hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  //hlpuart1.FifoMode = UART_FIFOMODE_DISABLE;
-  hlpuart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN LPUART1_Init 2 */
-
-  /* USER CODE END LPUART1_Init 2 */
-
-}
-
-/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -262,29 +220,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the USART3 and Loop until the end of transmission */
-  HAL_UART_Transmit(&hlpuart1, (uint8_t *)&ch, 1, 0xFFFF);
 
-  return ch;
-}
-
-GETCHAR_PROTOTYPE
-{
-  char ch;
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  HAL_UART_Receive(&hlpuart1, (uint8_t *)&ch, 1, 0xFFFF); 
-
-  return ch;
-}
 /* USER CODE END 4 */
 
 /**

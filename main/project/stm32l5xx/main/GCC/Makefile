@@ -8,6 +8,7 @@ APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
 
 ASMSRC += $(APP_DIR)/GCC/startup_stm32l552zetxq.s 
 SRC += $(APP_DIR)/src/main.c
+SRC += $(APP_DIR)/src/serial.c
 SRC += $(APP_DIR)/src/stm32l5xx_hal_msp.c
 SRC += $(APP_DIR)/src/stm32l5xx_it.c
 SRC += $(APP_DIR)/src/user/syscalls.c

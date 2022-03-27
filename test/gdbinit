@@ -338,7 +338,7 @@ end
 
 
 target remote localhost:1234
-load
+#load
 set disassemble-next-line on
 set pagination off
 b _start

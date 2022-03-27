@@ -10,7 +10,7 @@ GDBINIT = ../gdbinit
 #use stdlib
 NOSTDLIB_ENABLE = y
 
-CFLAGS += -march=armv7-m 
+CFLAGS += -march=armv7-m  -O1 -std=gnu11
 CFLAGS += -mcpu=cortex-m3
 CFLAGS += -mfloat-abi=soft
 

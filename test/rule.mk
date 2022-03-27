@@ -86,9 +86,9 @@ code: all
 
 .PHONY : hex
 hex: all
-	@hexdump -C $(BUILD_DIR)/$(EXEC).bin
 	@hexdump -C $(BUILD_DIR)/$(EXEC).bin > $(BUILD_DIR)/$(EXEC).binary
 	@git diff $(BUILD_DIR)/$(EXEC).binary > $(BUILD_DIR)/$(EXEC).binary.diff
+	@hexdump -C $(BUILD_DIR)/$(EXEC).bin
 
 BUILD_FILES = $(BUILD_DIR)/*
 
