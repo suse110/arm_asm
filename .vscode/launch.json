@@ -1,0 +1,33 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "cwd": "${workspaceRoot}",
+            "type":"cortex-debug",
+            "request": "launch",
+            "name": "Cortex Debug launch",
+            "servertype": "openocd",
+            "configFiles": [
+                "interface/stlink.cfg",
+                // "target/stm32f4x.cfg"
+                "target/stm32l5x.cfg"
+            ],
+            "interface": "swd",
+            "executable": ".\\main\\build\\stm32l5xx\\main\\main.elf",
+            // "executable": ".\\main\\build\\stm32f4xx\\main\\main.elf",
+            // "executable": ".\\main\\build\\stm32f4xx\\FreeRTOS_demo\\FreeRTOS_demo.elf",
+            "runToMain": false,
+            "svdFile": ".\\main\\drivers\\CMSIS\\SVD\\STM32L552.svd",
+            // "svdFile": ".\\main\\drivers\\CMSIS\\SVD\\STM32F401xE.svd",
+            // "device": "STM32F401RE",
+            "device": "STM32F552ZE",
+            "preLaunchCommands": [
+                "dir D:/src/os/toyos/src/gnu/clion-stm32/arm_asm/main/project/stm32l5xx/main/GCC"
+            ]
+            
+        }
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                //指定头文件路径,这里指定的是当前工作目录，如有需要在后面添加，添加方式是加入 "/to/path" 格式的路径
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/main/kernel/service/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.19041.0",
+            "compilerPath": "${workspaceFolder}\\tools\\arm-none-eabi\\Sourcery_CodeBench_Lite_for_ARM_EABI\\bin\\arm-none-eabi-gcc.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-gcc-arm"
+        }
+    ],
+    "version": 4
+}
