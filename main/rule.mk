@@ -6,6 +6,7 @@ CFLAGS += -g -Wall -mlittle-endian -mthumb -mabi=aapcs
 # -ffreestanding 按独立环境编译，该环境可以没有标准库，且对main()函数没有要求。
 # 最典型的例子就是操作系统内核。该选项隐含设置了 -fno-builtin，且与 -fno-hosted 等价
 CFLAGS +=-ffreestanding
+CFLAGS +=-std=gnu99
 
 
 LDFLAGS += -static -Wl,-Map,$(BUILD_DIR)/$(EXEC).map
