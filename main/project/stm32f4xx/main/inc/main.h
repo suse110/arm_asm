@@ -33,7 +33,7 @@
 #ifdef BACKTRACE_ENABLE
 #include "backtrace.h"
 #endif
-#include "sw_spi_master.h"
+
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
 /* User can use this section to tailor USARTx/UARTx instance used and associated 

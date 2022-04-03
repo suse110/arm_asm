@@ -162,7 +162,7 @@ int main(void)
 
 //  BSP_LED_Init(LED2);
   gpio_test();
-  spim_test();
+  // spim_test();
 #ifdef RTOS_ENABLE
   void task_start(void);
   // task_start();
