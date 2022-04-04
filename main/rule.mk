@@ -50,15 +50,18 @@ Objects = $(SRC:%.c=$(BUILD_DIR)/%.o)
 AsmObjects = $(ASMSRC:%.s=$(BUILD_DIR)/%.o)
 
 $(BUILD_DIR)/$(EXEC).elf:$(Objects) $(AsmObjects)
-	$(CROSS_COMPILE)gcc -o $@ $^  $(CFLAGS) $(LDFLAGS) -T $(LINKSCRIPT)
+	@echo [LD] $(notdir $^) $(CFLAGS) $(LDFLAGS) -T $(LINKSCRIPT)
+	@$(CROSS_COMPILE)gcc -o $@ $^  $(CFLAGS) $(LDFLAGS) -T $(LINKSCRIPT)
 
 $(Objects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.c
+	@echo [CC] $(notdir $<) 
 	@mkdir -p $(shell dirname $@)
-	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
+	@$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
 
 $(AsmObjects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.s
+	@echo [ASM] $(notdir $<)
 	@mkdir -p $(shell dirname $@)
-	$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
+	@$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
 
 .DEFAULT_GOAL := all
 # all:
@@ -69,10 +72,15 @@ $(AsmObjects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.s
 
 
 all:$(BUILD_DIR)/$(EXEC).elf
-	$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
-	$(CROSS_COMPILE)objcopy -O ihex $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).hex
-	$(CROSS_COMPILE)objdump -D -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
-	$(CROSS_COMPILE)size $(BUILD_DIR)/$(EXEC).elf
+	@echo [BIN] $(BUILD_DIR)/$(EXEC).bin
+	@$(CROSS_COMPILE)objcopy -O binary $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).bin
+	@echo [HEX] $(BUILD_DIR)/$(EXEC).hex
+	@$(CROSS_COMPILE)objcopy -O ihex $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).hex
+	@echo [ASM] $(BUILD_DIR)/$(EXEC).asm
+	@$(CROSS_COMPILE)objdump -D -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
+	@echo ------------------------------------------------
+	@$(CROSS_COMPILE)size $(BUILD_DIR)/$(EXEC).elf
+	@echo ------------------------------------------------
 
 
 .PHONY : run
