@@ -24,8 +24,9 @@
 
 #define WRITE_ONCE(var, val) (*((volatile typeof(val) *)(&(var))) = (val))
 #define READ_ONCE(x) (*(volatile typeof(x) *)&(x))
+#ifndef offsetof
 #define offsetof(TYPE, MEMBER)  ((size_t)&((TYPE *)0)->MEMBER)
-
+#endif
 /**
  * container_of - cast a member of a structure out to the containing structure
  * @ptr:	the pointer to the member.
