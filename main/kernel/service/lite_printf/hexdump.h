@@ -5,6 +5,7 @@
 static void _hexdump(const char *funcname, const void *data, unsigned int len, const void *data1, unsigned int len1);
 #define hexdump(data, len)   _hexdump(__FUNCTION__, data, len, NULL, 0)
 #define hexdump2(data, len, data1, len1)   _hexdump(__FUNCTION__, data, len, data1, len1)
+#if 0
 #define get_sys_tick() \
 ({\
     struct timespec tp;\
@@ -23,6 +24,9 @@ static char *get_time(void)
 
     return (char*)time_str;
 }
+#else
+#define get_sys_tick() 0
+#endif
 static void _hexdump(const char *funcname, const void *data, unsigned int len, const void *data1, unsigned int len1)
 {
     #define print_with_tick(format, arg...)  printf("[%6lu] " format, tick, ##arg)
@@ -114,5 +118,43 @@ static void _hexdump(const char *funcname, const void *data, unsigned int len, c
     }
 }
 
+static void hexdump_pure(const void *data, unsigned int len)
+{
+    #define print_with_tick(format, arg...)  printf(format, ##arg)
+    char str[160], octet[10];
+    int ofs, i, k, d;
+    const unsigned char *buf = (const unsigned char *)data;
+    unsigned int flen;
+    uintptr_t base_addr = (uintptr_t)data;
+
+    if (len == 0) return;
+
+    for (ofs = 0; ofs < (int)len; ofs += 16) {
+        d = snprintf(str, sizeof(str), "| %08lx: ", ofs + base_addr);
+
+        for (i = 0; i < 16; i++) {
+            if ((i + ofs) < (int)len)
+                snprintf(octet, sizeof(octet), "%02x ", buf[ofs + i]);
+            else
+                snprintf(octet, sizeof(octet), "   ");
+
+            d += snprintf(&str[d], sizeof(str) - d, "%s", octet);
+        }
+        d += snprintf(&str[d], sizeof(str) - d, "  ");
+        k = d;
+
+        for (i = 0; i < 16; i++) {
+            if ((i + ofs) < (int)len)
+                str[k++] = (0x20 <= (buf[ofs + i]) && (buf[ofs + i]) <= 0x7E) ? buf[ofs + i] : '.';
+            else
+                str[k++] = ' ';
+        }
+
+        str[k] = '\0';
+        print_with_tick("%s |\r\n", str);
+    }
+
+
+}
 
 #endif // __HEXDUMP_H__

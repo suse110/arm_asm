@@ -28,6 +28,19 @@ typedef struct
     /*15*/ uint32_t systick_handler;
 } exception_vector_t;
 
+typedef struct {
+    char *name;
+    uint32_t start_address;
+    uint32_t end_address;
+} exception_dump_address_t;
+
 void exception_test(void);
 extern void trigger_crash(int crash_id);
+typedef struct {
+    char *name;
+    uint32_t start_address;
+    // uint32_t end_address;
+    uint32_t size;
+} exception_dump_table_t;
+
 #endif // __EXCEPTION_H__

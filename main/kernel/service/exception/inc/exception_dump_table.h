@@ -1,0 +1,6 @@
+#ifndef __EXCEPTION_DUMP_TABLE_H__
+#define __EXCEPTION_DUMP_TABLE_H__
+
+
+
+#endif // __EXCEPTION_DUMP_TABLE_H__

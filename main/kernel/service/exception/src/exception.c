@@ -1,5 +1,6 @@
 #include "exception.h"
-
+#include "stp.h"
+#include "macro.h"
 /*
 When the fault is a precise fault, the pc holds the address of the instruction that 
 was executing when the hard fault (or other fault) occurred. 
@@ -284,28 +285,35 @@ indicating the processor is in thumb mode11.
 
 // Following symbols are defined by the linker.
 // Start address for the initialization values of the .data section.
-extern uint32_t _sidata;
+extern uint32_t _sidata[];
 // Start address for the .data section
-extern uint32_t _sdata;
+extern uint32_t _sdata[];
 // End address for the .data section
-extern uint32_t _edata;
+extern uint32_t _edata[];
 // Start address for the .bss section
-extern uint32_t _sbss;
+extern uint32_t _sbss[];
 // End address for the .bss section
-extern uint32_t _ebss;
+extern uint32_t _ebss[];
 // End address for stack
-extern uint32_t _estack;
+extern uint32_t _estack[];
+
+extern uint32_t _stext[];
+extern uint32_t _etext[];
+extern uint32_t _s_ram_vtor[];
+extern uint32_t _e_ram_vtor[];
+extern uint32_t _sheap[];
+extern uint32_t _eheap[];
 
 // Prevent inlining to avoid persisting any variables on stack
 __attribute__((noinline)) static void prv_cinit(void) {
   // Initialize data and bss
   // Copy the data segment initializers from flash to SRAM
-  for (uint32_t *dst = &_sdata, *src = &_sidata; dst < &_edata;) {
+  for (uint32_t *dst = _sdata, *src = _sidata; dst < _edata;) {
     *(dst++) = *(src++);
   }
 
   // Zero fill the bss segment.
-  for (uint32_t *dst = &_sbss; dst < &_ebss;) {
+  for (uint32_t *dst = _sbss; dst < _ebss;) {
     *(dst++) = 0;
   }
 }
@@ -395,6 +403,18 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_M
     Irq1_Handler
 };
 
+
+
+exception_dump_address_t exception_dump_address[] = {
+    // {"text", (uint32_t)_stext, (uint32_t)_etext},
+    // {"data",(uint32_t) _sdata,(uint32_t) _edata},
+    {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
+    // {"bss",(uint32_t) _sbss,(uint32_t) _ebss},
+    {"heap",(uint32_t) _sheap,(uint32_t) _eheap},
+    {"nvic", 0xE000E000, 0xE000E450},
+    {NULL, 0, 0}
+};
+
 void exception_init(void)
 {
   g_unaligned_buffer = &s_buffer[1];
@@ -430,3 +450,19 @@ void __platform_assert(const char *expr, const char *file, uint32_t line)
   *((volatile uint32_t*)0xFFFFFFF1) = 1;
   while(1);
 }
+
+void exception_dump(void)
+{
+  uint32_t dump_len;
+  exception_dump_address_t *p_exaddr;
+  foreach_index(i, 0, sizeof(exception_dump_address)/sizeof(exception_dump_address[0])) {
+    p_exaddr = &exception_dump_address[i];
+    if (p_exaddr->name == NULL) {
+      break;
+    }
+    dump_len = p_exaddr->end_address - p_exaddr->start_address;
+    printf("------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
+    stp_write((uint8_t*)p_exaddr->start_address, dump_len, 0, 0);
+  }
+}
+
