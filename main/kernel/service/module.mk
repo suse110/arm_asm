@@ -57,4 +57,13 @@ ifeq ($(EXCEPTION_ENABLE),y)
 include $(SDKPATH)/$(SERVICE_DIR)/exception/module.mk
 endif
 
+#syslog
+SRC += $(SERVICE_DIR)/syslog/src/syslog.c
+SRC += $(SERVICE_DIR)/syslog/src/portable/stm32/serial.c
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/syslog/inc
+
+#stp
+SRC += $(SERVICE_DIR)/stp/stp.c
+CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/stp
+
 # include $(SDKPATH)/$(SERVICE_DIR)/hibribus/module.mk
