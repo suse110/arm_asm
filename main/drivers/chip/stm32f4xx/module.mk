@@ -2,7 +2,6 @@
 CHIP_DIR = drivers/chip/stm32f4xx
 
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal.c
-SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_msp_template.c
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_adc.c
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_nand.c
 SRC += $(CHIP_DIR)/STM32F4xx_HAL_Driver/src/stm32f4xx_hal_adc_ex.c
