@@ -80,7 +80,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
   GPIO_InitStruct.Alternate = USARTx_RX_AF;
     
   HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
-#if 0
+#if 1
   /*##-3- Configure the DMA streams ##########################################*/
   /* Configure the DMA handler for Transmission process */
   hdma_tx.Instance                 = USARTx_TX_DMA_STREAM;

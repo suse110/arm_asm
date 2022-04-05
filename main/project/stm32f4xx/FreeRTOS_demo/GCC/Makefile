@@ -9,17 +9,17 @@ APP_DIR=project/$(CHIP_COFNIG)/$(EXEC)
 include ./feature.mk
 include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
 include $(SDKPATH)/kernel/service/module.mk
+include $(SDKPATH)/middleware/module.mk
 
 include $(SDKPATH)/kernel/rtos/freertos/FreeRTOS-Kernel/module.mk
+# include $(SDKPATH)/kernel/rtos/freertos/FreeRTOS/module.mk
 
 ASMSRC += $(APP_DIR)/GCC/startup_stm32f401xe.s 
 SRC += $(APP_DIR)/src/main.c
-SRC += $(APP_DIR)/src/serial.c
 SRC += $(APP_DIR)/src/stm32f4xx_hal_msp.c
 SRC += $(APP_DIR)/src/stm32f4xx_it.c
 SRC += $(APP_DIR)/src/syscalls.c
 SRC += $(APP_DIR)/src/system_stm32f4xx.c
-SRC += $(APP_DIR)/src/hal_log.c
 
 LINKSCRIPT = $(SDKPATH)/project/$(CHIP_COFNIG)/$(EXEC)/GCC/nucleo.ld
 

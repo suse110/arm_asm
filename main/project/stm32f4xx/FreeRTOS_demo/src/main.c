@@ -74,6 +74,11 @@ TaskHandle_t xHandle = NULL;
     printf("create stask fail\n");
   }
 }
+void HAL_MspInit(void)
+{
+  // WWDG_Enable
+  printf("[%s]\n", __func__);
+}
 /**
   * @brief  Main program
   * @param  None
@@ -96,12 +101,13 @@ int main(void)
   /* Configure the system clock to 84 MHz */
   SystemClock_Config();
 
-  serial_init();
+  syslog_init();
   /* Output a message on Hyperterminal using printf function */
   printf("\n\r -- hello world\n\r");
 
   MainTaskCreate();
-  
+  void exception_dump(void);
+  exception_dump();
   vTaskStartScheduler ();
 
   while (1) {}

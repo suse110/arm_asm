@@ -26,7 +26,7 @@
 #include "stm32f4xx_nucleo.h"
 #include "stm32f401xe.h"
 #include "stdio.h"
-#include "serial.h"
+#include "syslog.h"
 #include "hal.h"
 #include "hal_platform.h"
 
