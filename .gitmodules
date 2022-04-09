@@ -1,12 +1,61 @@
 [submodule "main/kernel/service/printf"]
 	path = main/kernel/service/printf
-	url = https://github.com/suse110/printf.git
+	url = http://github.com/suse110/printf.git
 [submodule "main/kernel/service/CmBacktrace"]
 	path = main/kernel/service/CmBacktrace
-	url = https://github.com/suse110/CmBacktrace.git
-[submodule "main/middleware/multi_core_sim/CSerialPortg"]
-	path = main/middleware/multi_core_sim/CSerialPortg
-	url = https://github.com/suse110/CSerialPort.git
+	url = http://github.com/suse110/CmBacktrace.git
 [submodule "main/middleware/multi_core_sim/CSerialPort"]
 	path = main/middleware/multi_core_sim/CSerialPort
-	url = https://github.com/suse110/CSerialPort.git
+	url = http://github.com/suse110/CSerialPort.git
+	url = http://github.com/suse110/CmBacktrace.git
+[submodule "main/kernel/third/CrashCatcher"]
+	path = main/kernel/third/CrashCatcher
+	url = http://github.com/suse110/CrashCatcher.git
+[submodule "main/kernel/third/PyCortexMDebug"]
+	path = main/kernel/third/PyCortexMDebug
+	url = http://github.com/suse110/PyCortexMDebug.git
+[submodule "main/kernel/third/breakpad"]
+	path = main/kernel/third/breakpad
+	url = http://github.com/google/breakpad.git
+[submodule "main/kernel/third/debugbreak"]
+	path = main/kernel/third/debugbreak
+	url = http://github.com/scottt/debugbreak.git
+[submodule "main/kernel/third/early-bringup-tool"]
+	path = main/kernel/third/early-bringup-tool
+	url = http://github.com/google/early-bringup-tool.git
+[submodule "main/kernel/third/uboot_shell"]
+	path = main/kernel/third/uboot_shell
+	url = http://github.com/suse110/uboot_shell.git
+[submodule "main/kernel/third/umm_malloc"]
+	path = main/kernel/third/umm_malloc
+	url = http://github.com/rhempel/umm_malloc.git
+[submodule "main/kernel/third/unit-test/CUnit"]
+	path = main/kernel/third/unit-test/CUnit
+	url = http://github.com/asimjalis/cutest.git
+[submodule "main/kernel/third/unit-test/CppUnitLite"]
+	path = main/kernel/third/unit-test/CppUnitLite
+	url = http://github.com/smikes/CppUnitLite.git
+[submodule "main/kernel/third/unit-test/Unity"]
+	path = main/kernel/third/unit-test/Unity
+	url = http://github.com/ThrowTheSwitch/Unity
+[submodule "main/kernel/third/unit-test/cmockery"]
+	path = main/kernel/third/unit-test/cmockery
+	url = http://github.com/google/cmockery.git
+[submodule "main/kernel/third/unit-test/cutest"]
+	path = main/kernel/third/unit-test/cutest
+	url = http://github.com/asimjalis/cutest.git
+[submodule "main/kernel/rtos/freertos/FreeRTOS-Kernel"]
+	path = main/kernel/rtos/freertos/FreeRTOS-Kernel
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "main/kernel/service/sf_i2c/"]
+	path = main/kernel/service/sf_i2c/
+	url =  https://github.com/yang260384793/sf_i2c.git
+[submodule "main/kernel/service/spi-for-gd32/"]
+	path = main/kernel/service/spi-for-gd32/
+	url = https://gitee.com/lu_xianfan/spi-for-gd32.git
+[submodule "main/kernel/third/microshell/"]
+	path = main/kernel/third/microshell/
+	url = https://github.com/suse110/microshell.git
+[submodule "main/kernel/service/sf_i2c"]
+	path = main/kernel/service/sf_i2c
+	url = https://github.com/yang260384793/sf_i2c.git
