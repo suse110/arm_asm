@@ -30,7 +30,8 @@
         "complex": "c",
         "types.h": "c",
         "stat.h": "c",
-        "mt_ringbuffer.h": "c"
+        "mt_ringbuffer.h": "c",
+        "cmb_zh_cn.h": "c"
     },
     "riscv-venus.variableFormat": "hex",
     "cortex-debug.registerUseNaturalFormat": false,
