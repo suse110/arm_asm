@@ -30,7 +30,7 @@
 	url = http://github.com/rhempel/umm_malloc.git
 [submodule "main/kernel/third/unit-test/CUnit"]
 	path = main/kernel/third/unit-test/CUnit
-	url = http://github.com/asimjalis/cutest.git
+	url = https://github.com/jacklicn/CUnit.git
 [submodule "main/kernel/third/unit-test/CppUnitLite"]
 	path = main/kernel/third/unit-test/CppUnitLite
 	url = http://github.com/smikes/CppUnitLite.git
@@ -58,3 +58,6 @@
 [submodule "main/kernel/service/sf_i2c"]
 	path = main/kernel/service/sf_i2c
 	url = https://github.com/yang260384793/sf_i2c.git
+[submodule "main/kernel/third/unit-test/minicunittest"]
+	path = main/kernel/third/unit-test/minicunittest
+	url = https://gitee.com/dcp_483/minicunittest.git
