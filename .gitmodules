@@ -48,13 +48,13 @@
 	path = main/kernel/rtos/freertos/FreeRTOS-Kernel
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
 [submodule "main/kernel/service/sf_i2c/"]
-	path = main/kernel/service/sf_i2c/
+	path = main/kernel/service/sf_i2c
 	url =  https://github.com/yang260384793/sf_i2c.git
 [submodule "main/kernel/service/spi-for-gd32/"]
-	path = main/kernel/service/spi-for-gd32/
+	path = main/kernel/service/spi-for-gd32
 	url = https://gitee.com/lu_xianfan/spi-for-gd32.git
 [submodule "main/kernel/third/microshell/"]
-	path = main/kernel/third/microshell/
+	path = main/kernel/third/microshell
 	url = https://github.com/suse110/microshell.git
 [submodule "main/kernel/service/sf_i2c"]
 	path = main/kernel/service/sf_i2c
