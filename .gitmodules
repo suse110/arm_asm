@@ -3,11 +3,10 @@
 	url = http://github.com/suse110/printf.git
 [submodule "main/kernel/service/CmBacktrace"]
 	path = main/kernel/service/CmBacktrace
-	url = http://github.com/suse110/CmBacktrace.git
+	url = https://gitee.com/Armink/CmBacktrace.git
 [submodule "main/middleware/multi_core_sim/CSerialPort"]
 	path = main/middleware/multi_core_sim/CSerialPort
 	url = http://github.com/suse110/CSerialPort.git
-	url = http://github.com/suse110/CmBacktrace.git
 [submodule "main/kernel/third/CrashCatcher"]
 	path = main/kernel/third/CrashCatcher
 	url = http://github.com/suse110/CrashCatcher.git
