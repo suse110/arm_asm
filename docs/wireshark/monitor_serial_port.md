@@ -41,7 +41,16 @@ Wireshark.exe -i \\\\.\pipe\wrsk_0_COM4_xxx -P persconf:"d:/wireshark_settings\"
 
 [IM通信协议逆向分析、Wireshark自定义数据包格式解析插件编程学习 - 郑瀚Andrew.Hann - 博客园 (cnblogs.com)](https://www.cnblogs.com/LittleHann/p/3751595.html)
 
+
+## Wireshark Plugin
+
+[Wireshark C 插件开发之插件框架 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/362748246)
+
 [Python (wireshark.org)](https://wiki.wireshark.org/Python)
+
+[9.2. Adding a basic dissector (wireshark.org)](https://www.wireshark.org/docs/wsdg_html_chunked/ChDissectAdd.html)
+
+https://github.com/ashdnazg/pyreshark
 
 ## pcapng format
 
