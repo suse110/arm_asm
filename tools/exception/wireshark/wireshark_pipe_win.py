@@ -213,9 +213,10 @@ if __name__ == '__main__':
             "shb_userappl": "python-pcapng",
         }
     )
+    # linktype设置为162，在wireshark源码中表示保留给用户的USER15 类型
     idb = shb.new_member(
         blocks.InterfaceDescription,
-        link_type=147,
+        link_type=162,#251,
         options={
             "if_description": "Hand-rolled",
             "if_os": "Python",

@@ -36,7 +36,7 @@ ssstp_flag = ProtoField.uint16("ssstp.flag", "flag", base.HEX,
 })
 --所有可能的字段都要定义，到时没有t:add就不会显示
 ssstp_id = ProtoField.uint16("ssstp.id", "id", base.HEX)
-ssstp_payload = ProtoField.none("ssstp.payload", "payload", base.HEX)
+ssstp_payload = ProtoField.bytes("ssstp.payload", "payload", base.none)
 
 --把ProtoField对象加到Proto对象上
 ssstp_proto.fields = {
@@ -92,11 +92,11 @@ function ssstp_proto.dissector(tvb, pinfo, tree)
     payload_st:add_le(ssstp_payload, payload)
 
     print(string.format("type    = %x", type))
-    print(string.format("length  = %x", length))
+    print(string.format("length  = %d", length))
     print(string.format("flag    = %x", flag))
     print(string.format("id      = %x", id))
     print(string.format("payload = %s", payload))
-    local info_str = string.format("[type]:%x [len]:%x [flag]:%x [id]:%x", type, length, flag, id)
+    local info_str = string.format("[type]:%x [len]:%d [flag]:%x [id]:%x", type, length, flag, id)
     pinfo.cols.info:append(info_str)
 
 end
@@ -110,4 +110,9 @@ local udp_port = DissectorTable.get("udp.port") --如果获取tcp就是tcp.port
 print(type(udp_port))
 --抓到源或目的为10000端口的数据，按ssstp_proto的规则来解析.解析规则为ssstp_proto.dissector，会自动调用
 -- udp_port:add(10000, ssstp_proto)
-register_postdissector(ssstp_proto)
+-- register_postdissector(ssstp_proto)
+
+local serial_encap_table = DissectorTable.get("wtap_encap")
+-- USER0~USER15是45到60，可以自定义解析，参见源码wtap.h
+serial_encap_table:add(60, ssstp_proto)
+-- 上面两行代码，截取type为60的文件和包进行解析
