@@ -406,10 +406,10 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_M
 
 
 exception_dump_address_t exception_dump_address[] = {
-    // {"text", (uint32_t)_stext, (uint32_t)_etext},
-    // {"data",(uint32_t) _sdata,(uint32_t) _edata},
+    {"text", (uint32_t)_stext, (uint32_t)_etext},
+    {"data",(uint32_t) _sdata,(uint32_t) _edata},
     {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
-    // {"bss",(uint32_t) _sbss,(uint32_t) _ebss},
+    {"bss",(uint32_t) _sbss,(uint32_t) _ebss},
     {"heap",(uint32_t) _sheap,(uint32_t) _eheap},
     {"nvic", 0xE000E000, 0xE000E450},
     {NULL, 0, 0}
@@ -451,18 +451,58 @@ void __platform_assert(const char *expr, const char *file, uint32_t line)
   while(1);
 }
 
+uint8_t dump_buffer[EXECPTION_DUMP_PKT_SIZE + EXECPTION_DUMP_BUFFER_HEAD_SIZE];
+void do_exception_dump(exception_dump_buffer_t *dump_buf)
+{
+  memcpy(dump_buffer, (uint8_t*)dump_buf, EXECPTION_DUMP_BUFFER_HEAD_SIZE);
+  memcpy(&dump_buffer[EXECPTION_DUMP_BUFFER_HEAD_SIZE], (uint8_t*)dump_buf->content, dump_buf->length);
+  stp_write_exception(dump_buffer, dump_buf->length + EXECPTION_DUMP_BUFFER_HEAD_SIZE);
+}
+
 void exception_dump(void)
 {
   uint32_t dump_len;
+  uint32_t i, j;
   exception_dump_address_t *p_exaddr;
+  exception_dump_buffer_t dump_buf;
+  uint8_t buffer[128] = {0};
   foreach_index(i, 0, sizeof(exception_dump_address)/sizeof(exception_dump_address[0])) {
     p_exaddr = &exception_dump_address[i];
     if (p_exaddr->name == NULL) {
       break;
     }
     dump_len = p_exaddr->end_address - p_exaddr->start_address;
-    printf("------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
-    stp_write((uint8_t*)p_exaddr->start_address, dump_len, 0, 0);
+    // printf("------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
+    snprintf(buffer, sizeof(buffer), "------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
+    stp_write_log(buffer, strlen(buffer));
+    dump_buf.id = EXECPTION_DUMP_ID_START;
+    dump_buf.region = i;
+    dump_buf.length = strlen(p_exaddr->name);
+    dump_buf.content = p_exaddr->name;
+    do_exception_dump(&dump_buf);
+
+    uint32_t dump_blocks = dump_len / EXECPTION_DUMP_PKT_SIZE;
+    uint32_t dump_remains = dump_len % EXECPTION_DUMP_PKT_SIZE;
+
+
+    dump_buf.id = EXECPTION_DUMP_ID_DATA;
+    for (j = 0; j < dump_blocks; j++) {
+      dump_buf.region = j;
+      dump_buf.length = EXECPTION_DUMP_PKT_SIZE;
+      dump_buf.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
+      do_exception_dump(&dump_buf);
+    }
+
+    dump_buf.region = j;
+    dump_buf.length = dump_remains;
+    dump_buf.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
+    do_exception_dump(&dump_buf);
+
+    dump_buf.id = EXECPTION_DUMP_ID_END;
+    dump_buf.length = 0;
+    dump_buf.content = NULL;
+    do_exception_dump(&dump_buf);
+  
   }
 }
 

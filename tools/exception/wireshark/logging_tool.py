@@ -264,6 +264,11 @@ class log_receiver():
         self.LOGGING_ID = 0x0001
         self.EXCEPTION_ID = 0x0002
         
+        self.EXECPTION_DUMP_ID_START = 0
+        self.EXECPTION_DUMP_ID_DATA  = 1
+        self.EXECPTION_DUMP_ID_END   = 2
+        self.exec_fd = None
+        
         self.ids = (self.LOGGING_ID, self.EXCEPTION_ID)
         self.dispatcher = {
             self.LOGGING_ID : self.logging,
@@ -284,12 +289,29 @@ class log_receiver():
         self.log_writter.write(self.log_bytes_formater(payload))
         
     def logging_string(self, payload):
-        print("logging:", payload)
+        print("[%d]logging_str:%s" % (len(payload), payload))
         self.log_writter.write(self.log_string_formater(payload))
 
+    def exception_parser(self, data):
+        id, region, length = struct.unpack("BBH", data[:4])
+        print("id=%d region=%d length=%d" % (id, region, length))
+        if id == self.EXECPTION_DUMP_ID_START:
+            content = data[4:].decode()
+            print("exec content start:", content)
+            if self.exec_fd is None:
+                self.exec_fd = open("%s.bin" % content, 'wb')
+        elif id == self.EXECPTION_DUMP_ID_DATA:
+            self.exec_fd.write(data[4:])
+        elif id == self.EXECPTION_DUMP_ID_END:
+            self.exec_fd.close()
+            self.exec_fd = None
+        return (id, region, length)
+    
     def exception(self, payload):
-        print("exception:", b2hs(payload))
-        self.logging_string("EXCEPTON!!")
+        # print("exception:", b2hs(payload))
+        id, region, length = self.exception_parser(payload)
+        self.logging_string("EXCEPTON!! id=%d region=%d length=%d" % (id, region, length))
+        
 
     def check_header(self):
         count = self.log_source.inWaiting()
@@ -297,7 +319,7 @@ class log_receiver():
             header = self.log_source.read(self.header_len)
             print("header:", b2hs(header))
             head, type, length, flags, id = struct.unpack('BBHHH', header)  
-            # print("HEADER: %x %x %x %x %x" % (head, type, length, flags, id))  
+            print("HEADER: head=0x%x type=0x%x length=%d flags=0x%x id=0x%x" % (head, type, length, flags, id))  
             if head == self.head:
                 return (type, length, id)
         return None
@@ -313,7 +335,7 @@ class log_receiver():
     def parser(self, header, payload):
         id = header[2]
         if id not in self.ids:
-            print("ID=0x%x is invalid!!")
+            print("ID=0x%x is invalid!!" % id)
             return
         self.dispatcher[id](payload)
         
@@ -373,7 +395,7 @@ if __name__ == '__main__':
     # wireshark_path = r'D:\src\Development\wsbuild64\run\RelWithDebInfo\Wireshark.exe'
     wireshark_path = r'D:\Tools\Wireshark\Wireshark.exe'
 
-    ser = serial.Serial("COM1", 921600)
+    ser = serial.Serial("COM3", 921600)
     log = logging(wireshark_path)
     receiver = log_receiver(ser, log)
     

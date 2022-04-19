@@ -43,4 +43,19 @@ typedef struct {
     uint32_t size;
 } exception_dump_table_t;
 
+
+#define EXECPTION_DUMP_ID_START 0
+#define EXECPTION_DUMP_ID_DATA  1
+#define EXECPTION_DUMP_ID_END   2
+
+#define EXECPTION_DUMP_PKT_SIZE 2048
+#define EXECPTION_DUMP_BUFFER_HEAD_SIZE 4
+
+typedef struct {
+    uint8_t id;
+    uint8_t region;
+    uint16_t length;
+    void * content;
+} exception_dump_buffer_t;
+
 #endif // __EXCEPTION_H__

@@ -63,9 +63,9 @@ TaskHandle_t xHandle = NULL;
   // must exist for the lifetime of the task, so in this case is declared static.  If it was just an
   // an automatic stack variable it might no longer exist, or at least have been corrupted, by the time
   // the new task attempts to access it.
-  printf("start create stask\n");
+  // printf("start create stask\n");
   xTaskCreate( vTaskCode, "NAME", 1024, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle );
-  printf("start create stask done\n");
+  // printf("start create stask done\n");
   configASSERT( xHandle );
 
   // Use the handle to delete the task.
@@ -103,7 +103,7 @@ int main(void)
 
   syslog_init();
   /* Output a message on Hyperterminal using printf function */
-  printf("\n\r -- hello world\n\r");
+  // printf("\n\r -- hello world\n\r");
 
   MainTaskCreate();
   void exception_dump(void);
