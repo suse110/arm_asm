@@ -1,6 +1,7 @@
 -- 我自定义的协议
 -- struct ssstp_protocol
 -- {
+	-- char head;
 	-- char type;
 	-- unsigned short length;
 	-- unsigned short flag;
@@ -19,6 +20,7 @@ ssstp_proto = Proto("SSSTP", "Serial Transmission Protocol")
 -- 协议的各个字段
 -- 创建几个ProtoField对象，就是主界面中部Packet Details窗格中能显示的那些属性
 -- 第一个参数用于过滤器的字段，第二个是数据显示时的名称，第三个是数据类型
+ssstp_head = ProtoField.uint8("ssstp.head", "head", base.HEX) 
 ssstp_type = ProtoField.uint8("ssstp.type", "type", base.HEX) 
 ssstp_length = ProtoField.uint16("ssstp.length", "length", base.DEC)
 ssstp_flag = ProtoField.uint16("ssstp.flag", "flag", base.HEX,
@@ -36,10 +38,11 @@ ssstp_flag = ProtoField.uint16("ssstp.flag", "flag", base.HEX,
 })
 --所有可能的字段都要定义，到时没有t:add就不会显示
 ssstp_id = ProtoField.uint16("ssstp.id", "id", base.HEX)
-ssstp_payload = ProtoField.bytes("ssstp.payload", "payload", base.none)
+ssstp_payload = ProtoField.string("ssstp.payload", "payload", base.none)
 
 --把ProtoField对象加到Proto对象上
 ssstp_proto.fields = {
+    ssstp_head,
     ssstp_type,
     ssstp_length,
     ssstp_flag,
@@ -60,11 +63,11 @@ local data_dis = Dissector.get("data")
 -- tree：包结构的关系，显示在图形化中的树形结构，Treeitem对象
 function ssstp_proto.dissector(tvb, pinfo, tree)
 	if tvb:len() == 0 then return end
-	head_len = 7
-    print("----")
-    print(tvb)
+	head_len = 8
+    -- print("----")
+    -- print(tvb)
 
-    print("----")
+    -- print("----")
     
     --显示在protocol列的名字
     pinfo.cols.protocol = ssstp_proto.name
@@ -75,39 +78,43 @@ function ssstp_proto.dissector(tvb, pinfo, tree)
     local payload_st = subtree:add(ssstp_proto, tvb(head_len, tvb:len() - head_len), "payload")
 
     -- 根据字段大小，添加到子树
-    head_st:add_le(ssstp_type, tvb(0,1)):append_text("(Type)") -- 解析成具体的类型提示追加在字段后面
-    head_st:add_le(ssstp_length, tvb(1,2)):append_text("(Length)")
-    head_st:add_le(ssstp_flag, tvb(3,2)):append_text("(Flag)")
-    head_st:add_le(ssstp_id, tvb(5,2)):append_text("(ID)")
+    head_st:add_le(ssstp_head, tvb(0,1)):append_text("(Head)") -- 解析成具体的类型提示追加在字段后面
+    head_st:add_le(ssstp_type, tvb(1,1)):append_text("(Type)")
+    head_st:add_le(ssstp_length, tvb(2,2)):append_text("(Length)")
+    head_st:add_le(ssstp_flag, tvb(4,2)):append_text("(Flag)")
+    head_st:add_le(ssstp_id, tvb(6,2)):append_text("(ID)")
 
     -- 字段一并显示到info列上
-    local type    = tvb(0,1):le_uint()
-    local length  = tvb(1,2):le_uint() --要复用的可以定义成变量
-    local flag    = tvb(3,2):le_uint()
-    local id      = tvb(5,2):le_uint()
-    local payload = tvb(head_len, length - 4)
+    local head    = tvb(0,1):le_uint()
+    local type    = tvb(1,1):le_uint()
+    local length  = tvb(2,2):le_uint() --要复用的可以定义成变量
+    local flag    = tvb(4,2):le_uint()
+    local id      = tvb(6,2):le_uint()
+    local payload = tvb(head_len, length - 4):string()
     
     -- DissectorTable
     -- 剩下的字节为payload
     payload_st:add_le(ssstp_payload, payload)
 
-    print(string.format("type    = %x", type))
-    print(string.format("length  = %d", length))
-    print(string.format("flag    = %x", flag))
-    print(string.format("id      = %x", id))
-    print(string.format("payload = %s", payload))
-    local info_str = string.format("[type]:%x [len]:%d [flag]:%x [id]:%x", type, length, flag, id)
+    -- print(string.format("head    = %x", head))
+    -- print(string.format("type    = %x", type))
+    -- print(string.format("length  = %d", length))
+    -- print(string.format("flag    = %x", flag))
+    -- print(string.format("id      = %x", id))
+    -- print(string.format("payload = %s", payload))
+    -- local info_str = string.format("[head]:%x [type]:%x [len]:%d [flag]:%x [id]:%x", head, type, length, flag, id)
+    local info_str = string.format("%s", payload)
     pinfo.cols.info:append(info_str)
 
 end
-local dt = DissectorTable.list()
-for _,name in ipairs(dt) do
-    print(name)
-end
+-- local dt = DissectorTable.list()
+-- for _,name in ipairs(dt) do
+--     print(name)
+-- end
 --所有的dissector都是以“table”的形式组织的，table表示上级协议
 --这个是获得udp协议的DissectorTable，并且以端口号排列
-local udp_port = DissectorTable.get("udp.port") --如果获取tcp就是tcp.port
-print(type(udp_port))
+-- local udp_port = DissectorTable.get("udp.port") --如果获取tcp就是tcp.port
+-- print(type(udp_port))
 --抓到源或目的为10000端口的数据，按ssstp_proto的规则来解析.解析规则为ssstp_proto.dissector，会自动调用
 -- udp_port:add(10000, ssstp_proto)
 -- register_postdissector(ssstp_proto)

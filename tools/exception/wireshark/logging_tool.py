@@ -3,12 +3,15 @@
 # http://www.python.org
 # http://sourceforge.net/projects/pywin32/
 
+from email import header
+from socket import timeout
 import win32pipe, win32file
 import time
 import datetime
 import serial
 import struct
 import subprocess
+import codecs
 import pcapng.blocks as blocks
 from pcapng import FileWriter
 
@@ -202,69 +205,180 @@ class ws_pipe():
 
         #wait 2 second (not mandatory, but this let watching data coming trough the pipe)
         time.sleep(2)
-        
-if __name__ == '__main__':
-  
-    # pcapng_format_write()  
-    shb = blocks.SectionHeader(
-        options={
-            "shb_hardware": "artificial",
-            "shb_os": "python",
-            "shb_userappl": "python-pcapng",
-        }
-    )
-    # linktype设置为162，在wireshark源码中表示保留给用户的USER15 类型
-    idb = shb.new_member(
-        blocks.InterfaceDescription,
-        link_type=162,#251,
-        options={
-            "if_description": "Hand-rolled",
-            "if_os": "Python",
-            "if_filter": [(0, b"tcp port 23 and host 192.0.2.5")],
-        },
-    )
-    ws_ser = ws_serial("COM1", 921600)
-    ws_ser.open()
-    wireshark_path = r'D:\src\Development\wsbuild64\run\RelWithDebInfo\Wireshark.exe'
-    # wireshark_path = r'D:\Tools\Wireshark\Wireshark.exe'
-    w32_ws_pipe = ws_pipe(wireshark_path, r"\\.\pipe\wireshark")
-    w32_ws_pipe.wireshark_start()
-    w32_ws_pipe.create_pipe()
-    print("wireshark start success!!!")
-    print("start connect pipe...")
-    w32_ws_pipe.connect_pipe()
-    print("pipe connect success!!!")
-    print("starting wireshark...")
-    # test_pl = (
-    #         0xff, 0xff, 0xff, 0xff, 0xff, 0xff,     # dest MAC
-    #         0x11, 0x22, 0x33, 0xdd, 0xaa, 0x00,     # src MAC
-    #         0x08, 0x00,                             # ethertype (ipv4)
-    #         0x45, 0x00, 0x00, 31,                   # IP start
-    #         0x00, 0x00, 0x00, 0x00,                 # ID+flags
-    #         0xfe, 17,                               # TTL, UDP
-    #         0x00, 0x00,                             # checksum
-    #         127, 0, 0, 1,                           # src IP
-    #         127, 0, 0, 2,                           # dst IP
-    #         0x12, 0x34, 0x56, 0x78,                 # src/dst ports
-    #         0x00, 11,                               # length
-    #         0x00, 0x00,                             # checksum
-    #         0x44, 0x41, 0x50,                       # Payload
-    # )
-    test_pl = (0x05, 0x5a, 0x08,0x00,0x01,0x00,0x31,0x32,0x33,0x34,0x35,0x36)
-    # # FileWriter() immediately writes the SHB and any IDBs you've added to it
-    writer = FileWriter(w32_ws_pipe, shb)
+# struct header {
+# uint8_t  head;
+# uint8_t  type;
+# uint16_t length;
+# uint16_t flags;
+# uint16_t id;
+# }
 
-    spb = shb.new_member(blocks.SimplePacket)
-    # spb = shb.new_member(blocks.EnhancedPacket)
-    spb.packet_data = bytes(test_pl)
-    # writer.write_block(spb)
+'''
+string to bytes
+eg:
+'0123456789ABCDEF0123456789ABCDEF'
+b'0123456789ABCDEF0123456789ABCDEF'
+'''
+def s2b(str):
+    return bytes(str,encoding='utf8')
+
+'''
+bytes to string
+eg:
+b'0123456789ABCDEF0123456789ABCDEF'
+'0123456789ABCDEF0123456789ABCDEF'
+'''
+def b2s(bs):
+    return bytes.decode(bs,encoding='utf8')
+
+'''
+hex string to bytes
+eg:
+'01 23 45 67 89 AB CD EF 01 23 45 67 89 AB CD EF'
+b'\x01#Eg\x89\xab\xcd\xef\x01#Eg\x89\xab\xcd\xef'
+'''
+def hs2b(str):
+    str = str.replace(" ", "")
+    return bytes.fromhex(str)
+    # return a2b_hex(str)
+    
+'''
+bytes to hex string 
+eg:
+b'\x01#Eg\x89\xab\xcd\xef\x01#Eg\x89\xab\xcd\xef'
+'01 23 45 67 89 AB CD EF 01 23 45 67 89 AB CD EF'
+'''
+def b2hs(bs):
+    # hex_str = ''
+    # for item in bs:
+    #     hex_str += str(hex(item))[2:].zfill(2).upper() + " "
+    # return hex_str
+    return ''.join(['%02X' % b for b in bs])
+
+class log_receiver():
+    def __init__(self, log_source, log_writter):
+        self.log_source = log_source
+        self.log_writter = log_writter
+        self.header_len = 8
+        self.head = 0x5A
+        self.LOGGING_ID = 0x0001
+        self.EXCEPTION_ID = 0x0002
+        
+        self.ids = (self.LOGGING_ID, self.EXCEPTION_ID)
+        self.dispatcher = {
+            self.LOGGING_ID : self.logging,
+            self.EXCEPTION_ID : self.exception}
+        
+    def log_bytes_formater(self, payload):
+        length = "%04x" % (len(payload) + 4)
+        data = '5A5B%s%s00000000' % (length[2:], length[:2])
+        return bytes.fromhex(data) + payload
+    
+    def log_string_formater(self, payload):
+        length = "%04x" % (len(payload) + 4)
+        data = '5A5B%s%s00000000' % (length[2:], length[:2])
+        return bytes.fromhex(data) + bytes(payload, 'utf-8')
+    
+    def logging(self, payload):
+        print("logging:", b2hs(payload))
+        self.log_writter.write(self.log_bytes_formater(payload))
+        
+    def logging_string(self, payload):
+        print("logging:", payload)
+        self.log_writter.write(self.log_string_formater(payload))
+
+    def exception(self, payload):
+        print("exception:", b2hs(payload))
+        self.logging_string("EXCEPTON!!")
+
+    def check_header(self):
+        count = self.log_source.inWaiting()
+        if count > self.header_len:
+            header = self.log_source.read(self.header_len)
+            print("header:", b2hs(header))
+            head, type, length, flags, id = struct.unpack('BBHHH', header)  
+            # print("HEADER: %x %x %x %x %x" % (head, type, length, flags, id))  
+            if head == self.head:
+                return (type, length, id)
+        return None
+
+    def recv_payload(self, header):
+        length = header[1] - 4
+        # print("payload start ...,inwaiting=%d" % (self.log_source.inWaiting()))
+        while(length > self.log_source.inWaiting()):
+            time.sleep(0.01)
+        # print("payload end len=%d inwaiting=%d..." % (length, self.log_source.inWaiting()))
+        return self.log_source.read(length)
+
+    def parser(self, header, payload):
+        id = header[2]
+        if id not in self.ids:
+            print("ID=0x%x is invalid!!")
+            return
+        self.dispatcher[id](payload)
+        
+    def processer(self):
+        header = self.check_header()
+        
+        if header is not None:
+            # print("%x %x %x" % header)
+            payload = self.recv_payload(header)
+            # print("PAYLOAD:", b2hs(payload))
+            self.parser(header, payload)
+
+class logging():
+    def __init__(self, wireshark_path):
+        shb = blocks.SectionHeader(
+            options={
+                "shb_hardware": "artificial",
+                "shb_os": "python",
+                "shb_userappl": "python-pcapng",
+            }
+        )
+        # linktype设置为162，在wireshark源码中表示保留给用户的USER15 类型
+        idb = shb.new_member(
+            blocks.InterfaceDescription,
+            link_type=162,#251,
+            options={
+                "if_description": "Hand-rolled",
+                "if_os": "Python",
+                "if_filter": [(0, b"tcp port 23 and host 192.0.2.5")],
+            },
+        )
+        
+        
+        w32_ws_pipe = ws_pipe(wireshark_path, r"\\.\pipe\wireshark")
+        w32_ws_pipe.wireshark_start()
+        w32_ws_pipe.create_pipe()
+        print("wireshark start success!!!")
+        print("start connect pipe...")
+        w32_ws_pipe.connect_pipe()
+        print("pipe connect success!!!")
+        print("starting wireshark...")
+        
+        # # FileWriter() immediately writes the SHB and any IDBs you've added to it
+        self.writer = FileWriter(w32_ws_pipe, shb)
+
+        # self.spb = shb.new_member(blocks.SimplePacket)
+        self.spb = shb.new_member(blocks.EnhancedPacket)
+
+    def write(self, data):
+        self.spb.packet_data = data
+        # w32_ws_pipe.write_pipe(bytes(test_pl))
+        self.writer.write_block(self.spb)
+
+
+if __name__ == '__main__':
+    # pcapng_format_write()  
+    # wireshark_path = r'D:\src\Development\wsbuild64\run\RelWithDebInfo\Wireshark.exe'
+    wireshark_path = r'D:\Tools\Wireshark\Wireshark.exe'
+
+    ser = serial.Serial("COM1", 921600)
+    log = logging(wireshark_path)
+    receiver = log_receiver(ser, log)
+    
     while True:
-        # time.sleep(1)
-        buf = ws_ser.read_all()
-        if len(buf) > 0:
-            spb.packet_data = bytes(buf)
-            # w32_ws_pipe.write_pipe(bytes(test_pl))
-            writer.write_block(spb)
+        receiver.processer()
         
 ################################## Simple Packet Block ################################
 

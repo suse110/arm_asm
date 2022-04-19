@@ -16,5 +16,6 @@
 @set OPENOCD_ROOT=%ROOT_DIR%\tools\openocd\OpenOCD-20210519-0.11.0\bin
 @set HEXDUMP_ROOT=%ROOT_DIR%\tools\hexdump
 @set TOOL_ROOT=%ROOT_DIR%\tools\
-@set USR_PATH=D:\Tools\Git\bin;D:\Tools\msys64\usr\bin;D:\Tools\lua-5.3.6_Win32_bin;D:\Tools\Wireshark
+@set WIRESHARK_PATH=D:\Tools\Wireshark
+@set USR_PATH=D:\Tools\Git\bin;D:\Tools\msys64\usr\bin;D:\Tools\lua-5.3.6_Win32_bin;%WIRESHARK_PATH%
 @set PATH=%PYTHONPATH%;%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%;%USR_PATH%
