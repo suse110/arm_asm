@@ -102,30 +102,6 @@ def pcapng_format_write():
         time.sleep(1)
         break
 
-class ws_serial():
-    def __init__(self, port, baudrate, timeout=0.5):
-        self.port = port
-        self.baudrate = baudrate
-        self.timeout = timeout
-
-    def open(self):
-        self.ser = serial.Serial(self.port, self.baudrate, timeout = self.timeout)
-
-    def close(self):
-        self.ser.close()
-    
-    def read(self, length):
-        return self.ser.read(length)
-    
-    def read_all(self):
-        return self.ser.read(self.in_waiting())
-
-    def in_waiting(self):
-        return self.ser.inWaiting()
-
-    def write(self, buff):
-        self.ser.write(buff)
-
 class ws_pipe():
     def __init__(self, wireshark_abs_path=None, pipe_name=r'\\.\pipe\wireshark'):
         self.magic_num = 0xa1b2c3d4
@@ -276,48 +252,53 @@ class log_receiver():
         
     def log_bytes_formater(self, payload):
         length = "%04x" % (len(payload) + 4)
-        data = '5A5B%s%s00000000' % (length[2:], length[:2])
+        data = '%02X5B%s%s00000000' % (self.head, length[2:], length[:2])
         return bytes.fromhex(data) + payload
     
     def log_string_formater(self, payload):
         length = "%04x" % (len(payload) + 4)
-        data = '5A5B%s%s00000000' % (length[2:], length[:2])
+        data = '%02X5B%s%s00000000' % (self.head, length[2:], length[:2])
         return bytes.fromhex(data) + bytes(payload, 'utf-8')
     
     def logging(self, payload):
-        print("logging:", b2hs(payload))
+        # print("logging:", b2hs(payload))
         self.log_writter.write(self.log_bytes_formater(payload))
         
     def logging_string(self, payload):
-        print("[%d]logging_str:%s" % (len(payload), payload))
+        # print("[%d]logging_str:%s" % (len(payload), payload))
         self.log_writter.write(self.log_string_formater(payload))
 
     def exception_parser(self, data):
         id, region, length = struct.unpack("BBH", data[:4])
-        print("id=%d region=%d length=%d" % (id, region, length))
+        # print("id=%d region=%d length=%d len(data)=%d" % (id, region, length, len(data)))
         if id == self.EXECPTION_DUMP_ID_START:
-            content = data[4:].decode()
-            print("exec content start:", content)
+            start_addr = struct.unpack('I', data[4:8])
+            name = data[8:].decode()
+            # print("start_addr=0x%08x, name=%s" % (start_addr[0], name))
+            self.logging_string("EXCEPTON!! id=%d region=%d length=%d start address=0x%08x" % (id, region, length, start_addr[0]))
+
             if self.exec_fd is None:
-                self.exec_fd = open("%s.bin" % content, 'wb')
+                self.exec_fd = open("%s.bin" % name, 'wb')
         elif id == self.EXECPTION_DUMP_ID_DATA:
+            self.logging_string("EXCEPTON!! id=%d region=%d length=%d" % (id, region, length))
             self.exec_fd.write(data[4:])
         elif id == self.EXECPTION_DUMP_ID_END:
             self.exec_fd.close()
             self.exec_fd = None
+            end_addr = struct.unpack('I', data[4:8])
+            self.logging_string("EXCEPTON!! id=%d region=%d length=%d end address=0x%08x" % (id, region, length, end_addr[0]))
         return (id, region, length)
     
     def exception(self, payload):
         # print("exception:", b2hs(payload))
         id, region, length = self.exception_parser(payload)
-        self.logging_string("EXCEPTON!! id=%d region=%d length=%d" % (id, region, length))
         
 
     def check_header(self):
         count = self.log_source.inWaiting()
         if count > self.header_len:
             header = self.log_source.read(self.header_len)
-            print("header:", b2hs(header))
+            # print("header:", b2hs(header))
             head, type, length, flags, id = struct.unpack('BBHHH', header)  
             print("HEADER: head=0x%x type=0x%x length=%d flags=0x%x id=0x%x" % (head, type, length, flags, id))  
             if head == self.head:
@@ -386,6 +367,7 @@ class logging():
 
     def write(self, data):
         self.spb.packet_data = data
+        
         # w32_ws_pipe.write_pipe(bytes(test_pl))
         self.writer.write_block(self.spb)
 

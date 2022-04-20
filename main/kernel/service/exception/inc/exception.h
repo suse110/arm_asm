@@ -55,6 +55,14 @@ typedef struct {
     uint8_t id;
     uint8_t region;
     uint16_t length;
+    /*
+    for EXECPTION_DUMP_ID_START:
+        content -> start_addr(4 bytes) + region name string
+    for EXECPTION_DUMP_ID_DATA:
+        content -> region data
+    for EXECPTION_DUMP_ID_START:
+        content -> end_addr(4 bytes) 
+    */
     void * content;
 } exception_dump_buffer_t;
 

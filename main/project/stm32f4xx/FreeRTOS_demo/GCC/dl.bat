@@ -1,6 +1,9 @@
+@echo off
 set CUR_DIR=%CD%
 cd ..\..\..\..\..
-call setenv.bat
+if "%OPENOCD_ROOT%" == "" ( 
+    call setenv.bat 
+) 
 cd %CUR_DIR%
 
-openocd -f ./config/program.cfg
+@openocd -f ./config/program.cfg

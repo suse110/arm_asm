@@ -475,10 +475,12 @@ void exception_dump(void)
     // printf("------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
     snprintf(buffer, sizeof(buffer), "------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
     stp_write_log(buffer, strlen(buffer));
+    memcpy(buffer, &p_exaddr->start_address, sizeof(p_exaddr->start_address));
+    memcpy(buffer + sizeof(p_exaddr->start_address), p_exaddr->name, strlen(p_exaddr->name));
     dump_buf.id = EXECPTION_DUMP_ID_START;
     dump_buf.region = i;
-    dump_buf.length = strlen(p_exaddr->name);
-    dump_buf.content = p_exaddr->name;
+    dump_buf.length = strlen(p_exaddr->name) + sizeof(p_exaddr->start_address);
+    dump_buf.content = buffer;
     do_exception_dump(&dump_buf);
 
     uint32_t dump_blocks = dump_len / EXECPTION_DUMP_PKT_SIZE;
@@ -499,8 +501,9 @@ void exception_dump(void)
     do_exception_dump(&dump_buf);
 
     dump_buf.id = EXECPTION_DUMP_ID_END;
-    dump_buf.length = 0;
-    dump_buf.content = NULL;
+    dump_buf.region = i;
+    dump_buf.length = sizeof(p_exaddr->end_address);
+    dump_buf.content = &p_exaddr->end_address;
     do_exception_dump(&dump_buf);
   
   }
