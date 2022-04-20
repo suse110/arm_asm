@@ -1,0 +1,19 @@
+
+ WCLEAR
+
+ SYStem.CPU CortexM4
+ 
+ SYStem.Up
+
+ Data.LOAD.ELF FreeRTOS_demo.elf /spath /lpath
+
+ winpos 0% 0% 100% 50%
+ w.d.l
+ winpos 0% 50% 50% 50%
+ w.v.f /l /c
+ winpos 50% 50% 50% 50%
+ w.v.w flags ast
+
+ r.s pc main
+
+ enddo
