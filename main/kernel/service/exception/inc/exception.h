@@ -66,4 +66,5 @@ typedef struct {
     void * content;
 } exception_dump_buffer_t;
 
+void exception_dump(void);
 #endif // __EXCEPTION_H__

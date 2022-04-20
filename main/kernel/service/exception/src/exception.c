@@ -196,7 +196,7 @@ odd address for ARM Thumb code
 
 __attribute__((optimize("O0")))
 void exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type) {
-
+  exception_dump();
 }
 
 /**

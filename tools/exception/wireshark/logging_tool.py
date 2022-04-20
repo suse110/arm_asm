@@ -252,12 +252,12 @@ class log_receiver():
         
     def log_bytes_formater(self, payload):
         length = "%04x" % (len(payload) + 4)
-        data = '%02X5B%s%s00000000' % (self.head, length[2:], length[:2])
+        data = '%02X01%s%s00000000' % (self.head, length[2:], length[:2])
         return bytes.fromhex(data) + payload
     
     def log_string_formater(self, payload):
         length = "%04x" % (len(payload) + 4)
-        data = '%02X5B%s%s00000000' % (self.head, length[2:], length[:2])
+        data = '%02X01%s%s00000000' % (self.head, length[2:], length[:2])
         return bytes.fromhex(data) + bytes(payload, 'utf-8')
     
     def logging(self, payload):
@@ -300,7 +300,7 @@ class log_receiver():
             header = self.log_source.read(self.header_len)
             # print("header:", b2hs(header))
             head, type, length, flags, id = struct.unpack('BBHHH', header)  
-            print("HEADER: head=0x%x type=0x%x length=%d flags=0x%x id=0x%x" % (head, type, length, flags, id))  
+            print("HEADER: head=0x%02x type=0x%02x length=%-4d flags=0x%04x id=0x%04x" % (head, type, length, flags, id))  
             if head == self.head:
                 return (type, length, id)
         return None
