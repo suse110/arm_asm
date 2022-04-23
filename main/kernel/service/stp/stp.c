@@ -73,13 +73,29 @@ void stp_wrapper(stp_pkt_t *stp_pkt, uint8_t *buffer, uint32_t length, uint8_t t
 
     header->head = STP_HEAD;
     header->type = type;
-    header->length = length + 4;
+    header->length = length + 4;//TODO:add crc check len?
     header->flags = 0;
     header->id = id;
 #ifdef STP_CHECKSUM_ENABLE
     header->crc = crc16(buffer, length);
 #endif
     stp_pkt->payload = buffer;
+}
+
+void stp_write_header(uint32_t length, uint8_t type, uint16_t id)
+{
+    stp_header_t header;
+    header.head = STP_HEAD;
+    header.type = type;
+    header.length = length + 4;//TODO:add crc check len?
+    header.flags = 0;
+    header.id = id;
+    serial_write((uint8_t*)&header, sizeof(stp_header_t));
+}
+
+void stp_write_log_header(uint32_t length)
+{
+    stp_write_header(length, 0x5B, STP_ID_LOG);
 }
 
 void stp_write_pkt(stp_pkt_t *stp_pkt)

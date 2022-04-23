@@ -69,7 +69,6 @@ SECTIONS
  		*(.dtors)
 
 		*(.rodata*)
-		*(.noinit.crash_info)
 
 		KEEP(*(.eh_frame*))
 
@@ -134,6 +133,7 @@ SECTIONS
 		_sdata = __data_start__;
 		*(vtable)
 		*(.data*)
+		*(.noinit.crash_info)
 
 		. = ALIGN(4);
 		/* preinit data */

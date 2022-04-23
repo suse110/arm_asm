@@ -1,9 +1,12 @@
+#!coding=utf-8
 # Win32 Wireshark named pipes example
 # Requires Python for Windows and the Python for Windows Extensions:
 # http://www.python.org
 # http://sourceforge.net/projects/pywin32/
 
 from email import header
+from fileinput import filename
+from logging import exception
 from socket import timeout
 import win32pipe, win32file
 import time
@@ -12,6 +15,7 @@ import serial
 import struct
 import subprocess
 import codecs
+import os
 import pcapng.blocks as blocks
 from pcapng import FileWriter
 
@@ -231,65 +235,245 @@ def b2hs(bs):
     # return hex_str
     return ''.join(['%02X' % b for b in bs])
 
+def mkdir(path):
+    # 去除首位空格
+    path=path.strip()
+    # 去除尾部 \ 符号
+    path=path.rstrip("\\")
+    # 判断路径是否存在
+    # 存在     True
+    # 不存在   False
+    isExists=os.path.exists(path)
+    # 判断结果
+    if not isExists:
+        # 如果不存在则创建目录
+        # 创建目录操作函数
+        os.makedirs(path) 
+        print (path+' 创建成功')
+        return True
+    else:
+        # 如果目录存在则不创建，并提示目录已存在
+        print (path+' 目录已存在')
+        return False
+
+
 class log_receiver():
     def __init__(self, log_source, log_writter):
         self.log_source = log_source
         self.log_writter = log_writter
         self.header_len = 8
+        self.exception_header_len = 4
         self.head = 0x5A
         self.LOGGING_ID = 0x0001
         self.EXCEPTION_ID = 0x0002
         
-        self.EXECPTION_DUMP_ID_START = 0
-        self.EXECPTION_DUMP_ID_DATA  = 1
-        self.EXECPTION_DUMP_ID_END   = 2
+        self.EXECPTION_DUMP_ID_INIT         = 0
+        self.EXECPTION_DUMP_ID_REGISTER     = 1
+        self.EXECPTION_DUMP_ID_REGION_START = 2
+        self.EXECPTION_DUMP_ID_REGION_DATA  = 3
+        self.EXECPTION_DUMP_ID_REGION_END   = 4
+        self.EXECPTION_DUMP_ID_DEINIT       = 5
+        self.exception_dump_id_name = {
+            self.EXECPTION_DUMP_ID_INIT        : "INIT  ",
+            self.EXECPTION_DUMP_ID_REGISTER    : "REGS  ",
+            self.EXECPTION_DUMP_ID_REGION_START: "START ",
+            self.EXECPTION_DUMP_ID_REGION_DATA : "DATA  ",
+            self.EXECPTION_DUMP_ID_REGION_END  : "END   ",
+            self.EXECPTION_DUMP_ID_DEINIT      : "DEINIT",
+        }
         self.exec_fd = None
+        self.cwd = os.getcwd()
+        self.load_cmm = 'load_main.cmm'
+        self.load_cmm_fd = None
         
         self.ids = (self.LOGGING_ID, self.EXCEPTION_ID)
         self.dispatcher = {
             self.LOGGING_ID : self.logging,
             self.EXCEPTION_ID : self.exception}
         
-    def log_bytes_formater(self, payload):
+        self.frames = None
+    def log_bytes_formater(self, header, payload):
+        """
+        Args:
+            header (tuple): (type, length, id)
+            payload (bytes): payload
+
+        Returns:
+            bytes: header + payload
+        """
         length = "%04x" % (len(payload) + 4)
-        data = '%02X01%s%s00000000' % (self.head, length[2:], length[:2])
+        id = "%04x" % header[2]
+        data = '%02X%02X%s%s0000%s%s' % (self.head, header[0], length[2:], length[:2],  id[2:], id[:2])
         return bytes.fromhex(data) + payload
     
-    def log_string_formater(self, payload):
+    def log_string_formater(self, header, payload):
+        """
+        Args:
+            header (tuple): (type, length, id)
+            payload (str): payload
+
+        Returns:
+            bytes: header + payload
+        """
         length = "%04x" % (len(payload) + 4)
-        data = '%02X01%s%s00000000' % (self.head, length[2:], length[:2])
+        id = "%04x" % header[2]
+        data = '%02X%02X%s%s0000%s%s' % (self.head, header[0], length[2:], length[:2],  id[2:], id[:2])
         return bytes.fromhex(data) + bytes(payload, 'utf-8')
     
-    def logging(self, payload):
+    def logging(self, header, payload):
         # print("logging:", b2hs(payload))
-        self.log_writter.write(self.log_bytes_formater(payload))
+        self.log_writter.write(self.log_bytes_formater(header, payload))
         
     def logging_string(self, payload):
         # print("[%d]logging_str:%s" % (len(payload), payload))
-        self.log_writter.write(self.log_string_formater(payload))
-
+        self.log_writter.write(self.log_string_formater((0xaa, len(payload) + 4, 0), payload))
+        
     def exception_parser(self, data):
-        id, region, length = struct.unpack("BBH", data[:4])
+        id, region, length = struct.unpack("BBH", data[:self.exception_header_len])
         # print("id=%d region=%d length=%d len(data)=%d" % (id, region, length, len(data)))
-        if id == self.EXECPTION_DUMP_ID_START:
-            start_addr = struct.unpack('I', data[4:8])
-            name = data[8:].decode()
-            # print("start_addr=0x%08x, name=%s" % (start_addr[0], name))
-            self.logging_string("EXCEPTON!! id=%d region=%d length=%d start address=0x%08x" % (id, region, length, start_addr[0]))
+        if id == self.EXECPTION_DUMP_ID_INIT:
+            self.logging_string("EXCEPTON!! %s" % self.exception_dump_id_name[id])
 
+            #no data
+            mkdir('dump')
+            if self.load_cmm_fd is None:
+                self.load_cmm_fd = open(".\\dump\\%s" % self.load_cmm, 'w')
+            self.load_cmm_fd.write('title \"My Trace32\"\n')
+            self.load_cmm_fd.write('sys.down\n')
+            self.load_cmm_fd.write('system.cpu cortexm4\n')
+            self.load_cmm_fd.write('sys.up\n')
+            self.load_cmm_fd.write("\n\n")
+            # self.load_cmm_fd.write('symbol.sourcepath.setbasedir \"D:\\\"\n')
+            self.load_cmm_fd.write("\n\n")
+        elif id == self.EXECPTION_DUMP_ID_REGISTER:
+            # print(b2hs(data))
+            # I 类型为4个byte，所以这里要除以4
+            length = length >> 2
+            fmt = '%dI' % length
+            self.frames = struct.unpack_from(fmt, data[4:], 0)
+            self.logging_string("R0       = 0x%08x" % self.frames[0])
+            self.logging_string("R1       = 0x%08x" % self.frames[1])
+            self.logging_string("R2       = 0x%08x" % self.frames[2])
+            self.logging_string("R3       = 0x%08x" % self.frames[3])
+            self.logging_string("R12      = 0x%08x" % self.frames[4])
+            self.logging_string("LR       = 0x%08x" % self.frames[5])
+            self.logging_string("PC       = 0x%08x" % self.frames[6])
+            self.logging_string("XPSR     = 0x%08x" % self.frames[7])
+            self.logging_string("R4       = 0x%08x" % self.frames[8])
+            self.logging_string("R5       = 0x%08x" % self.frames[9])
+            self.logging_string("R6       = 0x%08x" % self.frames[10])
+            self.logging_string("R7       = 0x%08x" % self.frames[11])
+            self.logging_string("R8       = 0x%08x" % self.frames[12])
+            self.logging_string("R9       = 0x%08x" % self.frames[13])
+            self.logging_string("R10      = 0x%08x" % self.frames[14])
+            self.logging_string("R11      = 0x%08x" % self.frames[15])
+            self.logging_string("SP       = 0x%08x" % self.frames[16])
+            self.logging_string("MSP      = 0x%08x" % self.frames[17])
+            self.logging_string("PSP      = 0x%08x" % self.frames[18])
+            self.logging_string("CONTROL  = 0x%08x" % self.frames[19])
+            self.logging_string("BASEPRI  = 0x%08x" % self.frames[20])
+            self.logging_string("PRIMASK  = 0x%08x" % self.frames[21])
+            self.logging_string("FAULTMASK= 0x%08x" % self.frames[22])
+            self.logging_string("FPSCR    = 0x%08x" % self.frames[23])
+            
+        elif id == self.EXECPTION_DUMP_ID_REGION_START:
+            #4B head + 4B start_addr + nB region name
+            start_addr = struct.unpack('I', data[self.exception_header_len:8])[0]
+            name = data[8:].decode()
+            file_name = "%d_%s.bin" % (region, name)
+            # print("start_addr=0x%08x, name=%s" % (start_addr[0], name))
+            self.logging_string("EXCEPTON!! %s region=%-2d length=%-4d start address=0x%08x" % (self.exception_dump_id_name[id], region, length, start_addr))
+            # 记录下bin 文件的加载地址
             if self.exec_fd is None:
-                self.exec_fd = open("%s.bin" % name, 'wb')
-        elif id == self.EXECPTION_DUMP_ID_DATA:
-            self.logging_string("EXCEPTON!! id=%d region=%d length=%d" % (id, region, length))
-            self.exec_fd.write(data[4:])
-        elif id == self.EXECPTION_DUMP_ID_END:
+                self.exec_fd = open(r".\dump\%s" % file_name, 'wb')
+                self.load_cmm_fd.write("data.load.binary %s\\dump\\%s 0x%08x\n" % (self.cwd, file_name, start_addr))
+        elif id == self.EXECPTION_DUMP_ID_REGION_DATA:
+            #4B head + nB dump data
+            self.logging_string("EXCEPTON!! %s region=%-2d length=%-4d" % (self.exception_dump_id_name[id], region, length))
+            self.exec_fd.write(data[self.exception_header_len:])
+        elif id == self.EXECPTION_DUMP_ID_REGION_END:
+            #4B head + 4B start_addr
             self.exec_fd.close()
             self.exec_fd = None
-            end_addr = struct.unpack('I', data[4:8])
-            self.logging_string("EXCEPTON!! id=%d region=%d length=%d end address=0x%08x" % (id, region, length, end_addr[0]))
+            end_addr = struct.unpack('I', data[self.exception_header_len:8])[0]
+            self.logging_string("EXCEPTON!! %s region=%-2d length=%-4d end   address=0x%08x" % (self.exception_dump_id_name[id], region, length, end_addr))
+        elif id == self.EXECPTION_DUMP_ID_DEINIT:
+            self.logging_string("EXCEPTON!! %s" % self.exception_dump_id_name[id])
+            #相对位置是基于cmm文件
+            # B::data.load.elf ~~~~~/../../../main/build/stm32f4xx/FreeRTOS_demo/FreeRTOS_demo.elf /strippart "arm_asm"
+            self.load_cmm_fd.write('data.load.elf ~~~~~/../../../main/build/stm32f4xx/FreeRTOS_demo/FreeRTOS_demo.elf /strippart "arm_asm"\n')
+            # self.load_cmm_fd.write('data.load.elf D:\\src\\os\\arm_asm\\main\\build\\stm32f4xx\\FreeRTOS_demo\\FreeRTOS_demo.elf\n')
+            self.load_cmm_fd.write("r.s r0        0x%08x\n" % self.frames[0])
+            self.load_cmm_fd.write("r.s r1        0x%08x\n" % self.frames[1])
+            self.load_cmm_fd.write("r.s r2        0x%08x\n" % self.frames[2])
+            self.load_cmm_fd.write("r.s r3        0x%08x\n" % self.frames[3])
+            self.load_cmm_fd.write("r.s r12       0x%08x\n" % self.frames[4])
+            self.load_cmm_fd.write("r.s lr        0x%08x\n" % self.frames[5])
+            self.load_cmm_fd.write("r.s pc        0x%08x\n" % self.frames[6])
+            self.load_cmm_fd.write("r.s xpsr      0x%08x\n" % self.frames[7])
+            self.load_cmm_fd.write("r.s r4        0x%08x\n" % self.frames[8])
+            self.load_cmm_fd.write("r.s r5        0x%08x\n" % self.frames[9])
+            self.load_cmm_fd.write("r.s r6        0x%08x\n" % self.frames[10])
+            self.load_cmm_fd.write("r.s r7        0x%08x\n" % self.frames[11])
+            self.load_cmm_fd.write("r.s r8        0x%08x\n" % self.frames[12])
+            self.load_cmm_fd.write("r.s r9        0x%08x\n" % self.frames[13])
+            self.load_cmm_fd.write("r.s r10       0x%08x\n" % self.frames[14])
+            self.load_cmm_fd.write("r.s r11       0x%08x\n" % self.frames[15])
+            self.load_cmm_fd.write("r.s sp        0x%08x\n" % self.frames[16])
+            self.load_cmm_fd.write("r.s msp       0x%08x\n" % self.frames[17])
+            self.load_cmm_fd.write("r.s psp       0x%08x\n" % self.frames[18])
+            self.load_cmm_fd.write("r.s control   0x%08x\n" % self.frames[19])
+            self.load_cmm_fd.write("r.s basepri   0x%08x\n" % self.frames[20])
+            self.load_cmm_fd.write("r.s primask   0x%08x\n" % self.frames[21])
+            self.load_cmm_fd.write("r.s faultmask 0x%08x\n" % self.frames[22])
+            # self.load_cmm_fd.write("r.s fpscr     0x%08x\n" % self.frames[23])
+
+            self.load_cmm_fd.write("sYmbol.SourcePATH.SetBaseDir ~~~~~/../../.. \n")
+            self.load_cmm_fd.write("\n\n")
+            self.load_cmm_fd.write("TOOLBAR ON\n")
+            self.load_cmm_fd.write("STATUSBAR ON\n")
+            # trace32 在windows桌面的位置 left, up, hsize, vsize
+            # self.load_cmm_fd.write("FramePOS 0% 0% 50% 50%\n") # 左上角
+            # self.load_cmm_fd.write("FramePOS 50% 0% 100% 50%\n") # 右上角
+            # self.load_cmm_fd.write("FramePOS 25% 0% 50% 50%\n") # 中上
+            self.load_cmm_fd.write("FramePOS 0% 0% 50% 89%\n") # 左半屏
+            # self.load_cmm_fd.write("FramePOS 0% 0% 75% 89%\n") # 左3/4
+            # self.load_cmm_fd.write("FramePOS 50% 0% 50% 89%\n") # 右半屏
+            # self.load_cmm_fd.write("FramePOS 25% 0% 100% 89%\n") # 右3/4
+            # self.load_cmm_fd.write("FramePOS 0% 0% 100% 89%\n") #全屏, vsize 要考虑任务栏高度
+            
+            # All pages and windows are removed, including resistant windows.
+            self.load_cmm_fd.write("WinPAGE.RESet\n")
+            # If no parameters are set, all windows of one page are erased.
+            self.load_cmm_fd.write("WinCLEAR\n")
+            
+            self.load_cmm_fd.write("WinPOS 50% 0% 50% 50%\n")
+            self.load_cmm_fd.write("Var.Frame\n")
+            
+            self.load_cmm_fd.write("WinPOS 50% 50% 50% 60%\n")
+            self.load_cmm_fd.write("Register /spotlight\n")
+            
+            self.load_cmm_fd.write("WinPOS 0% 0% 50% 100%\n")
+            # self.load_cmm_fd.write("WinTABS 10. 10. 25. 62.\n")
+            self.load_cmm_fd.write("Data.List\n")
+            # If no parameters are set, the next page will be selected. Page names are case-sensitive.
+            self.load_cmm_fd.write("WinPAGE.select P000\n")
+
+            #no data
+            if self.load_cmm_fd is not None:
+                self.load_cmm_fd.close()
+                self.load_cmm_fd = None
+            
+            trace32_base_path = r'D:\src\os\arm_asm\tools\trace32_simulation'
+            trace32_executable_name=r't32marm.exe'
+            script_arg = '%s\dump\load_main.cmm' % self.cwd
+            os.chdir(trace32_base_path)
+            trace32_cmd=[trace32_executable_name, '-s', script_arg]
+            print(trace32_cmd)
+            proc=subprocess.Popen(trace32_cmd)
         return (id, region, length)
     
-    def exception(self, payload):
+    def exception(self, header, payload):
         # print("exception:", b2hs(payload))
         id, region, length = self.exception_parser(payload)
         
@@ -301,8 +485,10 @@ class log_receiver():
             # print("header:", b2hs(header))
             head, type, length, flags, id = struct.unpack('BBHHH', header)  
             print("HEADER: head=0x%02x type=0x%02x length=%-4d flags=0x%04x id=0x%04x" % (head, type, length, flags, id))  
-            if head == self.head:
+            if head == self.head and id in self.ids:
+                print("------: head=0x%02x type=0x%02x length=%-4d flags=0x%04x id=0x%04x" % (head, type, length, flags, id))  
                 return (type, length, id)
+                # self.recv_payload((type, length, id))
         return None
 
     def recv_payload(self, header):
@@ -318,7 +504,7 @@ class log_receiver():
         if id not in self.ids:
             print("ID=0x%x is invalid!!" % id)
             return
-        self.dispatcher[id](payload)
+        self.dispatcher[id](header, payload)
         
     def processer(self):
         header = self.check_header()
@@ -383,6 +569,7 @@ if __name__ == '__main__':
     
     while True:
         receiver.processer()
+
         
 ################################## Simple Packet Block ################################
 

@@ -57,7 +57,7 @@ void unaligned_double_word_read(void) {
 
 /*Imprecise Fault*/
 void bad_addr_double_word_write(void) {
-  volatile uint64_t *buf = (volatile uint64_t *)0x30000000;
+  volatile uint64_t *buf = (volatile uint64_t *)0x00000000;
   *buf = 0x1122334455667788;
 }
 /*Coprocessor Fault*/
@@ -117,6 +117,7 @@ int exception_crash_id = 0;
 //  7: Illegal EXC_RETURN
 void trigger_crash(int crash_id) 
 {
+  // printf(" [%s] crash_id=%d", __func__, crash_id);
   switch (crash_id) {
     case 0:
       illegal_instruction_execution();      

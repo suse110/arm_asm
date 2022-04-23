@@ -43,13 +43,23 @@ static void SystemClock_Config(void);
 #define HARDWARE_VERSION               "V1.0.0"
 #define SOFTWARE_VERSION               "V0.1.0"
 // Task to be created.
+uint8_t tst_buffer[256];
 void vTaskCode( void * pvParameters )
 {
+  uint32_t i=0, j = 0;
   for( ;; )
   {
       // Task code goes here.
-      printf("[%s] \n", __func__);
-      vTaskDelay(1000);
+      // printf("[%s] \n", __func__);
+
+        snprintf(tst_buffer, sizeof(tst_buffer), "------------vTaskCoded------------\n");
+        stp_write_log(tst_buffer, strlen(tst_buffer));
+      // while(i++ < 1000000);
+      // while(j++ < 1000000);
+      i = 0;
+      j = 0;
+      // trigger_crash(6);
+      // vTaskDelay(1000);
   }
 }
 
@@ -77,7 +87,7 @@ TaskHandle_t xHandle = NULL;
 void HAL_MspInit(void)
 {
   // WWDG_Enable
-  printf("[%s]\n", __func__);
+
 }
 /**
   * @brief  Main program
@@ -102,12 +112,15 @@ int main(void)
   SystemClock_Config();
 
   syslog_init();
+
   /* Output a message on Hyperterminal using printf function */
-  // printf("\n\r -- hello world\n\r");
+  // while(1)
+  // printf(" -- hello world --");
 
   MainTaskCreate();
-  void exception_dump(void);
-  exception_dump();
+  // void exception_dump(void);
+  // exception_dump();
+  //  trigger_crash(6);
   vTaskStartScheduler ();
 
   while (1) {}

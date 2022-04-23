@@ -68,9 +68,7 @@ function sltp_proto.dissector(tvb, pinfo, tree)
     -- print(tvb)
 
     -- print("----")
-    
-    --显示在protocol列的名字
-    pinfo.cols.protocol = sltp_proto.name
+    local TOOL_LOG_ID = 0x0
     --显示在数据查看,会在Packet Details窗格中增加一行协议
 	local subtree = tree:add(sltp_proto, tvb(), "STP data") 
     -- 在Packet Details窗格中增加一行属性，并指定要鼠标点击该属性时Packet Bytes窗格中会选中哪些字节
@@ -91,7 +89,16 @@ function sltp_proto.dissector(tvb, pinfo, tree)
     local flag    = tvb(4,2):le_uint()
     local id      = tvb(6,2):le_uint()
     local payload = tvb(head_len, length - 4):string()
+
     
+    --显示在protocol列的名字
+    if id == TOOL_LOG_ID then
+        pinfo.cols.protocol = sltp_proto.name..':T'
+    else
+        pinfo.cols.protocol = sltp_proto.name..':C'
+    end
+    
+
     -- DissectorTable
     -- 剩下的字节为payload
     payload_st:add_le(sltp_payload, payload)

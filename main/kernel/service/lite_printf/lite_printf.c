@@ -2,13 +2,30 @@
 #include <stdint.h>
 #include "lite_printf.h"
 
-
+// #define WS_PRINTF_ENABLE
 extern int __io_putchar(int ch);
 extern int __io_getchar(void);
+uint32_t printf_buffer_data_len = 0;
+/*must be power of 2*/
+#define PRINTF_BUFFSER_SIZE 2048
 
+uint8_t printf_buffer[PRINTF_BUFFSER_SIZE];
+
+void flush_printf_buffer(void)
+{
+#ifdef WS_PRINTF_ENABLE
+    stp_write_log(printf_buffer, printf_buffer_data_len);
+    printf_buffer_data_len = 0;
+#endif
+}
 void _putchar(const char ch)
 {
+#ifdef WS_PRINTF_ENABLE
+    printf_buffer[printf_buffer_data_len++] = ch;
+    printf_buffer_data_len &= (PRINTF_BUFFSER_SIZE - 1);
+#else
     __io_putchar(ch);
+#endif
 }
 
 char _getchar(void)
@@ -149,5 +166,6 @@ int lite_printf(const char *str, ...)
         str++;
     }
     va_end(ap);
+    flush_printf_buffer();
     return res;
 }

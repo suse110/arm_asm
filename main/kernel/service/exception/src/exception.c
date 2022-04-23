@@ -2,24 +2,24 @@
 #include "stp.h"
 #include "macro.h"
 /*
-When the fault is a precise fault, the pc holds the address of the instruction that 
-was executing when the hard fault (or other fault) occurred. 
-When the fault is an imprecise fault, then additional steps are required to find 
-the address of the instruction that caused the fault.It is harder to determine 
-the cause of an imprecise fault because the fault will not necessarily occur 
+When the fault is a precise fault, the pc holds the address of the instruction that
+was executing when the hard fault (or other fault) occurred.
+When the fault is an imprecise fault, then additional steps are required to find
+the address of the instruction that caused the fault.It is harder to determine
+the cause of an imprecise fault because the fault will not necessarily occur
 concurrently with the instruction that caused the fault.
 
-For example, if writes to memory are cached then there might be a delay between an 
-assembly instruction initiating a write to memory and the write to memory actually 
-occurring. If such a delayed write operation is invalid (for example, a write is 
-being attempted to an invalid memory location) then an imprecise fault will occur, 
-and the program counter value obtained using the code above will not be the address 
+For example, if writes to memory are cached then there might be a delay between an
+assembly instruction initiating a write to memory and the write to memory actually
+occurring. If such a delayed write operation is invalid (for example, a write is
+being attempted to an invalid memory location) then an imprecise fault will occur,
+and the program counter value obtained using the code above will not be the address
 of the assembly instruction that initiated the write operation.
 
-In the above example, turning off write buffering by setting the DISDEFWBUF bit (bit 1) 
-in the Auxiliary Control Register (or ACTLR) will result in the imprecise fault becoming 
-a precise fault, which makes the fault easier to debug, albeit at the cost of slower 
-program execution. This is for the Cortex M3 & Cortex M4 only,For the Cortex M7, there 
+In the above example, turning off write buffering by setting the DISDEFWBUF bit (bit 1)
+in the Auxiliary Control Register (or ACTLR) will result in the imprecise fault becoming
+a precise fault, which makes the fault easier to debug, albeit at the cost of slower
+program execution. This is for the Cortex M3 & Cortex M4 only,For the Cortex M7, there
 is no way to force all stores to be synchronous / precise.
 
 
@@ -47,7 +47,7 @@ $16 = {
   0xe0000000,
   0x80000000
 }
-Offset 6 and 7 in the array dumped hold the LR (illegal_instruction_execution) & 
+Offset 6 and 7 in the array dumped hold the LR (illegal_instruction_execution) &
 PC (0xe0000000) so we now can see exactly where the fault originated!
 */
 
@@ -55,8 +55,8 @@ PC (0xe0000000) so we now can see exactly where the fault originated!
 /*
 Halting & Determining Core Register State
 
-What if we are trying to debug an issue that is not easy to reproduce? Even if we 
-have a debugger attached, useful state may be overwritten before we have a chance 
+What if we are trying to debug an issue that is not easy to reproduce? Even if we
+have a debugger attached, useful state may be overwritten before we have a chance
 to halt the debugger and take a look.
 
 The first thing we can do is to programmatically trigger a breakpoint when the system faults:
@@ -67,66 +67,6 @@ The first thing we can do is to programmatically trigger a breakpoint when the s
       __asm("bkpt 1");                                   \
     }                                                    \
 } while (0)
-
-/*define a C struct to represent the register stacking*/
-typedef struct __attribute__((packed)) ContextStateFrame {
-  /*00*/uint32_t r0;
-  /*01*/uint32_t r1;
-  /*02*/uint32_t r2;
-  /*03*/uint32_t r3;
-  /*04*/uint32_t r12;
-  /*05*/uint32_t lr;
-  /*06*/uint32_t pc;
-  /*07*/uint32_t xpsr;
-  /*08*/uint32_t r4;
-  /*09*/uint32_t r5;
-  /*10*/uint32_t r6;
-  /*11*/uint32_t r7;
-  /*12*/uint32_t r8;
-  /*13*/uint32_t r9;
-  /*14*/uint32_t r10;
-  /*15*/uint32_t r11;
-  /*16*/uint32_t sp;
-  /*17*/uint32_t msp;
-  /*18*/uint32_t psp;
-  /*19*/uint32_t control;
-  /*20*/uint32_t basepri;
-  /*21*/uint32_t primask;
-  /*22*/uint32_t faultmask;
-  /*23*/uint32_t fpscr;
-  /*24*/uint32_t s0;
-  /*25*/uint32_t s1;
-  /*26*/uint32_t s2;
-  /*27*/uint32_t s3;
-  /*28*/uint32_t s4;
-  /*29*/uint32_t s5;
-  /*30*/uint32_t s6;
-  /*31*/uint32_t s7;
-  /*32*/uint32_t s8;
-  /*33*/uint32_t s9;
-  /*34*/uint32_t s10;
-  /*35*/uint32_t s11;
-  /*36*/uint32_t s12;
-  /*37*/uint32_t s13;
-  /*38*/uint32_t s14;
-  /*39*/uint32_t s15;
-  /*40*/uint32_t s16;
-  /*41*/uint32_t s17;
-  /*42*/uint32_t s18;
-  /*43*/uint32_t s19;
-  /*44*/uint32_t s20;
-  /*45*/uint32_t s21;
-  /*46*/uint32_t s22;
-  /*47*/uint32_t s23;
-  /*48*/uint32_t s24;
-  /*49*/uint32_t s25;
-  /*50*/uint32_t s26;
-  /*51*/uint32_t s27;
-  /*52*/uint32_t s28;
-  /*53*/uint32_t s29;
-  /*54*/uint32_t s30;
-  /*55*/uint32_t s31;
-} sContextStateFrame;
 
 #define CRASH_INFO_MAGIC 0xdead55aa
 
@@ -140,11 +80,11 @@ static sCrashInfo last_crash_info __attribute__((section(".noinit.crash_info")))
 
 
 /*
-The assembly code checks which stack we are using (MSP or PSP), and then loads the 
-offending PC position on the stack into the register R1. So R1 will contain the 
+The assembly code checks which stack we are using (MSP or PSP), and then loads the
+offending PC position on the stack into the register R1. So R1 will contain the
 code address where the problem happened:
 
-The program counter is *after* the problem, and that the program counter has an 
+The program counter is *after* the problem, and that the program counter has an
 odd address for ARM Thumb code
 */
 
@@ -180,23 +120,23 @@ odd address for ARM Thumb code
 /* add pointer        */   "add r1, r1, #28 \n"                       \
 /* store r4-r11       */   "stmia r1!, {r4-r11}\n"                    \
 /* load psp           */   "mrs r2, psp \n"                           \
-/* store psp          */   "str r2, [r1, #0] \n"                      \
+/* store psp          */   "str r2, [r1, #4] \n"                      \
 /* load msp           */   "mrs r2, msp \n"                           \
-/* store msp          */   "str r2, [r1, #4] \n"                      \
+/* store msp          */   "str r2, [r1, #8] \n"                      \
 /* load control       */   "mrs r2, control \n"                       \
-/* store control      */   "str r2, [r1, #8] \n"                      \
+/* store control      */   "str r2, [r1, #12] \n"                      \
 /* load basepri       */   "mrs r2, basepri \n"                       \
-/* store basepri      */   "str r2, [r1, #12] \n"                     \
-/* store primask      */   "str r3, [r1, #16] \n"                     \
+/* store basepri      */   "str r2, [r1, #16] \n"                     \
+/* store primask      */   "str r3, [r1, #20] \n"                     \
 /* load faultmask     */   "mrs r2, faultmask \n"                     \
-/* store faultmask    */   "str r2, [r1, #20] \n"                     \
+/* store faultmask    */   "str r2, [r1, #24] \n"                     \
 /*                    */   "ldr r0, =last_crash_info\n"               \
 /*                    */   "b HardFault_Handler_C \n"                 \
                                                  )
 
 __attribute__((optimize("O0")))
 void exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type) {
-  exception_dump();
+    exception_dump(&sCrashInfo->frame);
 }
 
 /**
@@ -218,63 +158,64 @@ __attribute__((optimize("O0")))
 void HardFault_Handler_C(sCrashInfo *sCrashInfo) {
     sContextStateFrame *frame = &sCrashInfo->frame;
 
-  // If and only if a debugger is attached, execute a breakpoint
-  // instruction so we can take a look at what triggered the fault
-  HALT_IF_DEBUGGING();
-  // Logic for dealing with the exception. Typically:
-  //  - log the fault which occurred for postmortem analysis
-  //  - If the fault is recoverable,
-  //    - clear errors and return back to Thread Mode
-  //  - else
-  //    - reboot system
+    // If and only if a debugger is attached, execute a breakpoint
+    // instruction so we can take a look at what triggered the fault
+    // HALT_IF_DEBUGGING();
+    // Logic for dealing with the exception. Typically:
+    //  - log the fault which occurred for postmortem analysis
+    //  - If the fault is recoverable,
+    //    - clear errors and return back to Thread Mode
+    //  - else
+    //    - reboot system
 
-  //
-  // Example "recovery" mechanism for UsageFaults while not running
-  // in an ISR
-  // 
-  const uint32_t usage_fault_mask = 0xffff0000;
-  const bool non_usage_fault_occurred = (SCB->CFSR & ~usage_fault_mask) != 0;
-  // the bottom 8 bits of the xpsr hold the exception number of the
-  // executing exception or 0 if the processor is in Thread mode
-  const bool faulted_from_exception = ((frame->xpsr & 0xFF) != 0);
+    //
+    // Example "recovery" mechanism for UsageFaults while not running
+    // in an ISR
+    //
+    const uint32_t usage_fault_mask = 0xffff0000;
+    const bool non_usage_fault_occurred = (SCB->CFSR & ~usage_fault_mask) != 0;
+    // the bottom 8 bits of the xpsr hold the exception number of the
+    // executing exception or 0 if the processor is in Thread mode
+    const bool faulted_from_exception = ((frame->xpsr & 0xFF) != 0);
 
-  if (faulted_from_exception || non_usage_fault_occurred) {
-    // For any fault within an ISR or non-usage faults
-    // let's reboot the system
-    // SCB->AIRCR = (0x05FA << 16) | SCB_AIRCR_SYSRESETREQ_Msk;
+    if (faulted_from_exception || non_usage_fault_occurred) {
+        // For any fault within an ISR or non-usage faults
+        // let's reboot the system
+        // SCB->AIRCR = (0x05FA << 16) | SCB_AIRCR_SYSRESETREQ_Msk;
 #ifdef BACKTRACE_ENABLE
-    backtrace_dump_stack(frame->sp);
-    backtrace_print_callstack(frame->sp);
+        backtrace_dump_stack(frame->sp);
+        backtrace_print_callstack(frame->sp);
 #endif
-    while (1) { } // should be unreachable
-  }
-  extern void recover_from_task_fault(void);
-  // If it's just a usage fault, let's "recover"
-  // Clear any logged faults from the CFSR
-  SCB->CFSR |= SCB->CFSR;
-  // the instruction we will return to when we exit from the exception
-  frame->pc = (uint32_t)recover_from_task_fault;
-  // the function we are returning to should never branch
-  // so set lr to a pattern that would fault if it did
-  frame->lr = 0xdeadbeef;
-  // reset the psr state and only leave the
-  // "thumb instruction interworking" bit set
-  frame->xpsr = (1 << 24);
+        exception_dump(frame);
+        while (1) { } // should be unreachable
+    }
+    extern void recover_from_task_fault(void);
+    // If it's just a usage fault, let's "recover"
+    // Clear any logged faults from the CFSR
+    SCB->CFSR |= SCB->CFSR;
+    // the instruction we will return to when we exit from the exception
+    frame->pc = (uint32_t)recover_from_task_fault;
+    // the function we are returning to should never branch
+    // so set lr to a pattern that would fault if it did
+    frame->lr = 0xdeadbeef;
+    // reset the psr state and only leave the
+    // "thumb instruction interworking" bit set
+    frame->xpsr = (1 << 24);
 }
 
 /*how do we clean up our state and return to normal code from the HardFault handler?!
 There’s a few things we will need to do:
 
 1. Clear any logged faults from the CFSR by writing 1 to each bit which is set.
-2. Change the function we return to so we idle the task. In the example case it’s 
+2. Change the function we return to so we idle the task. In the example case it’s
    recover_from_task_fault.
-3. Scribble a known pattern over the lr. The function we are returning to will 
-   need to take special action (i.e like deleting the task or entering a while(1) loop). 
-   It can’t just exit and branch to where we were before so we want to fault if 
+3. Scribble a known pattern over the lr. The function we are returning to will
+   need to take special action (i.e like deleting the task or entering a while(1) loop).
+   It can’t just exit and branch to where we were before so we want to fault if
    this is attempted.
-4. Reset the xpsr. Among other things the xpsr tracks the state of previous comparison 
-instructions which were run and whether or not we are in the middle of a “If-Then” 
-instruction block. The only bit that needs to remain set is the “T” field (bit 24) 
+4. Reset the xpsr. Among other things the xpsr tracks the state of previous comparison
+instructions which were run and whether or not we are in the middle of a “If-Then”
+instruction block. The only bit that needs to remain set is the “T” field (bit 24)
 indicating the processor is in thumb mode11.
 */
 
@@ -306,16 +247,16 @@ extern uint32_t _eheap[];
 
 // Prevent inlining to avoid persisting any variables on stack
 __attribute__((noinline)) static void prv_cinit(void) {
-  // Initialize data and bss
-  // Copy the data segment initializers from flash to SRAM
-  for (uint32_t *dst = _sdata, *src = _sidata; dst < _edata;) {
-    *(dst++) = *(src++);
-  }
+    // Initialize data and bss
+    // Copy the data segment initializers from flash to SRAM
+    for (uint32_t *dst = _sdata, *src = _sidata; dst < _edata;) {
+        *(dst++) = *(src++);
+    }
 
-  // Zero fill the bss segment.
-  for (uint32_t *dst = _sbss; dst < _ebss;) {
-    *(dst++) = 0;
-  }
+    // Zero fill the bss segment.
+    for (uint32_t *dst = _sbss; dst < _ebss;) {
+        *(dst++) = 0;
+    }
 }
 
 // force alignment so we can guarantee that g_unaligned_buffer does not
@@ -326,14 +267,20 @@ void *g_unaligned_buffer;
 
 // DefaultIntHandler is used for unpopulated interrupts
 static void DefaultIntHandler(void) {
-  __asm__("bkpt");
-  // Go into an infinite loop.
-  while (1)
-    ;
+    __asm__("bkpt");
+    // Go into an infinite loop.
+    while (1)
+        ;
 }
 
-static void NMI_Handler(void) {
-  DefaultIntHandler();
+void NMI_Handler(void) {
+    DefaultIntHandler();
+}
+void MemManage_Handler(void) {
+    DefaultIntHandler();
+}
+void DebugMon_Handler(void) {
+    DefaultIntHandler();
 }
 
 
@@ -343,30 +290,41 @@ assembly function. */
 __attribute__((naked))
 void HardFault_Handler(void)
 {
-  HARDFAULT_HANDLING_ASM();
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();
 }
 __attribute__((naked))
 void MemoryManagement_Handler(void) {
-  HARDFAULT_HANDLING_ASM();
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();
 }
 __attribute__((naked))
 void BusFault_Handler(void) {
-  HARDFAULT_HANDLING_ASM();
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();
 }
 __attribute__((naked))
 void UsageFault_Handler(void) {
-  HARDFAULT_HANDLING_ASM();
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();
+}
+__attribute__((naked))
+void WWDG_IRQHandler(void)
+{
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();   
 }
 
 void Irq0_Handler(void) {
-  HARDFAULT_HANDLING_ASM();
+    HARDFAULT_HANDLING_ASM();
 }
 
 void Irq1_Handler(void);
 
 __attribute__((naked))
 static void SVC_Handler(void) {
-  HARDFAULT_HANDLING_ASM();
+    printf("[%s]", __func__);
+    HARDFAULT_HANDLING_ASM();
 }
 // __attribute__((naked))
 // static void PendSV_Handler(void) {
@@ -404,108 +362,142 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16+IRQ_NUM_M
 };
 
 
-
 exception_dump_address_t exception_dump_address[] = {
     {"text", (uint32_t)_stext, (uint32_t)_etext},
     {"data",(uint32_t) _sdata,(uint32_t) _edata},
     {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
-    {"bss",(uint32_t) _sbss,(uint32_t) _ebss},
     {"heap",(uint32_t) _sheap,(uint32_t) _eheap},
-    {"nvic", 0xE000E000, 0xE000E450},
+    //SCS includes SCnSCB,SysTick,NVIC,SCB,CoreDebug
+    {"SCS", SCS_BASE, CoreDebug_BASE + sizeof(CoreDebug_Type)},
+    {"DWT", DWT_BASE, DWT_BASE + sizeof(DWT_Type)},
+    {"ITM", ITM_BASE, ITM_BASE + sizeof(ITM_Type)},
+    {"TPI", TPI_BASE, TPI_BASE + sizeof(TPI_Type)},
     {NULL, 0, 0}
 };
 
 void exception_init(void)
 {
-  g_unaligned_buffer = &s_buffer[1];
-  // SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
-  // SCB->VTOR = (uint32_t)&pfnVectors & SCB_VTOR_TBLOFF_Msk;
-  // SCB->VTOR |= 1<<29;
+    g_unaligned_buffer = &s_buffer[1];
+    // SCB->SHCSR |= SCB_SHCSR_USGFAULTENA_Msk | SCB_SHCSR_BUSFAULTENA_Msk |SCB_SHCSR_MEMFAULTENA_Msk;
+    // SCB->VTOR = (uint32_t)&pfnVectors & SCB_VTOR_TBLOFF_Msk;
+    // SCB->VTOR |= 1<<29;
 
 }
 
 void exception_test(void)
 {
-  exception_init();
-  trigger_crash(0);
+    exception_init();
+    trigger_crash(0);
 }
 
 uint32_t __platform_assert_lr = 0;
 typedef struct {
-  const char* expr;
-  const char* file;
-  uint32_t line;
+    const char* expr;
+    const char* file;
+    uint32_t line;
 } assert_info_t;
 assert_info_t assert_info;
 __attribute__((__section__(".exception.__platform_assert")))
 void __platform_assert(const char *expr, const char *file, uint32_t line)
 {
-  __platform_assert_lr = (uint32_t)__builtin_return_address(0);
-  __disable_irq();
-  assert_info.expr = expr;
-  assert_info.file = file;
-  assert_info.line = line;
+    __platform_assert_lr = (uint32_t)__builtin_return_address(0);
+    __disable_irq();
+    assert_info.expr = expr;
+    assert_info.file = file;
+    assert_info.line = line;
 
-  SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk;
-  *((volatile uint32_t*)0xFFFFFFF1) = 1;
-  while(1);
+    SCB->CCR |= SCB_CCR_UNALIGN_TRP_Msk;
+    *((volatile uint32_t*)0xFFFFFFF1) = 1;
+    while(1);
 }
 
-uint8_t dump_buffer[EXECPTION_DUMP_PKT_SIZE + EXECPTION_DUMP_BUFFER_HEAD_SIZE];
-void do_exception_dump(exception_dump_buffer_t *dump_buf)
+void do_exception_dump(exception_dump_buffer_t *db)
 {
-  memcpy(dump_buffer, (uint8_t*)dump_buf, EXECPTION_DUMP_BUFFER_HEAD_SIZE);
-  memcpy(&dump_buffer[EXECPTION_DUMP_BUFFER_HEAD_SIZE], (uint8_t*)dump_buf->content, dump_buf->length);
-  stp_write_exception(dump_buffer, dump_buf->length + EXECPTION_DUMP_BUFFER_HEAD_SIZE);
+    uint32_t dump_len = EXECPTION_DUMP_BUFFER_HEAD_SIZE;
+    memcpy(db->buffer, (uint8_t*)db, EXECPTION_DUMP_BUFFER_HEAD_SIZE);
+    if (db->content != NULL) {
+        memcpy(&db->buffer[EXECPTION_DUMP_BUFFER_HEAD_SIZE], (uint8_t*)db->content, db->length);
+        dump_len += db->length;
+    }
+    stp_write_exception(db->buffer, dump_len);
 }
 
-void exception_dump(void)
+void exception_dump(sContextStateFrame *frame )
 {
-  uint32_t dump_len;
-  uint32_t i, j;
-  exception_dump_address_t *p_exaddr;
-  exception_dump_buffer_t dump_buf;
-  uint8_t buffer[128] = {0};
-  foreach_index(i, 0, sizeof(exception_dump_address)/sizeof(exception_dump_address[0])) {
-    p_exaddr = &exception_dump_address[i];
-    if (p_exaddr->name == NULL) {
-      break;
+    uint32_t dump_len;
+    uint32_t i, j;
+    exception_dump_address_t *p_exaddr;
+    exception_dump_buffer_t db;
+    uint8_t buffer[256] = {0};
+    // printf(" [%s]", __func__);
+    db.id = EXECPTION_DUMP_ID_INIT;
+    db.region = 0;
+    db.length = 0;
+    db.content = NULL;
+    do_exception_dump(&db);
+
+    if (frame) {
+        dump_len = sizeof(sContextStateFrame);
+        // printf("------------Core Register:%d------------", dump_len);
+        snprintf(buffer, sizeof(buffer), "------------Core Register:%d------------", dump_len);
+        stp_write_log(buffer, strlen(buffer));
+
+        db.id = EXECPTION_DUMP_ID_REGISTER;
+        db.region = 0;
+        db.length =  dump_len;
+        db.content = frame;
+        
+        do_exception_dump(&db);
     }
-    dump_len = p_exaddr->end_address - p_exaddr->start_address;
-    // printf("------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
-    snprintf(buffer, sizeof(buffer), "------------memmory region:%s:%d------------\r\n", p_exaddr->name, dump_len);
-    stp_write_log(buffer, strlen(buffer));
-    memcpy(buffer, &p_exaddr->start_address, sizeof(p_exaddr->start_address));
-    memcpy(buffer + sizeof(p_exaddr->start_address), p_exaddr->name, strlen(p_exaddr->name));
-    dump_buf.id = EXECPTION_DUMP_ID_START;
-    dump_buf.region = i;
-    dump_buf.length = strlen(p_exaddr->name) + sizeof(p_exaddr->start_address);
-    dump_buf.content = buffer;
-    do_exception_dump(&dump_buf);
+    foreach_index(i, 0, sizeof(exception_dump_address)/sizeof(exception_dump_address[0])) {
+        p_exaddr = &exception_dump_address[i];
+        if (p_exaddr->name == NULL) {
+            break;
+        }
+        if (p_exaddr->end_address <= p_exaddr->start_address) {
+            printf("ERROR: end_address larger than start_address!!");
+            continue;
+        }
+        dump_len = p_exaddr->end_address - p_exaddr->start_address;
+        // printf("------------memmory region:%s:%d------------", p_exaddr->name, dump_len);
+        snprintf(buffer, sizeof(buffer), "------------memmory region:%s:%d------------", p_exaddr->name, dump_len);
+        stp_write_log(buffer, strlen(buffer));
 
-    uint32_t dump_blocks = dump_len / EXECPTION_DUMP_PKT_SIZE;
-    uint32_t dump_remains = dump_len % EXECPTION_DUMP_PKT_SIZE;
+        memcpy(buffer, &p_exaddr->start_address, sizeof(p_exaddr->start_address));
+        memcpy(buffer + sizeof(p_exaddr->start_address), p_exaddr->name, strlen(p_exaddr->name));
+        db.id = EXECPTION_DUMP_ID_REGION_START;
+        db.region = i;
+        db.length = strlen(p_exaddr->name) + sizeof(p_exaddr->start_address);
+        db.content = buffer;
+        do_exception_dump(&db);
+
+        uint32_t dump_blocks = dump_len / EXECPTION_DUMP_PKT_SIZE;
+        uint32_t dump_remains = dump_len % EXECPTION_DUMP_PKT_SIZE;
 
 
-    dump_buf.id = EXECPTION_DUMP_ID_DATA;
-    for (j = 0; j < dump_blocks; j++) {
-      dump_buf.region = j;
-      dump_buf.length = EXECPTION_DUMP_PKT_SIZE;
-      dump_buf.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
-      do_exception_dump(&dump_buf);
+        db.id = EXECPTION_DUMP_ID_REGION_DATA;
+        for (j = 0; j < dump_blocks; j++) {
+            db.region = j;
+            db.length = EXECPTION_DUMP_PKT_SIZE;
+            db.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
+            do_exception_dump(&db);
+        }
+
+        db.region = j;
+        db.length = dump_remains;
+        db.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
+        do_exception_dump(&db);
+
+        db.id = EXECPTION_DUMP_ID_REGION_END;
+        db.region = i;
+        db.length = sizeof(p_exaddr->end_address);
+        db.content = &p_exaddr->end_address;
+        do_exception_dump(&db);
     }
-
-    dump_buf.region = j;
-    dump_buf.length = dump_remains;
-    dump_buf.content = (uint8_t*)p_exaddr->start_address + i*EXECPTION_DUMP_PKT_SIZE;
-    do_exception_dump(&dump_buf);
-
-    dump_buf.id = EXECPTION_DUMP_ID_END;
-    dump_buf.region = i;
-    dump_buf.length = sizeof(p_exaddr->end_address);
-    dump_buf.content = &p_exaddr->end_address;
-    do_exception_dump(&dump_buf);
-  
-  }
+    db.id = EXECPTION_DUMP_ID_DEINIT;
+    db.region = 0;
+    db.length = 0;
+    db.content = NULL;
+    do_exception_dump(&db);
 }
 

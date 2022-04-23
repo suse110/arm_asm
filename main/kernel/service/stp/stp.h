@@ -39,8 +39,9 @@ typedef struct {
 
 void stp_wrapper(stp_pkt_t *stp_pkt, uint8_t *buffer, uint32_t length, uint8_t type, uint16_t id);
 void stp_write_pkt(stp_pkt_t *stp_pkt);
+void stp_write_header(uint32_t length, uint8_t type, uint16_t id);
 void stp_write(uint8_t *buffer, uint32_t length, uint8_t type, uint16_t id);
+void stp_write_log_header(uint32_t length);
 void stp_write_log(uint8_t *buffer, uint32_t length);
 void stp_write_exception(uint8_t *buffer, uint32_t length);
-
 #endif // __STP_H__

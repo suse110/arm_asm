@@ -44,9 +44,12 @@ typedef struct {
 } exception_dump_table_t;
 
 
-#define EXECPTION_DUMP_ID_START 0
-#define EXECPTION_DUMP_ID_DATA  1
-#define EXECPTION_DUMP_ID_END   2
+#define EXECPTION_DUMP_ID_INIT          0
+#define EXECPTION_DUMP_ID_REGISTER      1
+#define EXECPTION_DUMP_ID_REGION_START  2
+#define EXECPTION_DUMP_ID_REGION_DATA   3
+#define EXECPTION_DUMP_ID_REGION_END    4
+#define EXECPTION_DUMP_ID_DEINIT        5
 
 #define EXECPTION_DUMP_PKT_SIZE 2048
 #define EXECPTION_DUMP_BUFFER_HEAD_SIZE 4
@@ -64,7 +67,68 @@ typedef struct {
         content -> end_addr(4 bytes) 
     */
     void * content;
+    uint8_t buffer[EXECPTION_DUMP_PKT_SIZE + EXECPTION_DUMP_BUFFER_HEAD_SIZE];
 } exception_dump_buffer_t;
 
-void exception_dump(void);
+/*define a C struct to represent the register stacking*/
+typedef struct __attribute__((packed)) ContextStateFrame {
+    /*00*/uint32_t r0;
+    /*01*/uint32_t r1;
+    /*02*/uint32_t r2;
+    /*03*/uint32_t r3;
+    /*04*/uint32_t r12;
+    /*05*/uint32_t lr;
+    /*06*/uint32_t pc;
+    /*07*/uint32_t xpsr;
+    /*08*/uint32_t r4;
+    /*09*/uint32_t r5;
+    /*10*/uint32_t r6;
+    /*11*/uint32_t r7;
+    /*12*/uint32_t r8;
+    /*13*/uint32_t r9;
+    /*14*/uint32_t r10;
+    /*15*/uint32_t r11;
+    /*16*/uint32_t psp;
+    /*17*/uint32_t msp;
+    /*18*/uint32_t control;
+    /*19*/uint32_t basepri;
+    /*20*/uint32_t primask;
+    /*21*/uint32_t faultmask;
+    /*22*/uint32_t fpscr;
+    /*23*/uint32_t s0;
+    /*24*/uint32_t s1;
+    /*25*/uint32_t s2;
+    /*26*/uint32_t s3;
+    /*27*/uint32_t s4;
+    /*28*/uint32_t s5;
+    /*29*/uint32_t s6;
+    /*30*/uint32_t s7;
+    /*31*/uint32_t s8;
+    /*32*/uint32_t s9;
+    /*33*/uint32_t s10;
+    /*34*/uint32_t s11;
+    /*35*/uint32_t s12;
+    /*36*/uint32_t s13;
+    /*37*/uint32_t s14;
+    /*38*/uint32_t s15;
+    /*39*/uint32_t s16;
+    /*40*/uint32_t s17;
+    /*41*/uint32_t s18;
+    /*42*/uint32_t s19;
+    /*43*/uint32_t s20;
+    /*44*/uint32_t s21;
+    /*45*/uint32_t s22;
+    /*46*/uint32_t s23;
+    /*47*/uint32_t s24;
+    /*48*/uint32_t s25;
+    /*49*/uint32_t s26;
+    /*50*/uint32_t s27;
+    /*51*/uint32_t s28;
+    /*52*/uint32_t s29;
+    /*53*/uint32_t s30;
+    /*54*/uint32_t s31;
+} sContextStateFrame;
+
+void exception_dump(sContextStateFrame *frame );
+void trigger_crash(int crash_id);
 #endif // __EXCEPTION_H__
