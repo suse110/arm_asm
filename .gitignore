@@ -9,6 +9,8 @@ tools/arm-none-eabi/Sourcery_CodeBench_Lite_for_ARM_EABI
 tools/xpack/xpack-arm-none-eabi-gcc-10.2.1-1.1-win32-x64
 tools/xpack/xpack-windows-build-tools-4.2.1-2-win32-x64
 tools/MSYS-Update/MSYS
+tools/trace32_simulation/dump
+tools/exception/wireshark/dump/
 **/*.asm
 **/*.hex
 **/*.pyc

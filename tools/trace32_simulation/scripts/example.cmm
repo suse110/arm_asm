@@ -1,0 +1,235 @@
+; 设置trace32界面title名称
+title "My Trace32"
+sys.down
+; 指定系统的CPU类型，对于Simulator来说这个CPU类型没有特别的影响，指令集都一样。
+system.cpu cortexm4
+; 启动CPU，如果我们连接有目标板，那么此命令会重启目标CPU，初始化连接，并运行Reset Vector
+sys.up
+; 打印R0寄存器中的值
+PRINT Register(R0)
+; 置寄存器的值。这条的含义是设置Non-secure bit为1。
+Register.Set NS 1
+; 设置CPSR寄存器为0x3C5
+Register.Set CPSR 0x3C5
+; 查看常用寄存器的值
+Register.view
+; 加载binary文件命令，把指定文件加载到指定地址，比如我们抓取到的故障现场的快照ramdump。
+; 除了起始地址外，还可以加上一个range参数，作为加载范围。加载时会以binary的大小和range
+; 之间选小值作为限制。OFFSET为跳过指定长度加载
+; Data.LOAD.Binary <file> <address> | <range> [/<option>]
+; <option>: SKIP <offset>
+;           UNZIP
+;           <generic_load_option>
+; Loads a plain binary file. 
+;     <address>       If <address> is specified, the complete file will be loaded to the target 
+;                     <address>. 
+;     <range>         If <range> is specified, the file will be loaded to the range start address 
+;                     until the end of the range, or the end of the file.
+;     SKIP <offset>   If the option /SKIP <offset> is specified, the first <offset> bytes of the 
+;                     file are omitted.
+;     UNZIP           Unpacks files compressed with the ZIP option of a TRACE32 command, or 
+;                     files compressed by an external tool that uses the gzip archive format.
+;     <option>        For a description of the generic options, click <generic_load_option>.
+
+data.load.binary DDRCS0_0.BIN 0x80000000  /OFFSET 0x36
+
+; 加载elf文件命令，把指定的elf文件加载到目标设备或者仿真设备的0x1488800000地址上去。
+; elf文件在编译时会把源文件的路径加入到elf文件中，我们后面加上/nocode代表没有对应的
+; sourcecode，trace32就不会去对应目录去查找源文件了
+; 也可以通过/path来指定sourcecode目录,比如
+; PATH
+; If the source files are not found with the paths provided by the object file, 
+; additional direct directories can be given by this option.The option can be 
+; used more than once to include more directories into the search path. 
+; The command sYmbol.SourcePATH can be used to define more and 
+; permanent search directories
+; data.load.elf ../../vmlinux 0x1488800000 /path  /home/xie/linux-4.4/
+; data.load.elf ../../vmlinux 0x1488800000 /nocode
+
+; StripPART
+; Parts of the file paths provided by the object file are removed. The option 
+; takes either a <number> or a <string> as parameter.
+; <number> defines how many parts of the path are removed.
+; <string> is searched in the path provided by the object file. Everything 
+; until <string> is removed from the source path.
+; This allow to specify a new base directory for a complete file tree by 
+; using the command sYmbol.SourcePATH.SetBaseDir
+d.load.elf ../../main/build/srm32f4xx/FreeRTOS_demo/FreeRTOS_demo.elf /strippart 3
+
+; The most important commands to load the code to be debugged and the debug symbols are
+Data.LOAD.<sub_cmd> <file> /<option>            ;Load code and debug symbols
+Data.LOAD.Binary <file> /<option>               ;Load only code
+Data.LOAD.<sub_cmd> <file> /NoCODE /<option>    ;Load only debug symbols
+
+Data.LOAD.Elf demo-flash.elf ; Load code and debug symbols from
+; ELF file 
+Data.LOAD.AIF demo.axf ; Load code and debug symbols from
+; AIF file 
+Data.LOAD.Elf * ; Load code and debug symbols from
+; ELF file 
+; open file browser to select file
+Data.LOAD.Elf demo.elf /NoCODE ; Load debug symbols from ELF file
+Data.LOAD.Binary my_app.bin ; Load code from binary file
+
+
+
+; 设置断点
+break.set 0x0c008000
+Break.Set 0xD4001FD0 /Program ; breakpoint on instruction
+Break.Set 0xAFE10200 /Write ; data write access breakpoint
+Break.Set 0xAFE10400 /Read ; data read access breakpoint
+
+; 切换目录命令，类似与linux下的cd命令
+cd dump_dir/
+; 进入到目标目录，并执行对应的cmm脚本
+cd.do dump_dir/test.cmm
+; 执行test.cmm脚本
+do test.cmm
+
+; 返回address地址上的64bit数据,需要注意每个address需要指明它的Access Classes，比如 (D:0x200)
+; 此地址是 的access type，那么如下是常用类型的定义:
+; P -Program Memory
+; D -Data Memory
+; S -Supervisor Memory (privileged access)
+; U -User Memory (non-privileged access)
+; SP -Supervisor Program Memory (privileged access)
+; R -AArch32 ARM Code (A32, 32-bit instr. length)
+; T -AArch32 Thumb Code (T32, 16-bit instr. length)
+; X -AArch64 ARM64 Code (A64, 32bit instr. length)
+; J -Java Code (8-bit)
+; Z -Secure Mode (TrustZonedevices)
+; N -Non-Secure Mode (TrustZonedevices)
+; A -Absolute addressing (physical address)
+Data.Quad(<address>)
+Data.Quad.BigEndian(<address>)
+Data.Quad.LittleEndian(<address>)
+Data.LongLong(<address>)
+Data.LongLong.BigEndian(<address>)
+Data.LongLong.LittleEndian(<address>)
+; 打印0x200地址的一个short类型数据
+PRINT D.S(D:0x200)
+PRINT Data.Short(D:0x200)
+; 显示系统中所有的task信息
+task.dtask
+
+; 创建宏定义，和C语言语法类似
+sYmbol.NEW.MACRO offsetof(type,member) ((int)(&((type*)0)->member))
+sYmbol.NEW.MACRO container_of(ptr,type,member) ((type *)((char *)(ptr)-offsetof(type,member)))
+; 配置窗口参数，当使用下一个命令打开窗口时生效。分别代表x轴坐标，y轴坐标，宽度，高度参数
+winpos 0% 0% 50% 100%
+; Var.Frame的缩写，显示当前栈回溯，/a代表arg选项，显示参数，/l代表local选项，显示本地变量
+w.v.f /a /l
+
+; 显示当前运行的情况，PC指向所在的位置会高亮
+; 用来查看当前的PC指针运行情况。可以查看到当前PC指针对应的代码和汇编
+d.l
+Data.List
+
+; 用于显示/设置/修改 sourcecode的位置。一般我们使用SetRecurseDir设置内核代码路径，
+; 把其中包含的路径都加入搜索列表。elf格式的文件会把编译的源文件路径包含进去，所以默
+; 认是会有个sourcepath的，如果我们服务器编译的固件在debug时必须要重新修改下代码路径
+; 为本地才能正常查找到
+sYmbol.SourcePATH.List
+sYmbol.SourcePATH.SetRecurseDir "/home/xiehaocheng/work/kernel-4.14"
+sYmbol.SourcePATH.Translate "/remote/kernel-4.4" "/home/xiehaocheng/work/kernel-4.14"
+symbol.sourcepath.setbasedir D:\src\os\arm_asm\main
+
+; 最后的重头戏，v.v是我们很常用的一个命令了，Var.View的缩写格式，目的是查看一个变量
+; 比如：
+v.v  %ASCII %STRING linux_banner
+; %s会把其中包含的子成员为string的成员解释为string类型来显示
+v.v %s %t %o (struct clk_core *)0xffffffffad96d880
+
+; 用来查看系统当前的调用栈关系，通过这个界面，类似于kernel dmesg中的dump stack，我们可以
+; 查看函数调用栈回溯。通过这个可以分析函数运行到哪里，或者程序卡死在哪里，系统挂在哪里
+v.f
+; 按地址查看符号表
+y.list
+
+; 常见命令索引
+d.load<filename> [/NOCODE] ][strippart] --Load dump/elf
+y.spath.setbasedir--Set HLL search path
+break <address> --Set breakpoint
+register /spotlight --Display register
+Log.open  <file> log.close--Log command flow
+d.v  %SYMBOL.QUAD.LE  <0xFFFFFFC0D9CCFD20> --Map elf and data
+V.f--Display call stack
+(Struct thread_info*) --Address
+V.v  var[0..?] --Variable and array
+D.l  or d.l<pc or lr>
+r.s <PC>/r.s <LR>/r.s <SP> [of particular core]
+Term.view--DCC console
+D.image--Display frame buffer
+
+
+IF (y.exist(_ram_code_load)) && (y.exist(_ram_code_start)) && (y.exist(_ram_code_end))
+(
+    data.copy _ram_code_load++(_ram_code_end - _ram_code_start) _ram_code_start
+)
+
+IF (y.exist(_md_ram_code_load)) && (y.exist(_md_ram_code_start)) && (y.exist(_md_ram_code_end))
+(
+    data.copy _md_ram_code_load++(_md_ram_code_end - _md_ram_code_start) _md_ram_code_start
+)
+Data.Set 0x6814 0xaa ; Write 0xaa to the address
+; 0x6814
+Data.Set 0x6814 %Long 0xaaaa ; Write 0xaaaa as a 32 bit value to 
+; the address 0x6814, add the 
+; leading zeros automatically
+Data.Set 0x6814 %LE %Long 0xaaaa ; Write 0xaaaa as a 32 bit value to 
+; the address 0x6814, add the 
+; leading zeros automatically
+; Use Little Endian mode
+D.S 0x04300000 %LE %LONG 0x12345678
+
+; r.s是register.set的缩写，也就是设置寄存器
+r.s r0 0x00000000
+r.s r1 0x00000000
+r.s r2 0x00000000
+r.s r3 0x00000000
+r.s r4 0x00000000
+r.s r5 0x00000000
+r.s r6 0x00000000
+r.s r7 0x00000000
+r.s r8 0x00000000
+r.s r9 0x00000000
+r.s r10 0x00000000
+r.s r11 0x00000000
+r.s r12 0x00000000
+r.s r13 0x00000000
+r.s r14 0x00000000
+r.s pc 0x00000000
+r.s xpsr 0x00000000
+r.s control 0x00000000
+r.s msp 0x00000000
+r.s psp 0x00000000
+r.s basepri 0x00000000
+r.s primask 0x00000000
+r.s faultmask 0x00000000
+; 有一个特殊的命令，打开中断功能：
+r.s I 0
+
+; The option /SpotLight advises TRACE32 PowerView to mark changes
+;do setup_windows.cmm    freertos.t32
+TOOLBAR ON
+STATUSBAR ON
+FramePOS 18.75, 10,714,,,Maxmized
+WinPAGE.RESet
+WinCLEAR
+WinPOS 0.62 0.35714 117. 41. 16. 1. W000
+WinTABS 10. 10. 25. 62.
+Data.List
+WinPOS 124.13 24.071 64. 19. 5. 0. W002
+Var.Frame
+WinPOS 123.88 0.42857 62. 19. 0. 0. W001
+Register /spotlight
+WinPAGE.select P000
+
+;menu.reprogram          freertos.men
+; Establish the option SpotLight as default setting for 
+; - all Variable windows
+; - Register window 
+; - PERipheral window
+; - the HLL Stack Frame 
+; - Data.dump window
+SETUP.Var %SpotLight 
