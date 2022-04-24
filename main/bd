@@ -1,0 +1,77 @@
+#!/usr/bin/python3
+import os,sys
+import argparse                     # 导入模板
+
+parser = argparse.ArgumentParser(
+    prog="build tool",
+    usage="./bd board projet [-c|-l]",
+    epilog="build",
+    description="build single project"
+)  # 创建parser
+
+parser.add_argument("board", type=str, default=None, help="board type")
+parser.add_argument("project",type=str, default=None, help="project type")
+#  action='store_true' --> 不带参数
+parser.add_argument("-c", "--clean", required=False,  action='store_true', help="clean build dir")
+parser.add_argument("-l", "--list", required=False,  action='store_true', help="list board type and projects")
+
+args = parser.parse_args()
+
+# print(args)
+# print(args.board)
+# print(args.project)
+
+build_types={}
+boards=[]
+def list_build_types():
+    global boards
+    boards = os.listdir("./project")
+    for i in range(len(boards)):
+        board = boards[i]
+        projects = os.listdir("./project/%s" % board)
+        build_types[board] = projects
+
+
+
+if args.list == True:
+    list_build_types()
+    for i in range(len(boards)):
+        board = boards[i]
+        projects = build_types[board]
+        print("[%d] %s" % (i, boards[i]))
+        for j in range(len(projects)):
+            print("    [%d] %s" % (j, projects[j]))
+
+elif args.clean == True:
+    if args.board.isdigit() and args.project.isdigit():
+        list_build_types()
+        print(int(args.board), int(args.project))
+        board = boards[int(args.board)]
+        project = build_types[board][int(args.project)]
+        os.system("make -C ./project/%s/%s/GCC clean" % (board, project))
+    else:
+        os.system("make -C ./project/%s/%s/GCC clean" % (args.board, args.project))
+
+    
+else:
+    if args.board != None and args.project != None:
+        if args.board.isdigit() and args.project.isdigit():
+            list_build_types()
+            print(int(args.board), int(args.project))
+            board = boards[int(args.board)]
+            project = build_types[board][int(args.project)]
+            os.system("make -C ./project/%s/%s/GCC -j8" % (board, project))
+        else:
+            os.system("make -C ./project/%s/%s/GCC -j8" % (args.board, args.project))
+
+
+# if sys.argv[1] == "list":
+#     print( "list")
+# else:
+#     BOARD=sys.argv[1]
+#     PROJECT=sys.argv[2]
+
+#     cmd = "make -C ./project/%s/%s/GCC %s -j8" % (BOARD, PROJECT, sys.argv[3])
+#     os.system(cmd)
+
+
