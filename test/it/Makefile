@@ -1,5 +1,5 @@
 EXEC = test
-CROSS_COMPILE = arm-none-linux-gnueabihf-
+CROSS_COMPILE = arm-linux-gnueabihf-
 BUILD_DIR=./build
 
 ASMSRC = $(EXEC).s 
