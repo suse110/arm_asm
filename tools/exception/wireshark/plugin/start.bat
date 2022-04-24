@@ -1,1 +1,0 @@
-start D:\src\Development\wsbuild64\run\RelWithDebInfo\Wireshark.exe
