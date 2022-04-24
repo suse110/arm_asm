@@ -41,6 +41,21 @@ resume all task
   * 如果调度器已经运行，新建的task优先级比当前task优先级高
     * 则trigger一个pendSV，这时候会切换到当前优先级最高的task运行
 
+## vTaskDelete
+
+* taskENTER_CRITICAL
+* 从task handle里获取到task TCB
+* 将task从就ready/delay list移除
+* task 如果在等一个event，那么也从event list中移除此task
+* 如果task删除自己
+  * 此时不能立即删除，需要将task放到一个termination list，idle task运行时会去检查这个list，并释放task分配的TCB/stack内存
+* taskEXIT_CRITICAL
+* 如果task不是删除自己
+  * 直接释放TCB/Stack 内存
+* 如果删除了当前运行的task，则立即触发调度器，调度下一个task
+
+    
+
 ## vTaskStartScheduler
 
 * 创建idle task
@@ -88,9 +103,29 @@ resume all task
   * 创建task时，R14(LR))初始化为什么？
     * 初始化为 portTASK_RETURN_ADDRESS（0xfffffffd）
 * pxCurrentTCB 在创建task时已经赋值为最高优先级task的TCB
-  * 这里执行bx r14
-* 在刚进入SVC handler 时LR=0xFFFFFFF9 (thread mode, return main stack)，从pxCurrentTCB pop stack( R4-R11, LR))后，LR=0xFFFFFFFD,
-* 
+  * 这里执行bx r14, 会将task stack中的值pop到寄存器中
+    * 在刚进入SVC handler 时LR=0xFFFFFFF9 (thread mode, return main stack)，从pxCurrentTCB pop stack( R4-R11, LR))后，LR=0xFFFFFFFD
+
+***No FP extension***
+
+| EXC_RETURN | Return to    | Return stack |
+| ---------- | ------------ | ------------ |
+| 0xFFFFFFF1 | Handler mode | Main         |
+| 0xFFFFFFF9 | Thread mode  | Main         |
+| 0xFFFFFFFD | Thread mode  | Process      |
+
+***With FP extension***
+
+| EXC_RETURN | Return to    | Return stack | Frame Type |
+| ---------- | ------------ | ------------ | ---------- |
+| 0xFFFFFFF1 | Handler mode | Main         | Basic      |
+| 0xFFFFFFF9 | Thread mode  | Main         | Basic      |
+| 0xFFFFFFFD | Thread mode  | Process      | Basic      |
+| 0xFFFFFFE1 | Handler mode | Main         | Extended   |
+| 0xFFFFFFE9 | Thread mode  | Main         | Extended   |
+| 0xFFFFFFED | Thread mode  | Process      | Extended   |
+
+***SVC_Handler***
 
 ```
     __asm volatile (
