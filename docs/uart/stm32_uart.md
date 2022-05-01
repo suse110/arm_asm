@@ -2,6 +2,10 @@
 
 Universal synchronous asynchronous receiver transmitter
 
+[Stm32 HAL库 USART(发送+接收)全部采用DMA形式](https://blog.csdn.net/xinghunlove123/article/details/89503218)
+
+[STM32 tutorial: Efficiently receive UART data using DMA](https://stm32f4-discovery.net/2017/07/stm32-tutorial-efficiently-receive-uart-data-using-dma/)
+
 ## USART main features
 
 * Full duplex, asynchronous communications
