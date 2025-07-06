@@ -2,6 +2,112 @@
 .syntax unifid
 .thumb
 
+
+/* Macro to define exception handlers with consistent save sequence */
+.macro DEFINE_EXCEPTION_HANDLER name, exc_num
+.section .text.\name
+.type \name, %function
+.global \name
+\name:
+    /* === PHASE 1: Immediate State Preservation === */
+    /* 1. Save PRIMASK to R12 (caller-saved reg) */
+    mrs r12, PRIMASK
+    
+    /* 2. Disable interrupts globally */
+    cpsid i
+    
+    /* === PHASE 2: Determine Stack Pointer === */
+    tst lr, #4          // Check EXC_RETURN[2] for stack selection
+    ite eq
+    mrseq r0, msp       // MSP if 0
+    mrsne r0, psp       // PSP if 1
+    
+    /* === PHASE 3: Jump to Common Handler === */
+    /* set exception number */
+    mov r2, #\exc_num
+    b exc_entry
+.endm
+
+
+/* Define all core exceptions */
+DEFINE_EXCEPTION_HANDLER NMI_Handler, 2
+DEFINE_EXCEPTION_HANDLER HardFault_Handler, 3
+DEFINE_EXCEPTION_HANDLER MemManage_Handler, 4
+DEFINE_EXCEPTION_HANDLER BusFault_Handler, 5
+DEFINE_EXCEPTION_HANDLER UsageFault_Handler, 6
+
+/* Common Exception Entry Point */
+.section .text.exc_entry
+.type exc_entry, %function
+exc_entry:
+    ldr r1, =g_exc_ctx
+    str r2, [r1, #132]  // offsetof(ExceptionContext, exception_id)
+    /* === FPU State Preservation === */
+    /* 1. Check if FPU context exists (EXC_RETURN[4]) */
+    tst lr, #0x10
+    bne save_core_regs
+    
+    /* 2. Save full FPU state (S0-S31) */
+    vstmia r1!, {s0-s31}
+    
+    /* 3. Save FPSCR from exception stack */
+    ldr r2, [r0, #32]     // FPSCR is at SP+32 if FPU active
+    str r2, [r1], #4
+    
+save_core_regs:
+    /* === General-Purpose Registers === */
+    /* 4. Save R4-R11 (not auto-saved by HW) */
+    add r1, #(8 * 4)        // Skip FPU area (8 regs * 4 bytes)
+    stmia r1!, {r4-r11}    // Matches struct member order
+    
+    /* === Hardware Auto-Saved Registers === */
+    /* 5. Load R0-R3 from exception stack */
+    ldmia r0!, {r2-r5}     // Original R0-R3
+    str r2, [r1], #4       // r0
+    str r3, [r1], #4       // r1
+    str r4, [r1], #4       // r2
+    str r5, [r1], #4       // r3
+    
+    /* 6. Load R12, LR, PC, xPSR */
+    ldmia r0!, {r2-r5}
+    str r2, [r1], #4       // r12
+    str r3, [r1], #4       // lr
+    str r4, [r1], #4       // pc
+    str r5, [r1], #4       // xpsr
+    
+    /* === System Registers === */
+    /* 7. Save MSP/PSP */
+    mrs r2, MSP
+    mrs r3, PSP
+    str r2, [r1], #4       // msp
+    str r3, [r1], #4       // psp
+    
+    /* 8. Save PRIMASK (from R12) */
+    str r12, [r1], #4      // primask
+    
+    /* 9. Save remaining system regs */
+    mrs r2, FAULTMASK
+    mrs r3, BASEPRI
+    mrs r4, CONTROL
+    stmia r1!, {r2-r4}     // faultmask, basepri, control
+    
+    /* === Fault Registers === */
+    /* 10. Capture fault diagnostics */
+    ldr r2, =SCB_BASE
+    ldmia r2, {r3-r8}      // MMFAR, BFAR, CFSR, HFSR, DFSR, AFSR
+    stmia r1!, {r3-r8}
+    
+    /* === Finalize === */
+    /* 11. Call C analyzer */
+    ldr r0, =g_exc_ctx
+    bl analyze_exception
+    
+    /* 12. System reset */
+    dsb
+    bkpt #0
+    b .
+
+
 .global last_crash_info
 .global exception_common_handler_c
 

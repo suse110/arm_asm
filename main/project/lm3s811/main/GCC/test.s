@@ -37,9 +37,6 @@ g_pfnVectors:
 .word SysTick_Handler
 
 
-
-
-
 .weak NMI_Handler
 .thumb_set NMI_Handler,Default_Handler
 

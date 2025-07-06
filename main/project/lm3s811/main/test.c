@@ -4,7 +4,7 @@
 #include "shell.h"
 #endif
 
-static volatile unsigned int * const UART_DR = (unsigned int *)0x4000c000;
+static volatile unsigned int *const UART_DR = (unsigned int *)0x4000c000;
 
 int __io_putchar(int ch)
 {
@@ -14,9 +14,8 @@ int __io_putchar(int ch)
 
 int __io_getchar(void)
 {
-    return(int)*UART_DR;
+    return (int)*UART_DR;
 }
-
 
 extern void exception_test(void);
 void main(void)
@@ -24,10 +23,11 @@ void main(void)
 
     printf("[%s] hello world\n", __func__);
     // shell_start();
-    backtrace_test();
-    exception_test();
+    // backtrace_test();
+    // exception_test();
     // hal_mpu_test();
-    while(1);
+    while (1)
+        ;
 }
 
 #if 0
@@ -45,7 +45,7 @@ LDR R0, =0xE000ED9C
 LDR R1, =0x00000010
 /* 设置region 0的基址 */
 STR R1, [R0, #0]
-/* R/W, TEX=0,S=1,C=1,B=1, 16MB, Enable=1  */
+/* R/W, TEX=0,S=1,C=1,B=1, 16MB, Enable=1  */、 
 LDR R1, =0x0307002F
 /* MPU Region 属性及容量寄存器 */
 STR R1, [R0, #4]

@@ -134,7 +134,7 @@ void SVC_Handler(void)
   * @param  None
   * @retval None
   */
-void DebugMon_Handler(void)
+__attribute__((weak)) void DebugMon_Handler(void)
 {
   
 }

@@ -29,10 +29,11 @@
 #include "serial.h"
 #include "hal.h"
 #include "hal_platform.h"
-
 #ifdef BACKTRACE_ENABLE
 #include "backtrace.h"
 #endif
+#include "stepper_motor.h"
+#include "serial_protocol.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
@@ -80,8 +81,11 @@
 
 /* Exported functions ------------------------------------------------------- */
 
+void Delay_us_TIM2(uint32_t us);
+uint32_t GetMicros_TIM2(void);
 #define delay_ms(ms) HAL_Delay(ms)
-
+#define delay_us(us) Delay_us_TIM2(us)
+#define get_ticks_us() GetMicros_TIM2()
 void Error_Handler(void);
 
 #endif /* __MAIN_H */

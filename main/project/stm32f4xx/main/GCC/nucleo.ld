@@ -45,175 +45,175 @@ ENTRY(Reset_Handler)
 PROVIDE(_estack = 0x20017FFF);
 SECTIONS
 {
-	PROVIDE(_stext = ORIGIN(FLASH));
-	.text :
-	{
-		KEEP(*(.isr_vector))
-		*(.text*)
+    PROVIDE(_stext = ORIGIN(FLASH));
+    .text :
+    {
+        KEEP(*(.isr_vector))
+        *(.text*)
 
-		KEEP(*(.init))
-		KEEP(*(.fini))
+        KEEP(*(.init))
+        KEEP(*(.fini))
 
-		/* .ctors */
-		*crtbegin.o(.ctors)
-		*crtbegin?.o(.ctors)
-		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
-		*(SORT(.ctors.*))
-		*(.ctors)
+        /* .ctors */
+        *crtbegin.o(.ctors)
+        *crtbegin?.o(.ctors)
+        *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+        *(SORT(.ctors.*))
+        *(.ctors)
 
-		/* .dtors */
- 		*crtbegin.o(.dtors)
- 		*crtbegin?.o(.dtors)
- 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
- 		*(SORT(.dtors.*))
- 		*(.dtors)
+        /* .dtors */
+        *crtbegin.o(.dtors)
+        *crtbegin?.o(.dtors)
+        *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+        *(SORT(.dtors.*))
+        *(.dtors)
 
-		*(.rodata*)
-		*(.noinit.crash_info)
+        *(.rodata*)
 
-		KEEP(*(.eh_frame*))
+        KEEP(*(.eh_frame*))
 
-	} > FLASH
-	__shell_command_start=.;
-	.shell_command : {*(.shell_command)} > FLASH
-	__shell_command_end=.;
+    } > FLASH
+    __shell_command_start=.;
+    .shell_command : {*(.shell_command)} > FLASH
+    __shell_command_end=.;
 
-	/*ARM.extab and .ARM.exidx are used ti unwind*/
-	.ARM.extab : 
-	{
-		*(.ARM.extab* .gnu.linkonce.armextab.*)
-	} > FLASH
+    /*ARM.extab and .ARM.exidx are used ti unwind*/
+    .ARM.extab : 
+    {
+        *(.ARM.extab* .gnu.linkonce.armextab.*)
+    } > FLASH
 
-	__exidx_start = .;
-	.ARM.exidx :
-	{
-		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
-	} > FLASH
-	__exidx_end = .;
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > FLASH
+    __exidx_end = .;
 
-	/* To copy multiple ROM to RAM sections,
-	 * uncomment .copy.table section and,
-	 * define __STARTUP_COPY_MULTIPLE in startup_ARMCMx.S */
-	/*
-	.copy.table :
-	{
-		. = ALIGN(4);
-		__copy_table_start__ = .;
-		LONG (__etext)
-		LONG (__data_start__)
-		LONG (__data_end__ - __data_start__)
-		LONG (__etext2)
-		LONG (__data2_start__)
-		LONG (__data2_end__ - __data2_start__)
-		__copy_table_end__ = .;
-	} > FLASH
-	*/
+    /* To copy multiple ROM to RAM sections,
+     * uncomment .copy.table section and,
+     * define __STARTUP_COPY_MULTIPLE in startup_ARMCMx.S */
+    /*
+    .copy.table :
+    {
+        . = ALIGN(4);
+        __copy_table_start__ = .;
+        LONG (__etext)
+        LONG (__data_start__)
+        LONG (__data_end__ - __data_start__)
+        LONG (__etext2)
+        LONG (__data2_start__)
+        LONG (__data2_end__ - __data2_start__)
+        __copy_table_end__ = .;
+    } > FLASH
+    */
 
-	/* To clear multiple BSS sections,
-	 * uncomment .zero.table section and,
-	 * define __STARTUP_CLEAR_BSS_MULTIPLE in startup_ARMCMx.S */
-	/*
-	.zero.table :
-	{
-		. = ALIGN(4);
-		__zero_table_start__ = .;
-		LONG (__bss_start__)
-		LONG (__bss_end__ - __bss_start__)
-		LONG (__bss2_start__)
-		LONG (__bss2_end__ - __bss2_start__)
-		__zero_table_end__ = .;
-	} > FLASH
-	*/
-	sizeoftext = SIZEOF(.text);
-	__etext = .;
-	PROVIDE(_etext = .);
-	_exit = .;
-	.data : AT (__etext)
-	{
-		__data_start__ = .;
-		_sdata = __data_start__;
-		*(vtable)
-		*(.data*)
+    /* To clear multiple BSS sections,
+     * uncomment .zero.table section and,
+     * define __STARTUP_CLEAR_BSS_MULTIPLE in startup_ARMCMx.S */
+    /*
+    .zero.table :
+    {
+        . = ALIGN(4);
+        __zero_table_start__ = .;
+        LONG (__bss_start__)
+        LONG (__bss_end__ - __bss_start__)
+        LONG (__bss2_start__)
+        LONG (__bss2_end__ - __bss2_start__)
+        __zero_table_end__ = .;
+    } > FLASH
+    */
+    sizeoftext = SIZEOF(.text);
+    __etext = .;
+    PROVIDE(_etext = .);
+    _exit = .;
+    .data : AT (__etext)
+    {
+        __data_start__ = .;
+        _sdata = __data_start__;
+        *(vtable)
+        *(.data*)
 
-		. = ALIGN(4);
-		/* preinit data */
-		PROVIDE_HIDDEN (__preinit_array_start = .);
-		KEEP(*(.preinit_array))
-		PROVIDE_HIDDEN (__preinit_array_end = .);
+        . = ALIGN(4);
+        /* preinit data */
+        PROVIDE_HIDDEN (__preinit_array_start = .);
+        KEEP(*(.preinit_array))
+        PROVIDE_HIDDEN (__preinit_array_end = .);
 
-		. = ALIGN(4);
-		/* init data */
-		PROVIDE_HIDDEN (__init_array_start = .);
-		KEEP(*(SORT(.init_array.*)))
-		KEEP(*(.init_array))
-		PROVIDE_HIDDEN (__init_array_end = .);
+        . = ALIGN(4);
+        /* init data */
+        PROVIDE_HIDDEN (__init_array_start = .);
+        KEEP(*(SORT(.init_array.*)))
+        KEEP(*(.init_array))
+        PROVIDE_HIDDEN (__init_array_end = .);
 
 
-		. = ALIGN(4);
-		/* finit data */
-		PROVIDE_HIDDEN (__fini_array_start = .);
-		KEEP(*(SORT(.fini_array.*)))
-		KEEP(*(.fini_array))
-		PROVIDE_HIDDEN (__fini_array_end = .);
+        . = ALIGN(4);
+        /* finit data */
+        PROVIDE_HIDDEN (__fini_array_start = .);
+        KEEP(*(SORT(.fini_array.*)))
+        KEEP(*(.fini_array))
+        PROVIDE_HIDDEN (__fini_array_end = .);
 
-		KEEP(*(.jcr*))
-		. = ALIGN(4);
+        KEEP(*(.jcr*))
+        . = ALIGN(4);
+        *(.noinit.crash_info)
 
-		/* All data end */
-		__data_end__ = .;
-		_edata = __data_end__;
+        /* All data end */
+        __data_end__ = .;
+        _edata = __data_end__;
 
-	} > RAM
-	
-	.ram_isr_vector :
-	{
-		. = ALIGN(512);
-		_s_ram_vtor = .;
-		*(.ram_isr_vector)
-		_e_ram_vtor = .;
-	} > RAM
+    } > RAM
+    
+    .ram_isr_vector :
+    {
+        . = ALIGN(512);
+        _s_ram_vtor = .;
+        *(.ram_isr_vector)
+        _e_ram_vtor = .;
+    } > RAM
 
-	_sidata = LOADADDR(.data);
+    _sidata = LOADADDR(.data);
 
-	.bss :
-	{
-		. = ALIGN(4);
-		__bss_start__ = .;
-		_sbss = __bss_start__;
-		*(.bss*)
-		*(COMMON)
-		. = ALIGN(4);
-		__bss_end__ = .;
-		_ebss = __bss_end__;
-	} > RAM
-	
-	.heap (COPY):
-	{
-		_sheap = .;
-		__end__ = .;
-		PROVIDE(end = .);
-		*(.heap*)
-		__HeapLimit = .;
-		_eheap = .;
-	} > RAM
+    .bss :
+    {
+        . = ALIGN(4);
+        __bss_start__ = .;
+        _sbss = __bss_start__;
+        *(.bss*)
+        *(COMMON)
+        . = ALIGN(4);
+        __bss_end__ = .;
+        _ebss = __bss_end__;
+    } > RAM
+    
+    .heap (COPY):
+    {
+        _sheap = .;
+        __end__ = .;
+        PROVIDE(end = .);
+        *(.heap*)
+        __HeapLimit = .;
+        _eheap = .;
+    } > RAM
 
-	/* .stack_dummy section doesn't contains any symbols. It is only
-	 * used for linker to calculate size of stack sections, and assign
-	 * values to stack symbols later */
-	.stack_dummy (COPY):
-	{
-		*(.stack*)
-	} > RAM
+    /* .stack_dummy section doesn't contains any symbols. It is only
+     * used for linker to calculate size of stack sections, and assign
+     * values to stack symbols later */
+    .stack_dummy (COPY):
+    {
+        *(.stack*)
+    } > RAM
 
-	/* Set stack top to end of RAM, and stack limit move down by
-	 * size of stack_dummy section */
-	PROVIDE(__StackTop = ORIGIN(RAM) + LENGTH(RAM));
+    /* Set stack top to end of RAM, and stack limit move down by
+     * size of stack_dummy section */
+    PROVIDE(__StackTop = ORIGIN(RAM) + LENGTH(RAM));
 
-	PROVIDE(__StackLimit = __StackTop - SIZEOF(.stack_dummy));
-	PROVIDE(__stack = __StackTop);
-	PROVIDE(_stacksize = 4096);
-	PROVIDE(_sstack = _estack - _stacksize);
-	
-	/* Check if data + heap + stack exceeds RAM limit */
-	ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    PROVIDE(__StackLimit = __StackTop - SIZEOF(.stack_dummy));
+    PROVIDE(__stack = __StackTop);
+    PROVIDE(_stacksize = 4096);
+    PROVIDE(_sstack = _estack - _stacksize);
+    
+    /* Check if data + heap + stack exceeds RAM limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
 }

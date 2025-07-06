@@ -47,9 +47,9 @@
   * @param  None
   * @retval None
   */
-void NMI_Handler(void)
-{
-}
+// void NMI_Handler(void)
+// {
+// }
 
 /**
   * @brief  This function handles Hard Fault exception.
@@ -130,9 +130,9 @@ void SVC_Handler(void)
   * @param  None
   * @retval None
   */
-void DebugMon_Handler(void)
-{
-}
+// void DebugMon_Handler(void)
+// {
+// }
 
 /**
   * @brief  This function handles PendSVC exception.
@@ -177,4 +177,28 @@ void DebugMon_Handler(void)
   * @}
   */
 
+// HAL库的中断回调函数
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+    if (GPIO_Pin == KEY_BUTTON_PIN) {
+        // 按键按下后的处理逻辑
+        printf("key pressed\n");
+        BSP_LED_Toggle(LED2); // 示例：切换LED状态
+    }
+}
+// 外部中断服务函数
+void USART2_IRQHandler(void) {
+  UART_IRQHandler();
+}
+void EXTI15_10_IRQHandler(void) {
+    HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN); // 处理中断标志
+}
+/* Interrupt Handlers (stm32f4xx_it.c) */
+void DMA1_Stream5_IRQHandler(void)
+{
+    UART_DMA_IRQHandler();
+}
+void DMA1_Stream6_IRQHandler(void)
+{
+    UART_DMA_IRQHandler();
+}
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

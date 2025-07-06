@@ -42,7 +42,47 @@ static void SystemClock_Config(void);
 
 #define HARDWARE_VERSION               "V1.0.0"
 #define SOFTWARE_VERSION               "V0.1.0"
+TIM_HandleTypeDef htim2;
 
+// 初始化定时器（1MHz计数，1μs分辨率）
+uint32_t timer_clock;
+uint32_t GetTimerClock(TIM_TypeDef *TIMx) {
+    uint32_t pclk;
+    if (TIMx == TIM1 ||TIMx == TIM9 || TIMx == TIM10 || TIMx == TIM11) {
+        pclk = HAL_RCC_GetPCLK2Freq(); // APB2定时器
+        if ((RCC->CFGR & RCC_CFGR_PPRE2) != RCC_CFGR_PPRE2_DIV1) pclk *= 2;
+    } else {
+        pclk = HAL_RCC_GetPCLK1Freq(); // APB1定时器
+        if ((RCC->CFGR & RCC_CFGR_PPRE1) != RCC_CFGR_PPRE1_DIV1) pclk *= 2;
+    }
+    return pclk;
+}
+void TIM2_Init(void) {
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    timer_clock = GetTimerClock(TIM2); // 获取实际定时器时钟
+    htim2.Instance = TIM2;
+    htim2.Init.Prescaler = timer_clock / 1000000 - 1;  // 1μs/tick
+    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim2.Init.Period = 0xFFFFFFFF;  // 32位最大值
+    if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
+        printf("HAL_TIM_Base_Init failed\r\n");
+    }
+    if (HAL_TIM_Base_Start(&htim2) != HAL_OK) {
+        printf("HAL_TIM_Base_Start failed\r\n");
+    }
+}
+
+// 获取当前计数值（μs）
+uint32_t GetMicros_TIM2(void) {
+    return __HAL_TIM_GET_COUNTER(&htim2);
+}
+
+// 微秒级延时
+void Delay_us_TIM2(uint32_t us) {
+    uint32_t start = GetMicros_TIM2();
+    while (GetMicros_TIM2() - start < us);
+}
 #if 0
 void fault_test_by_unalign(void) {
     volatile int * SCB_CCR = (volatile int *) 0xE000ED14; // SCB->CCR
@@ -153,33 +193,66 @@ int main(void)
   SystemClock_Config();
 
   serial_init();
+  serial_protocol_init();
   /* Output a message on Hyperterminal using printf function */
- printf("\n\r -- UART Printf Example: retarget the C library printf function to the UART\n\r");
-   __asm("svc 0");
-    //   printf("&__shell_command_start=0x%x &__shell_command_end=0x%x\r\n",\
-        &__shell_command_start, &__shell_command_end);
+ printf("1 -- UART Printf Example: retarget the C library printf function to the UART\r\n");
+ printf("2 -- UART Printf Example: retarget the C library printf function to the UART\r\n");
+  //  __asm("svc 0");
+    //   printf("&__shell_command_start=0x%x &__shell_command_end=0x%x\r\n",&__shell_command_start, &__shell_command_end);
     // shell_command_t * scmd = &__shell_command_start;
 
-//  BSP_LED_Init(LED2);
-  gpio_test();
+  BSP_LED_Init(LED2);
+  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
+  HAL_SetTickFreq(HAL_TICK_FREQ_1KHZ);
+  TIM2_Init();
+  // gpio_test();
   // spim_test();
 #ifdef RTOS_ENABLE
   void task_start(void);
   // task_start();
 #endif
 #ifdef EXCEPTION_ENABLE
-  exception_test();
+  // exception_test();
 #endif
 #ifdef BACKTRACE_ENABLE
-  backtrace_test();
+  // backtrace_test();
 #endif
-//  InitStepper();
-  while (1) {
-//    BSP_LED_Toggle(LED2);
+// 1. 配置相位引脚
+    stepper_phase_config_t phases[] = {
+        {GPIOA, GPIO_PIN_0, false},  // A相，高电平有效
+        {GPIOA, GPIO_PIN_1, false},  // B相
+        {GPIOA, GPIO_PIN_4, false},  // C相
+        {GPIOB, GPIO_PIN_0, false}   // D相
+    };
 
-//    HAL_Delay(1);
+    // 2. 创建电机配置
+    stepper_motor_config_t config = {
+        .phases = phases,
+        .seq = {
+            .sequence = NULL,  // 使用默认8拍步序
+            .length = 0,
+            .phase_count = 4
+        },
+        .steps_per_rev = 200,  // 1.8°步距角
+        .default_rpm = 60,
+        .step_delay_us = 1000
+    };
+
+    // 3. 创建电机实例
+    stepper_motor_t* motor1 = stepper_motor_create(&config);
+    stepper_motor_init_hardware(motor1);
+
+    // 4. 运行电机
+    stepper_motor_run(motor1, 600);  // 60 RPM
+   BSP_LED_Toggle(LED2);
+   printf("Hello World!\n");
+   validate_step_sequence(motor1);
+   while (1) {
+    // stepper_motor_test_all_pins(motor1);
+  //  HAL_Delay(1000);
+  // delay_us(1000000);
     
-//    step(2);
+  // stepper_motor_update(motor1);
   }
 }
 
@@ -253,6 +326,7 @@ static void SystemClock_Config(void)
 void Error_Handler(void)
 {
   /* Turn LED2 on */
+  printf("Error_Handler\r\n");
   BSP_LED_On(LED2);
   while(1)
   {

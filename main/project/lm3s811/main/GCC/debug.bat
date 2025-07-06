@@ -10,6 +10,7 @@ pushd %1 & for %%i in (.) do set PROJ_NAME=%%~ni
 cd %CUR_DIR%
 
 set ELFFILE=%ROOT_DIR%\main\build\lm3s811\%PROJ_NAME%\%PROJ_NAME%.elf
+echo %ELFFILE%
 tasklist | findstr /i qemu-system-arm.exe > NUL
 if ErrorLevel == 1 (
     @echo "start qemu-system-arm"

@@ -31,10 +31,20 @@
         "types.h": "c",
         "stat.h": "c",
         "mt_ringbuffer.h": "c",
-        "cmb_zh_cn.h": "c"
+        "cmb_zh_cn.h": "c",
+        "main.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "stm32f4xx_hal_conf.h": "c",
+        "serial.h": "c",
+        "stm32f401xe.h": "c",
+        "stm32f4xx_nucleo.h": "c"
     },
     "riscv-venus.variableFormat": "hex",
     "cortex-debug.registerUseNaturalFormat": false,
     "cortex-debug.variableUseNaturalFormat": false,
-    "C_Cpp.errorSquiggles": "Disabled"
+    "C_Cpp.errorSquiggles": "Disabled",
+    "cortex-debug.showRTOS": true,
+    "cortex-debug.gdbPath.windows": "${workspaceRoot}\\tools\\arm-none-eabi\\gcc-arm-none-eabi-10-2020-q4-major\\bin\\arm-none-eabi-gdb.exe",
+    "cortex-debug.openocdPath.windows": "${workspaceRoot}\\tools\\openocd\\OpenOCD-20210519-0.11.0\\bin\\openocd.exe"
+
 }

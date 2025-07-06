@@ -1,0 +1,432 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:t="http://nwalsh.com/docbook/xsl/template/1.0"
+xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:hl=
+"http://xslthl.sf.net">
+<head>
+<meta name="generator" content=
+"HTML Tidy for Linux/x86 (vers 25 March 2009), see www.w3.org">
+<meta http-equiv="Content-Type" content=
+"text/html; charset=us-ascii">
+<title>3.&nbsp;Hello ARM</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title=
+"Embedded Programming with the GNU Toolchain">
+<link rel="up" href="index.html" title=
+"Embedded Programming with the GNU Toolchain">
+<link rel="prev" href="arm-lab.html" title=
+"2.&nbsp;Setting up the ARM Lab">
+<link rel="next" href="asm-directives.html" title=
+"4.&nbsp;More Assembler Directives">
+<link href="revision.rss" type="application/rss+xml" rel=
+"alternate" title="Revision updates">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084"
+alink="#0000FF">
+<div class="body"><span id="forkongithub"><a href=
+"https://github.com/bravegnu/gnu-eprog">Fork me on
+GitHub</a></span>
+<div class="navheader">
+<table width="100%" summary="Navigation header">
+<tr>
+<th colspan="3" align="center">3.&nbsp;Hello ARM</th>
+</tr>
+<tr>
+<td width="20%" align="left"><a accesskey="p" href=
+"arm-lab.html"><img src="images/prev.png" alt="Prev" width="48"
+height="48"></a>&nbsp;</td>
+<th width="60%" align="center">&nbsp;</th>
+<td width="20%" align="right">&nbsp;<a accesskey="n" href=
+"asm-directives.html"><img src="images/next.png" alt="Next" width=
+"48" height="48"></a></td>
+</tr>
+</table>
+<hr></div>
+<div class="section" title="3.&nbsp;Hello ARM">
+<div class="titlepage">
+<div>
+<div>
+<h2 class="title" style="clear: both"><a name="hello-arm" id=
+"hello-arm"></a>3.&nbsp;Hello ARM</h2>
+</div>
+</div>
+</div>
+<p>In this section, you will learn to assemble a simple ARM
+program, and test it on a bare metal connex board emulated by
+Qemu.</p>
+<p>The assembly program source file consists of a sequence of
+statements, one per line. Each statement has the following
+format.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">label:    instruction         @ comment</code>
+</pre>
+<p>Each of the components is optional.</p>
+<div class="variablelist">
+<dl>
+<dt><span class="term"><code class=
+"literal">label</code></span></dt>
+<dd>The label is a convenient way to refer to the location of the
+instruction in memory. The label can be used where ever an address
+can appear, for example as an operand of the branch instruction.
+The label name should consist of alphabets, digits, <code class=
+"literal">_</code> and <code class="literal">$</code>.</dd>
+<dt><span class="term"><code class=
+"literal">comment</code></span></dt>
+<dd>A comment starts with an <code class="literal">@</code>, and
+the characters that appear after an <code class="literal">@</code>
+are ignored.</dd>
+<dt><span class="term"><code class=
+"literal">instruction</code></span></dt>
+<dd>The <code class="literal">instruction</code> could be an ARM
+instruction or an assembler directive. Assembler directives are
+commands to the assembler. Assembler directives always start with a
+<code class="literal">.</code> (period).</dd>
+</dl>
+</div>
+<p>Here is a very simple ARM assembly program to add two
+numbers.</p>
+<div class="example"><a name="add" id="add"></a>
+<p class="title"><b>Listing&nbsp;1.&nbsp;Adding Two Numbers</b></p>
+<div class="example-contents">
+<pre class="programlisting">
+<code class="armasm">        .<span class="hl-directive" style=
+"color: maroon">text</span>
+<b class="hl-keyword">start:</b>                       <i class=
+"hl-comment" style="color: #888">@ Label, not really required</i>
+        mov   r0, <span class=
+"hl-number">#5</span>         <i class="hl-comment" style=
+"color: #888">@ Load register r0 with the value 5</i>
+        mov   r1, <span class=
+"hl-number">#4</span>         <i class="hl-comment" style=
+"color: #888">@ Load register r1 with the value 4</i>
+        add   r2, r1, r0     <i class="hl-comment" style=
+"color: #888">@ Add r0 and r1 and store in r2</i>
+
+<b class="hl-keyword">stop:</b>   b stop               <i class=
+"hl-comment" style=
+"color: #888">@ Infinite loop to stop execution</i></code>
+</pre></div>
+</div>
+<br class="example-break">
+<p>The <code class="literal">.text</code> is an assembler
+directive, which says that the following instructions have to be
+assembled into the code section, rather than the <code class=
+"literal">.data</code> section. Sections will be covered in detail,
+later in the tutorial.</p>
+<div class="section" title="3.1.&nbsp;Building the Binary">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name=
+"_building_the_binary"></a>3.1.&nbsp;Building the Binary</h3>
+</div>
+</div>
+</div>
+<p>Save the program in a file say <code class=
+"literal">add.s</code>. To assemble the file, invoke the GNU
+Toolchain&rsquo;s assembler <code class="literal">as</code>, as
+shown in the following command.</p>
+<pre class="programlisting">
+<code class="no-highlight">$ arm-none-eabi-as -o add.o add.s</code>
+</pre>
+<p>The <code class="literal">-o</code> option specifies the output
+filename.</p>
+<div class="note" title="Note" style=
+"margin-left: 0.5in; margin-right: 0.5in;">
+<table border="0" summary="Note">
+<tr>
+<td rowspan="2" align="center" valign="top" width="25"><img alt=
+"[Note]" src="images/note.png" width="64" height="64"></td>
+<th align="left">Note</th>
+</tr>
+<tr>
+<td align="left" valign="top">
+<p>Cross toolchains are always prefixed with the target
+architecture for which they are built, to avoid name conflicts with
+the host toolchain. For the sake readability, tools will be
+referred to without the prefix, in the text.</p>
+</td>
+</tr>
+</table>
+</div>
+<p>To generate the executable file, invoke the GNU
+Toolchain&rsquo;s linker <code class="literal">ld</code>, as shown
+in the following command.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ arm-none-eabi-ld -Ttext=0x0 -o add.elf add.o</code>
+</pre>
+<p>Here again, the <code class="literal">-o</code> option specifies
+the output filename. The <code class="literal">-Ttext=0x0</code>,
+specifies that addresses should be assigned to the labels, such
+that the instructions were starting from address <code class=
+"literal">0x0</code>. To view the address assignment for various
+labels, the <code class="literal">nm</code> command can be used as
+shown below.</p>
+<pre class="programlisting">
+<code class="no-highlight">$ arm-none-eabi-nm add.elf
+... clip ...
+00000000 t start
+0000000c t stop</code>
+</pre>
+<p>Note the address assignment for the labels <code class=
+"literal">start</code> and <code class="literal">stop</code>. The
+address assigned for <code class="literal">start</code> is
+<code class="literal">0x0</code>. Since it is the label of the
+first instruction. The label <code class="literal">stop</code> is
+after 3 instructions. Each instructions is 4 bytes. Hence
+<code class="literal">stop</code> is assigned an address
+<code class="literal">12</code> (<code class=
+"literal">0xC</code>).</p>
+<p>Linking with a different base address for the instructions will
+result in a different set of addresses being assigned to the
+labels.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ arm-none-eabi-ld -Ttext=0x20000000 -o add.elf add.o
+$ arm-none-eabi-nm add.elf
+... clip ...
+20000000 t start
+2000000c t stop</code>
+</pre>
+<p>The output file created by <code class="literal">ld</code> is in
+a format called <code class="literal">ELF</code>. Various file
+formats are available for storing executable code. The ELF format
+works fine when you have an OS around, but since we are going to
+run the program on bare metal, we will have to convert it to a
+simpler file format called the <code class="literal">binary</code>
+format.</p>
+<p>A file in <code class="literal">binary</code> format contains
+consecutive bytes from a specific memory address. No other
+additional information is stored in the file. This is convenient
+for Flash programming tools, since all that has to be done when
+programming is to copy each byte in the file, to consecutive
+address starting from a specified base address in memory.</p>
+<p>The GNU toolchain&rsquo;s <code class="literal">objcopy</code>
+command can be used to convert between different object file
+formats. A common usage of the command is given below.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">objcopy -O &lt;output-format&gt; &lt;in-file&gt; &lt;out-file&gt;</code>
+</pre>
+<p>To convert <code class="literal">add.elf</code> to binary format
+the following command can be used.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ arm-none-eabi-objcopy -O binary add.elf add.bin</code>
+</pre>
+<p>Check the size of the file. The file will be exactly 16 bytes.
+Since there are 4 instructions and each instruction occupies 4
+bytes.</p>
+<pre class="programlisting">
+<code class="no-highlight">$ ls -al add.bin
+-rw-r--r-- 1 vijaykumar vijaykumar 16 2008-10-03 23:56 add.bin</code>
+</pre></div>
+<div class="section" title="3.2.&nbsp;Executing in Qemu">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name=
+"_executing_in_qemu"></a>3.2.&nbsp;Executing in Qemu</h3>
+</div>
+</div>
+</div>
+<p>When the ARM processor is reset, it starts executing from
+address <code class="literal">0x0</code>. On the connex board a
+16MB Flash is located at address <code class="literal">0x0</code>.
+The instructions present in the beginning of the Flash will be
+executed.</p>
+<p>When <code class="literal">qemu</code> emulates the connex
+board, a file has to be specified which will be treated file as
+Flash memory. The Flash file format is very simple. To get the byte
+from address X in the Flash, <code class="literal">qemu</code>
+reads the byte from offset X in the file. In fact, this is the same
+as the binary file format.</p>
+<p>To test the program, on the emulated Gumstix connex board, we
+first create a 16MB file representing the Flash. We use the
+<code class="literal">dd</code> command to copy 16MB of zeroes from
+<code class="literal">/dev/zero</code> to the file <code class=
+"literal">flash.bin</code>. The data is copied in 4K blocks.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ dd if=/dev/zero of=flash.bin bs=4096 count=4096</code>
+</pre>
+<p><code class="literal">add.bin</code> file is then copied into
+the beginning of the Flash, using the following command.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ dd if=add.bin of=flash.bin bs=4096 conv=notrunc</code>
+</pre>
+<p>This is the equivalent of programming the <code class=
+"literal">bin</code> file on to the Flash memory.</p>
+<p>After reset, the processor will start executing from address
+<code class="literal">0x0</code>, and the instructions from the
+program will get executed. The command to invoke <code class=
+"literal">qemu</code> is given below.</p>
+<pre class="programlisting">
+<code class=
+"no-highlight">$ qemu-system-arm -M connex -pflash flash.bin -nographic -serial /dev/null</code>
+</pre>
+<p>The <code class="literal">-M connex</code> option specifies that
+the machine <code class="literal">connex</code> is to be emulated.
+The <code class="literal">-pflash</code> options specifies that
+<code class="literal">flash.bin</code> file represents the Flash
+memory. The <code class="literal">-nographic</code> specifies that
+simulation of a graphical display is not required. The <code class=
+"literal">-serial /dev/null</code> specifies that the serial port
+of the connex board is to be connected to <code class=
+"literal">/dev/null</code>, so that the serial port data is
+discarded.</p>
+<p>The system executes the instructions and after completion, keeps
+looping infinitely in the <code class="literal">stop: b stop</code>
+instruction. To view the contents of the registers, the monitor
+interface of <code class="literal">qemu</code> can be used. The
+monitor interface is a command line interface, through which the
+emulated system can be controlled and the status of the system can
+be viewed. When <code class="literal">qemu</code> is started with
+the above mentioned command, the monitor interface is provided in
+the standard I/O of <code class="literal">qemu</code>.</p>
+<p>To view the contents of the registers the <code class=
+"literal">info registers</code> monitor command can be used.</p>
+<pre class="programlisting">
+<code class="no-highlight">(qemu) info registers
+R00=00000005 R01=00000004 R02=00000009 R03=00000000
+R04=00000000 R05=00000000 R06=00000000 R07=00000000
+R08=00000000 R09=00000000 R10=00000000 R11=00000000
+R12=00000000 R13=00000000 R14=00000000 R15=0000000c
+PSR=400001d3 -Z-- A svc32</code>
+</pre>
+<p>Note the value in register <code class="literal">R02</code>. The
+register contains the result of the addition and should match with
+the expected value of 9.</p>
+</div>
+<div class="section" title="3.3.&nbsp;More Monitor Commands">
+<div class="titlepage">
+<div>
+<div>
+<h3 class="title"><a name=
+"_more_monitor_commands"></a>3.3.&nbsp;More Monitor Commands</h3>
+</div>
+</div>
+</div>
+<p>Some useful <code class="literal">qemu</code> monitor commands
+are listed in the following table.</p>
+<div class="informaltable">
+<table border="1">
+<colgroup>
+<col>
+<col></colgroup>
+<thead>
+<tr>
+<th align="left" valign="top">Command</th>
+<th align="left" valign="top">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top">
+<p><code class="literal">help</code></p>
+</td>
+<td align="left" valign="top">
+<p>List available commands</p>
+</td>
+</tr>
+<tr>
+<td align="left" valign="top">
+<p><code class="literal">quit</code></p>
+</td>
+<td align="left" valign="top">
+<p>Quits the emulator</p>
+</td>
+</tr>
+<tr>
+<td align="left" valign="top">
+<p><code class="literal">xp /fmt addr</code></p>
+</td>
+<td align="left" valign="top">
+<p>Physical memory dump from <code class="literal">addr</code></p>
+</td>
+</tr>
+<tr>
+<td align="left" valign="top">
+<p><code class="literal">system_reset</code></p>
+</td>
+<td align="left" valign="top">
+<p>Reset the system.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The <code class="literal">xp</code> command deserves more
+explanation. The <code class="literal">fmt</code> argument
+specifies how the memory contents is to be displayed. The syntax of
+<code class="literal">fmt</code> is <code class=
+"literal">&lt;count&gt;&lt;format&gt;&lt;size&gt;</code>.</p>
+<div class="variablelist">
+<dl>
+<dt><span class="term"><code class=
+"literal">count</code></span></dt>
+<dd>specifies no. of data items to be dumped.</dd>
+<dt><span class="term"><code class=
+"literal">size</code></span></dt>
+<dd>specifies the size of each data item. <code class=
+"literal">b</code> for 8 bits, <code class="literal">h</code> for
+16 bits, <code class="literal">w</code> for 32 bits and
+<code class="literal">g</code> for 64 bits.</dd>
+<dt><span class="term"><code class=
+"literal">format</code></span></dt>
+<dd>specifies the display format. <code class="literal">x</code>
+for hex, <code class="literal">d</code> for signed decimal,
+<code class="literal">u</code> for unsigned decimal, <code class=
+"literal">o</code> for octal, <code class="literal">c</code> for
+char and <code class="literal">i</code> for asm instructions.</dd>
+</dl>
+</div>
+<p>This <code class="literal">xp</code> command with the
+<code class="literal">i</code> format, can be used to disassemble
+the instructions present in memory. To disassemble the instructions
+located at <code class="literal">0x0</code>, the <code class=
+"literal">xp</code> command with the <code class=
+"literal">fmt</code> specified as <code class="literal">4iw</code>
+can be used. The <code class="literal">4</code> specifies 4 items
+are to be displayed, <code class="literal">i</code> specifies that
+the items are to be printed as instructions (yes, a built in
+disassembler!), <code class="literal">w</code> specifies that the
+items are 32 bits in size. The output of the command is shown
+below.</p>
+<pre class="programlisting">
+<code class="no-highlight">(qemu) xp /4iw 0x0
+0x00000000:  mov        r0, #5  ; 0x5
+0x00000004:  mov        r1, #4  ; 0x4
+0x00000008:  add        r2, r1, r0
+0x0000000c:  b  0xc</code>
+</pre></div>
+</div>
+<div class="navfooter">
+<hr>
+<table width="100%" summary="Navigation footer">
+<tr>
+<td width="40%" align="left"><a accesskey="p" href=
+"arm-lab.html"><img src="images/prev.png" alt="Prev" width="48"
+height="48"></a>&nbsp;</td>
+<td width="20%" align="center">&nbsp;</td>
+<td width="40%" align="right">&nbsp;<a accesskey="n" href=
+"asm-directives.html"><img src="images/next.png" alt="Next" width=
+"48" height="48"></a></td>
+</tr>
+<tr>
+<td width="40%" align="left" valign="top">2.&nbsp;Setting up the
+ARM Lab&nbsp;</td>
+<td width="20%" align="center"><a accesskey="h" href=
+"index.html"><img src="images/home.png" alt="Home" width="48"
+height="48"></a></td>
+<td width="40%" align="right" valign="top">&nbsp;4.&nbsp;More
+Assembler Directives</td>
+</tr>
+</table>
+</div>
+</div>
+</body>
+</html>

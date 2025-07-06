@@ -78,7 +78,7 @@ typedef enum {
 typedef struct {
     uint32_t txbuf_len;
     uint32_t rxbuf_len;
-    uint8_t *                                                                                         txbuf;
+    uint8_t *txbuf;
     uint8_t *rxbuf;
     struct {
         uint16_t buadrate;

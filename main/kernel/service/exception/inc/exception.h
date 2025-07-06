@@ -131,4 +131,74 @@ typedef struct __attribute__((packed)) ContextStateFrame {
 
 void exception_dump(sContextStateFrame *frame );
 void trigger_crash(int crash_id);
+
+
+#include <stdint.h>
+
+/**
+ * @brief Complete exception context structure
+ * @note Member order MUST match assembly save sequence exactly
+ * @warning Changing member order requires updating offsets in assembly
+ */
+typedef struct {
+    /* ------------------------------------ */
+    /* FPU State (Conditionally Saved) */
+    /* ------------------------------------ */
+    uint32_t s[32];     // FPU registers S0-S15 (auto-saved if FPU active), S16-S31 (manually saved)
+    uint32_t fpscr;  // FPU status/control register
+
+    /* ------------------------------------ */
+    /* General-Purpose Registers (Manually Saved) */
+    /* ------------------------------------ */
+    uint32_t r4;  // Must match assembly STMIA sequence
+    uint32_t r5;
+    uint32_t r6;
+    uint32_t r7;
+    uint32_t r8;
+    uint32_t r9;
+    uint32_t r10;
+    uint32_t r11;
+
+    /* ------------------------------------ */
+    /* Hardware Auto-Saved Registers (From Stack) */
+    /* ------------------------------------ */
+    uint32_t r0;   // Loaded from exception stack
+    uint32_t r1;
+    uint32_t r2;
+    uint32_t r3;
+    uint32_t r12;  // Temporary register
+    uint32_t lr;   // EXC_RETURN value
+    uint32_t pc;   // Exception PC
+    uint32_t xpsr; // Contains exception number
+
+    /* ------------------------------------ */
+    /* System Registers */
+    /* ------------------------------------ */
+    uint32_t msp;      // Main Stack Pointer
+    uint32_t psp;      // Process Stack Pointer
+    uint32_t primask;  // Interrupt mask (saved immediately on entry)
+    uint32_t faultmask;
+    uint32_t basepri;
+    uint32_t control;  // Stack selection and privilege
+
+    /* ------------------------------------ */
+    /* Fault Diagnostic Registers */
+    /* ------------------------------------ */
+    uint32_t mmfar;    // MemManage Fault Address (MMFAR)
+    uint32_t bfar;     // Bus Fault Address (BFAR)
+    uint32_t cfsr;     // Configurable Fault Status (CFSR)
+    uint32_t hfsr;     // HardFault Status (HFSR)
+    uint32_t dfsr;     // Debug Fault Status (DFSR)
+    uint32_t afsr;     // Auxiliary Fault Status (AFSR)
+
+    /* ------------------------------------ */
+    /* Metadata */
+    /* ------------------------------------ */
+    uint32_t exception_id; // IPSR exception number
+    uint32_t timestamp;    // DWT cycle count
+} ExceptionContext;
+
+extern ExceptionContext g_exc_ctx;
+void analyze_exception(void);
+void exception_printf(const char *fmt, ...);
 #endif // __EXCEPTION_H__

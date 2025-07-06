@@ -5,13 +5,12 @@ https://github.com/SCons
 1. 安装python2.7或以上版本，执行python2.x的安装包程序python-2.7.12.amd64.msi进行安装即可
 
 2. 安装scons
-
-　　下载scons-3.0.4.zip压缩包并解压缩，（http://sourceforge.net/projects/scons/files/scons/2.3.2/）
-
-　　CMD下进入解压后的scons-3.0.4文件夹
-
-　　执行命令 python setup.py install 。这将会编译SCons，安装scons脚本到python目录（C:\Python27\Scripts），同时会安装SCons编译引擎到python使用的库目录（C:\Python27\scons）。
-
+    * 安装包安装
+      * 下载scons-3.0.4.zip压缩包并解压缩，（http://sourceforge.net/projects/scons/files/scons/2.3.2/）
+      * CMD下进入解压后的scons-3.0.4文件夹
+      * 执行命令 python setup.py install 。这将会编译SCons，安装scons脚本到python目录（C:\Python27\Scripts），同时会安装SCons编译引擎到python使用的库目录（C:\Python27\scons）。
+    * pip安装
+      * python -m pip install scons
 执行scons -v 测试是否安装成功。
 
 3. 构建环境

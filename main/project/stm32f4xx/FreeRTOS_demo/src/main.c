@@ -59,7 +59,7 @@ void vTaskCode( void * pvParameters )
       i = 0;
       j = 0;
       // trigger_crash(6);
-      // vTaskDelay(1000);
+      vTaskDelay(1000);
   }
 }
 
@@ -86,7 +86,7 @@ TaskHandle_t xHandle = NULL;
 }
 void HAL_MspInit(void)
 {
-  // WWDG_Enable
+  BSP_LED_Init(LED2);
 
 }
 /**
@@ -111,12 +111,12 @@ int main(void)
   /* Configure the system clock to 84 MHz */
   SystemClock_Config();
 
-  syslog_init();
 
+// BSP_LED_Off(LED2);
+  syslog_init();
   /* Output a message on Hyperterminal using printf function */
   // while(1)
-  // printf(" -- hello world --");
-
+  printf(" -- hello world --");
   MainTaskCreate();
   // void exception_dump(void);
   // exception_dump();

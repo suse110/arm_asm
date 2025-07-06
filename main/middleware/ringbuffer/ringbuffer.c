@@ -435,23 +435,20 @@ static bool is_power_of_2(uint32_t x);
 static uint32_t roundup_pow_of_two(uint32_t x);
 #endif
 
-ringbuffer_t *rb_init(uint8_t *buffer, uint32_t size)
+void rb_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t size)
 {
-    ringbuffer_t *rb;
 #if RB_ADDRESS_POWER_OF_2
     /* size must be a power of 2 */
     RB_ASSERT(!is_power_of_2(size));
 #endif
-    rb = (ringbuffer_t *)RB_MALLOC(sizeof(ringbuffer_t));
-    if (!rb)
-        return NULL;
+
     rb->buffer = buffer;
     rb->size = size;
     rb->wptr = rb->rptr = 0;
     return rb;
 }
 
-ringbuffer_t *rb_alloc(uint32_t size)
+bool rb_alloc(ringbuffer_t *rb, uint32_t size)
 {
     uint8_t *buffer;
     ringbuffer_t *ret;
@@ -465,12 +462,9 @@ ringbuffer_t *rb_alloc(uint32_t size)
 #endif
     buffer = (uint8_t *)RB_MALLOC(size);
     if (!buffer)
-        return NULL;
-    ret = rb_init(buffer, size);
-
-    if (!ret)
-        RB_FREE(buffer);
-    return ret;
+        return false;
+    rb_init(rb, buffer, size);
+    return true;
 }
 
 void rb_reset(ringbuffer_t *rb)

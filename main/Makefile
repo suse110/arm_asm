@@ -1,7 +1,7 @@
-PROJS = lm3s811/main \
-		stm32f4xx/main \
+PROJS = stm32f4xx/main \
 		stm32f4xx/NetduinoPlus2 \
 		stm32l5xx/main 
+# lm3s811/main 
 
 # 一般情况下，linux是有 LANG这个环境变量 而window没有的，所有通过  ifeq ($(LANG),)  是否为空即可判断操作系统。
 # windows情况下，一般情况是要用cl.exe 编译的，所以要用if 之下 else之上的块。
@@ -20,11 +20,11 @@ clean:
 	@for proj in $(PROJS); do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/$$proj/GCC clean|| exit "$$?"; done
 else
 #windows
-SDKPATH=J:/document/doc/src/os/toyos/src/gnu/clion-stm32/arm_asm/main
+SDKPATH=D:/src/os/arm_asm/main/project/stm32f4xx/main
 .DEFAULT_GOAL := all
 all :
 	@echo "begin compile ALL exercises for assembly samples in windows......................."
-	@for %%proj in ($(PROJS)) do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/%%proj/GCC || exit "$$?"
+	@for  %%proj in ($(PROJS)) do $(MAKE) SDKPATH=$(SDKPATH) -C ./project/%%proj/GCC || exit "$$?"
 	@echo "compile ALL exercises finished successfully! ......"
 .PHONY : clean
 clean:

@@ -56,10 +56,18 @@ endif
 ifeq ($(EXCEPTION_ENABLE),y)
 include $(SDKPATH)/$(SERVICE_DIR)/exception/module.mk
 endif
+ifeq ($(SYSLOG_ENABLE),y)
 
 #syslog
 SRC += $(SERVICE_DIR)/syslog/src/syslog.c
+ifeq ($(CHIP_COFNIG),stm32f4xx)
+
+ifneq ($(QEMU_ENABLE),y)
 SRC += $(SERVICE_DIR)/syslog/src/portable/stm32/serial.c
+endif
+endif
+endif
+
 CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/syslog/inc
 
 #stp

@@ -276,7 +276,7 @@ JOYState_TypeDef BSP_JOY_GetState(void);
 void             BSP_JOY_DeInit(void);
 #endif /* HAL_ADC_MODULE_ENABLED */
 
-  
+void MX_USART1_UART_Init(void);
 /**
   * @}
   */ 

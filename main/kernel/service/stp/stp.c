@@ -124,3 +124,8 @@ void stp_write_exception(uint8_t *buffer, uint32_t length)
     stp_write(buffer, length, 0x5B, STP_ID_EXCEPTION_DUMP);
 }
 
+void stp_write_shell(uint8_t *buffer, uint32_t length)
+{
+    stp_write(buffer, length, 0x5B, STP_ID_SHELL);
+}
+

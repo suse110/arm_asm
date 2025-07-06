@@ -2,13 +2,15 @@
 #include <stdint.h>
 #include <string.h>
 #include "shell.h"
+#include "serial.h"
 #include "hal.h"
 
 uint8_t shell_get_line(char *line, uint8_t max_len)
 {
     char chr;
     static uint8_t count = 0;
-    lite_getchar(&chr);
+    // lite_getchar(&chr);
+    serial_read(&chr, 1);
     {
         if (count >= max_len)
         {
@@ -40,7 +42,8 @@ uint8_t shell_get_line(char *line, uint8_t max_len)
         default:
             count++;
         }
-        lite_putchar(chr);
+        // lite_putchar(chr);
+        serial_write(&chr, 1);
     }
     return 0;
 }

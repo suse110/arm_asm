@@ -6,3 +6,4 @@ void syslog_init(void)
     serial_init();
     
 }
+

@@ -54,12 +54,12 @@ $(BUILD_DIR)/$(EXEC).elf:$(Objects) $(AsmObjects)
 	@$(CROSS_COMPILE)gcc -o $@ $^  $(CFLAGS) $(LDFLAGS) -T $(LINKSCRIPT)
 
 $(Objects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.c
-	@echo [CC] $(notdir $<) 
+	@echo [CC]  $<
 	@mkdir -p $(shell dirname $@)
 	@$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
 
 $(AsmObjects): $(BUILD_DIR)/%.o : $(SDKPATH)/%.s
-	@echo [ASM] $(notdir $<)
+	@echo [ASM]  $<
 	@mkdir -p $(shell dirname $@)
 	@$(CROSS_COMPILE)gcc -c $(CFLAGS) $^ -o $@
 
@@ -77,7 +77,7 @@ all:$(BUILD_DIR)/$(EXEC).elf
 	@echo [HEX] $(BUILD_DIR)/$(EXEC).hex
 	@$(CROSS_COMPILE)objcopy -O ihex $(BUILD_DIR)/$(EXEC).elf $(BUILD_DIR)/$(EXEC).hex
 	@echo [ASM] $(BUILD_DIR)/$(EXEC).asm
-	@$(CROSS_COMPILE)objdump -D -S $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
+	@$(CROSS_COMPILE)objdump -d $(BUILD_DIR)/$(EXEC).elf > $(BUILD_DIR)/$(EXEC).asm
 	@echo ------------------------------------------------
 	@$(CROSS_COMPILE)size $(BUILD_DIR)/$(EXEC).elf
 	@echo ------------------------------------------------

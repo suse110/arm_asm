@@ -149,8 +149,8 @@ define unwind_stack
 end
 
 target remote localhost:3333
-load
+// load
 set disassemble-next-line on
 set pagination off
-b Reset_Handler
-c
+// b Reset_Handler
+// c

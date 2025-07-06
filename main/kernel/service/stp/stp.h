@@ -3,10 +3,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 //stp:serial transmission protocol
-#define STP_HEAD 0x5A//0b01111110
+#define STP_HEAD 0x07//0b00000111
 
 #define STP_ID_LOG             0x0001
 #define STP_ID_EXCEPTION_DUMP  0x0002
+#define STP_ID_SHELL           0x0003
 // #define STP_CHECKSUM_ENABLE
 
 typedef enum {
@@ -36,7 +37,15 @@ typedef struct {
     uint8_t *payload;
 } stp_pkt_t;
 
+typedef uint32_t scp_handle_t;
+typedef struct {
 
+} stp_settings_t;
+
+typedef struct {
+
+}  stp_dev_t;
+scp_handle_t stp_init(stp_dev_t *dev, stp_settings_t *settings);
 void stp_wrapper(stp_pkt_t *stp_pkt, uint8_t *buffer, uint32_t length, uint8_t type, uint16_t id);
 void stp_write_pkt(stp_pkt_t *stp_pkt);
 void stp_write_header(uint32_t length, uint8_t type, uint16_t id);
