@@ -71,7 +71,6 @@ SECTIONS
         *(.rodata*)
 
         KEEP(*(.eh_frame*))
-
     } > FLASH
     __shell_command_start=.;
     .shell_command : {*(.shell_command)} > FLASH

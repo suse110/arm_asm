@@ -172,17 +172,17 @@ PendSV_Handler:
 g_pfnVectors:
   .word  _estack
   .word  Reset_Handler
-  .word  NMI_Handler
-  .word  HardFault_Handler
-  .word  MemManage_Handler
-  .word  BusFault_Handler
-  .word  UsageFault_Handler
+  .word  __NMI_Handler__
+  .word  __HardFault_Handler__
+  .word  __MemManage_Handler__
+  .word  __BusFault_Handler__
+  .word  __UsageFault_Handler__
   .word  0
   .word  0
   .word  0
   .word  0
   .word  SVC_Handler
-  .word  DebugMon_Handler
+  .word  __DebugMon_Handler__
   .word  0
   .word  PendSV_Handler
   .word  SysTick_Handler

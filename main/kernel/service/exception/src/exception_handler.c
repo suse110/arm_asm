@@ -78,6 +78,7 @@ typedef struct
 } sCrashInfo;
 
 static sCrashInfo last_crash_info __attribute__((section(".noinit.crash_info")));
+exception_context_t g_exception_context;
 
 /*
 The assembly code checks which stack we are using (MSP or PSP), and then loads the
@@ -90,55 +91,293 @@ odd address for ARM Thumb code
 
 #define HARDFAULT_HANDLING_ASM(_x) \
     __asm volatile(                \
-        /*                    */ \ 
-        "mrs r3, primask\n" /*                    */ \ 
-        "cpsid i\n" /*                    */ \ 
-        "ldr r1, =last_crash_info\n" /*                    */ \ 
-        "ldr r2, =0xdead55aa\n" /*                    */ \ 
-        "str r2, [r1]\n" /*                    */ \ 
-        "add r1, r1, #4\n" /*                    */ \ 
-        "mov r4, lr \n" /*                    */ \ 
-        "tst lr, #4 \n" /*                    */ \ 
-        "ite eq \n" /*                    */ \ 
-        "mrseq r0, msp \n" /*                    */ \ 
-        "mrsne r0, psp \n" /* load r0            */ \ 
-        "ldr r2, [r0, #0] \n" /* store r0           */ \ 
-        "str r2, [r1, #0] \n" /* load r1            */ \ 
-        "ldr r2, [r0, #4] \n" /* store r1           */ \ 
-        "str r2, [r1, #4] \n" /* load r2            */ \ 
-        "ldr r2, [r0, #8] \n" /* store r2           */ \ 
-        "str r2, [r1, #8] \n" /* load r3            */ \ 
+        /*                    */ \
+        "mrs r3, primask\n" /*                    */ \
+        "cpsid i\n" /*                    */ \
+        "ldr r1, =last_crash_info\n" /*                    */ \
+        "ldr r2, =0xdead55aa\n" /*                    */ \
+        "str r2, [r1]\n" /*                    */ \
+        "add r1, r1, #4\n" /*                    */ \
+        "mov r4, lr \n" /*                    */ \
+        "tst lr, #4 \n" /*                    */ \
+        "ite eq \n" /*                    */ \
+        "mrseq r0, msp \n" /*                    */ \
+        "mrsne r0, psp \n" /* load r0            */ \
+        "ldr r2, [r0, #0] \n" /* store r0           */ \
+        "str r2, [r1, #0] \n" /* load r1            */ \
+        "ldr r2, [r0, #4] \n" /* store r1           */ \
+        "str r2, [r1, #4] \n" /* load r2            */ \
+        "ldr r2, [r0, #8] \n" /* store r2           */ \
+        "str r2, [r1, #8] \n" /* load r3            */ \
         "ldr r2, [r0, #12] \n" /* store r3           */ \
-        "str r2, [r1, #12] \n" /* load r12           */ \ 
+        "str r2, [r1, #12] \n" /* load r12           */ \
         "ldr r2, [r0, #16] \n" /* store r12          */ \
-        "str r2, [r1, #16] \n" /* load lr            */ \ 
+        "str r2, [r1, #16] \n" /* load lr            */ \
         "ldr r2, [r0, #20] \n" /* store lr           */ \
-        "str r2, [r1, #20] \n" /* load pc            */ \ 
+        "str r2, [r1, #20] \n" /* load pc            */ \
         "ldr r2, [r0, #24] \n" /* store pc           */ \
-        "str r2, [r1, #24] \n" /* load xpsr          */ \ 
+        "str r2, [r1, #24] \n" /* load xpsr          */ \
         "ldr r2, [r0, #28] \n" /* store xpsr         */ \
-        "str r2, [r1, #28] \n" /* add pointer        */ \ 
-        "add r1, r1, #28 \n" /* store r4-r11       */ \ 
-        "stmia r1!, {r4-r11}\n" /* load psp           */ \ 
-        "mrs r2, psp \n" /* store psp          */ \ 
-        "str r2, [r1, #4] \n" /* load msp           */ \ 
-        "mrs r2, msp \n" /* store msp          */ \ 
-        "str r2, [r1, #8] \n" /* load control       */ \ 
-        "mrs r2, control \n" /* store control      */ \ 
-        "str r2, [r1, #12] \n" /* load basepri       */ \ 
-        "mrs r2, basepri \n" /* store basepri      */ \ 
-        "str r2, [r1, #16] \n" /* store primask      */ \ 
-        "str r3, [r1, #20] \n" /* load faultmask     */ \ 
-        "mrs r2, faultmask \n" /* store faultmask    */ \ 
-        "str r2, [r1, #24] \n" /*                    */ \ 
-        "ldr r0, =last_crash_info\n" /*                    */ \ 
+        "str r2, [r1, #28] \n" /* add pointer        */ \
+        "add r1, r1, #28 \n" /* store r4-r11       */ \
+        "stmia r1!, {r4-r11}\n" /* load psp           */ \
+        "mrs r2, psp \n" /* store psp          */ \
+        "str r2, [r1, #4] \n" /* load msp           */ \
+        "mrs r2, msp \n" /* store msp          */ \
+        "str r2, [r1, #8] \n" /* load control       */ \
+        "mrs r2, control \n" /* store control      */ \
+        "str r2, [r1, #12] \n" /* load basepri       */ \
+        "mrs r2, basepri \n" /* store basepri      */ \
+        "str r2, [r1, #16] \n" /* store primask      */ \
+        "str r3, [r1, #20] \n" /* load faultmask     */ \
+        "mrs r2, faultmask \n" /* store faultmask    */ \
+        "str r2, [r1, #24] \n" /*                    */ \
+        "ldr r0, =last_crash_info\n" /*                    */ \
         "b HardFault_Handler_C \n"\
     )
 
-__attribute__((optimize("O0"))) void exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type)
+void exception_common_entry(unsigned int *sp) {
+    __asm volatile (
+        "ldr r1, =g_exception_context\n"
+#ifdef FLOAT_POINT_EXCEPTION_DUMP_ENABLE
+        /* === FPU State Preservation === */
+        /* 1. Check if FPU context exists (EXC_RETURN[4]) */
+        "tst lr, #0x10\n"
+        "bne save_core_regs\n"
+        
+        /* 2. Save full FPU state (S0-S31) */
+        "vstmia r1!, {s0-s31}\n"
+        
+        /* 3. Save FPSCR from exception stack */
+        "ldr r2, [r0, #32]\n"     // FPSCR is at SP+32 if FPU active
+        "str r2, [r1], #4\n"
+        "save_core_regs:\n"
+        "add r1, #(8 * 4)\n"        // Skip FPU area (8 regs * 4 bytes)
+#endif
+        "str r0, [r1], #4\n"        /* save sp */
+        /* === General-Purpose Registers === */
+        /* 4. Save R4-R11 (not auto-saved by HW) */
+        "stmia r1!, {r4-r11}\n"    // Matches struct member order
+        "mov r11, r2\n" //save fault type to r11
+        /* === Hardware Auto-Saved Registers === */
+        "ldmia r0!, {r2-r5}\n"      /* 5. Load R0-R3 from exception stack */
+        "stmia r1!, {r2-r5}\n"      /* 5. Store R0-R3 to exception context */
+        
+        "ldmia r0!, {r2-r5}\n" /* 6. Load R12, LR, PC, xPSR */
+        "stmia r1!, {r2-r5}\n" /* 6. Store R12, LR, PC, xPSR */
+        
+        /* === System Registers === */
+        /* 7. Save MSP/PSP */
+        "mrs r2, MSP\n"
+        "mrs r3, PSP\n"
+        "stmia r1!, {r2-r3, r12}\n" /* 8. Save PRIMASK (from R12) */
+        
+        /* 9. Save remaining system regs */
+        "mrs r2, FAULTMASK\n"
+        "mrs r3, BASEPRI\n"
+        "mrs r4, CONTROL\n"
+        "stmia r1!, {r2-r4, lr}\n"     // faultmask, basepri, control, EXC_RETURN
+        
+        /* === Finalize === */
+        /* 11. Call C analyzer */
+        "ldr r0, =g_exception_context\n"
+        "mov r1, r11\n"
+        "b exception_common_handler_c\n"
+    );
+}
+
+/* Macro to define exception handlers with consistent save sequence */
+#define DEFINE_EXCEPTION_HANDLER(name) \
+__attribute__((naked)) void name(void) { \
+    __asm volatile ( \
+        /* === PHASE 1: Immediate State Preservation === */ \
+        /* 1. Save PRIMASK to R12 (caller-saved reg) */ \
+        "mrs r12, PRIMASK\n\t" \
+        /* 2. Disable interrupts globally */ \
+        "cpsid i\n\t" \
+        /* === PHASE 2: Determine Stack Pointer === */ \
+        "tst lr, #4\n\t"          /* Check EXC_RETURN[2] for stack selection */ \
+        "ite eq\n\t" \
+        "mrseq r0, msp\n\t"       /* MSP if 0 */ \
+        "mrsne r0, psp\n\t"       /* PSP if 1 */ \
+        /* === PHASE 3: Jump to Common Handler === */ \
+        /* set exception number */ \
+        "b exception_common_entry\n\t" \
+    ); \
+}
+
+DEFINE_EXCEPTION_HANDLER(__NMI_Handler__)
+DEFINE_EXCEPTION_HANDLER(__HardFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__MemManage_Handler__)
+DEFINE_EXCEPTION_HANDLER(__BusFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__UsageFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__DebugMon_Handler__)
+
+__attribute__((optimize("O0"))) void __exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type)
 {
     exception_dump(&sCrashInfo->frame);
 }
+// 定义故障信息结构体
+typedef struct {
+    uint32_t mask;
+    const char *name;
+} fault_info_t;
+
+// 定义各故障类型的信息表
+static const fault_info_t afsr_faults[] = {
+    {0xFFFFFFFF, "Alignment Fault occurred, AFSR: 0x%08x\n"}
+};
+
+static const fault_info_t cfsr_faults[] = {
+    {SCB_CFSR_DIVBYZERO_Msk, "  - Divide by Zero Fault\n"},
+    {SCB_CFSR_UNALIGNED_Msk, "  - Unaligned Access Fault\n"},
+    {SCB_CFSR_NOCP_Msk, "  - No Coprocessor Fault\n"},
+    {SCB_CFSR_INVPC_Msk, "  - Invalid PC Load Fault\n"},
+    {SCB_CFSR_INVSTATE_Msk, "  - Invalid State Fault\n"},
+    {SCB_CFSR_UNDEFINSTR_Msk, "  - Undefined Instruction Fault\n"},
+    {SCB_CFSR_BFARVALID_Msk, "  - Bus Fault Address Register Valid\n"},
+    {SCB_CFSR_MMARVALID_Msk, "  - Memory Management Fault Address Register Valid\n"},
+    {SCB_CFSR_MSTKERR_Msk, "  - Memory Management Stacking Error\n"},
+    {SCB_CFSR_MUNSTKERR_Msk, "  - Memory Management Unstacking Error\n"},
+    {SCB_CFSR_DACCVIOL_Msk, "  - Memory Management Data Access Violation\n"},
+    {SCB_CFSR_IACCVIOL_Msk, "  - Memory Management Instruction Access Violation\n"},
+    {SCB_CFSR_STKERR_Msk, "  - Bus Fault Stacking Error\n"},
+    {SCB_CFSR_UNSTKERR_Msk, "  - Bus Fault Unstacking Error\n"},
+    {SCB_CFSR_IMPRECISERR_Msk, "  - Imprecise Bus Fault\n"},
+    {SCB_CFSR_PRECISERR_Msk, "  - Precise Bus Fault\n"},
+    {SCB_CFSR_IBUSERR_Msk, "  - Instruction Bus Fault\n"}
+};
+
+static const fault_info_t dfsr_faults[] = {
+    {SCB_DFSR_HALTED_Msk, "  - Debug Halted Fault\n"},
+    {SCB_DFSR_BKPT_Msk, "  - Breakpoint Fault\n"},
+    {SCB_DFSR_DWTTRAP_Msk, "  - DWT Match Trap Fault\n"},
+    {SCB_DFSR_VCATCH_Msk, "  - Vector Catch Fault\n"},
+    {SCB_DFSR_EXTERNAL_Msk, "  - External Debug Request Fault\n"}
+};
+
+static const fault_info_t hfsr_faults[] = {
+    {SCB_HFSR_VECTTBL_Msk, "  - Vector Table Hard Fault\n"},
+    {SCB_HFSR_FORCED_Msk, "  - Forced Hard Fault\n"}
+};
+
+// 辅助函数：根据掩码表打印故障信息
+static void print_fault_details(uint32_t fault_val, const fault_info_t *faults, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        if (fault_val & faults[i].mask) {
+            exception_printf(faults[i].name);
+        }
+    }
+}
+
+// Following symbols are defined by the linker.
+// Start address for the initialization values of the .data section.
+extern uint32_t _sidata[];
+// Start address for the .data section
+extern uint32_t _sdata[];
+// End address for the .data section
+extern uint32_t _edata[];
+// Start address for the .bss section
+extern uint32_t _sbss[];
+// End address for the .bss section
+extern uint32_t _ebss[];
+// End address for stack
+extern uint32_t _estack[];
+
+extern uint32_t _stext[];
+extern uint32_t _etext[];
+extern uint32_t _s_ram_vtor[];
+extern uint32_t _e_ram_vtor[];
+extern uint32_t _sheap[];
+extern uint32_t _eheap[];
+
+exception_dump_address_t exception_dump_address[] = {
+    {"text", (uint32_t)_stext, (uint32_t)_etext},
+    {"data", (uint32_t)_sdata, (uint32_t)_edata},
+    // {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
+    {"heap", (uint32_t)_sheap, (uint32_t)_eheap},
+    // SCS includes SCnSCB,SysTick,NVIC,SCB,CoreDebug
+    {"SCS", SCS_BASE, CoreDebug_BASE + sizeof(CoreDebug_Type)},
+    {"DWT", DWT_BASE, DWT_BASE + sizeof(DWT_Type)},
+    {"ITM", ITM_BASE, ITM_BASE + sizeof(ITM_Type)},
+    {"TPI", TPI_BASE, TPI_BASE + sizeof(TPI_Type)},
+    {NULL, 0, 0}};
+
+
+void exception_memory_dump(exception_dump_address_t *address, uint32_t size)
+{
+    exception_printf("memory dump start:\n");
+
+    exception_printf("memory dump end.\n");
+
+}
+void exception_registers_dump(exception_context_t *exception_context)
+{
+    exception_printf(">>>>>>>>>>>>START START START START START START<<<<<<<<<<<<\n");
+    exception_printf("pc  : %08x  sp  : %08x  lr  : %08x  xpsr: %08x\n",
+                    exception_context->pc, exception_context->sp,
+                    exception_context->lr, exception_context->xpsr);
+    exception_printf("r0  : %08x  r1  : %08x  r2  : %08x  r3  : %08x\n",
+                    exception_context->r0, exception_context->r1,
+                    exception_context->r2, exception_context->r3);
+    exception_printf("r4  : %08x  r5  : %08x  r6  : %08x  r7  : %08x\n",
+                    exception_context->r4, exception_context->r5,
+                    exception_context->r6, exception_context->r7);
+    exception_printf("r8  : %08x  r9  : %08x  r10 : %08x  r11 : %08x\n",
+                    exception_context->r8, exception_context->r9,
+                    exception_context->r10, exception_context->r11);
+    exception_printf("r12 : %08x\n", exception_context->r12);
+    // 根据 fault 寄存器的值打印错误类型
+    if (exception_context->afsr) {
+        exception_printf(afsr_faults[0].name, exception_context->afsr);
+    }
+    if (exception_context->cfsr) {
+        exception_printf("Configurable Fault occurred, CFSR: 0x%08x\n", exception_context->cfsr);
+        print_fault_details(exception_context->cfsr, cfsr_faults, sizeof(cfsr_faults)/sizeof(cfsr_faults[0]));
+    }
+    if (exception_context->dfsr) {
+        exception_printf("Debug Fault occurred, DFSR: 0x%08x\n", exception_context->dfsr);
+        print_fault_details(exception_context->dfsr, dfsr_faults, sizeof(dfsr_faults)/sizeof(dfsr_faults[0]));
+    }
+    if (exception_context->hfsr) {
+        exception_printf("Hard Fault occurred, HFSR: 0x%08x\n", exception_context->hfsr);
+        print_fault_details(exception_context->hfsr, hfsr_faults, sizeof(hfsr_faults)/sizeof(hfsr_faults[0]));
+    }
+    if (SCB_CFSR_BFARVALID_Msk & exception_context->cfsr) {
+        exception_printf("Bus Fault Address: 0x%08x\n", exception_context->bfar);
+    }
+    if (SCB_CFSR_MEMFAULTSR_Msk & exception_context->cfsr) {
+        exception_printf("Memory Fault Address: 0x%08x\n", exception_context->mmfar);
+    }
+
+    exception_printf(">>>>>>>>>>>>END END END END END END<<<<<<<<<<<<\n");
+
+}
+
+__attribute__((optimize("O0"))) void exception_common_handler_c(exception_context_t *exception_context)
+{
+    exception_context->exception_id = EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER;
+
+    exception_context->afsr = SCB->AFSR;
+    exception_context->cfsr = SCB->CFSR;
+    exception_context->dfsr = SCB->DFSR;
+    exception_context->hfsr = SCB->HFSR;
+    exception_context->mmfar = SCB->MMFAR;
+    exception_context->bfar = SCB->BFAR;
+
+  const bool fpu_stack_rsvd = ((exception_context->exc_return & (1 << 4)) == 0);
+  const bool stack_force_align = ((exception_context->xpsr & (1 << 9)) != 0);
+
+  exception_context->sp_before_exception = (uint32_t)exception_context->sp + (fpu_stack_rsvd ? 0x68 : 0x20);
+
+  if (stack_force_align) {
+    exception_context->sp_before_exception += 0x4;
+  }
+  exception_registers_dump(exception_context);
+
+  while(1);
+}
+
 
 /**
  * HardFaultHandler_C:
@@ -227,27 +466,6 @@ indicating the processor is in thumb mode11.
 
 /*remote fault recovery*/
 
-// Following symbols are defined by the linker.
-// Start address for the initialization values of the .data section.
-extern uint32_t _sidata[];
-// Start address for the .data section
-extern uint32_t _sdata[];
-// End address for the .data section
-extern uint32_t _edata[];
-// Start address for the .bss section
-extern uint32_t _sbss[];
-// End address for the .bss section
-extern uint32_t _ebss[];
-// End address for stack
-extern uint32_t _estack[];
-
-extern uint32_t _stext[];
-extern uint32_t _etext[];
-extern uint32_t _s_ram_vtor[];
-extern uint32_t _e_ram_vtor[];
-extern uint32_t _sheap[];
-extern uint32_t _eheap[];
-
 // Prevent inlining to avoid persisting any variables on stack
 __attribute__((noinline)) static void prv_cinit(void)
 {
@@ -294,26 +512,28 @@ void DebugMon_Handler(void)
 
 /* The prototype shows it is a naked function - in effect this is just an
 assembly function. */
-__attribute__((naked)) void HardFault_Handler(void)
-{
-    // printf("[%s]", __func__);
-    HARDFAULT_HANDLING_ASM();
-}
-__attribute__((naked)) void MemoryManagement_Handler(void)
-{
-    // printf("[%s]", __func__);
-    HARDFAULT_HANDLING_ASM();
-}
-__attribute__((naked)) void BusFault_Handler(void)
-{
-    // printf("[%s]", __func__);
-    HARDFAULT_HANDLING_ASM();
-}
-__attribute__((naked)) void UsageFault_Handler(void)
-{
-    // printf("[%s]", __func__);
-    HARDFAULT_HANDLING_ASM();
-}
+// __attribute__((naked)) void HardFault_Handler(void)
+// {
+//     // printf("[%s]", __func__);
+//     HARDFAULT_HANDLING_ASM();
+// }
+// __attribute__((naked)) void MemManage_Handler(void)
+// {
+//     // printf("[%s]", __func__);
+//     HARDFAULT_HANDLING_ASM();
+// }
+// __attribute__((naked)) void BusFault_Handler(void)
+// {
+//     // printf("[%s]", __func__);
+//     HARDFAULT_HANDLING_ASM();
+// }
+// __attribute__((naked)) void UsageFault_Handler(void)
+// {
+//     // printf("[%s]", __func__);
+//     HARDFAULT_HANDLING_ASM();
+// }
+
+
 __attribute__((naked)) void WWDG_IRQHandler(void)
 {
     // printf("[%s]", __func__);
@@ -340,6 +560,13 @@ __attribute__((naked)) static void SVC_Handler(void)
 // static void SysTick_Handler(void) {
 //   HARDFAULT_HANDLING_ASM();
 // }
+extern void __NMI_Handler__(void);
+extern void __HardFault_Handler__(void);
+extern void __MemManage_Handler__(void);
+extern void __BusFault_Handler__(void);
+extern void __UsageFault_Handler__(void);
+extern void __DebugMon_Handler__(void);
+
 extern void Reset_Handler(void);
 extern void PendSV_Handler(void);
 extern void SysTick_Handler(void);
@@ -349,34 +576,22 @@ extern void SysTick_Handler(void);
 __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16 + IRQ_NUM_MAX])(void) = {
     (void *)(&_estack), // initial stack pointer
     Reset_Handler,
-    NMI_Handler,
-    HardFault_Handler,
-    MemoryManagement_Handler,
-    BusFault_Handler,
-    UsageFault_Handler,
+    __NMI_Handler__,
+    __HardFault_Handler__,
+    __MemManage_Handler__,
+    __BusFault_Handler__,
+    __UsageFault_Handler__,
     0,
     0,
     0,
     0,
     SVC_Handler,
-    0,
+    __DebugMon_Handler__,
     0,
     PendSV_Handler,
     SysTick_Handler,
     Irq0_Handler,
     Irq1_Handler};
-
-exception_dump_address_t exception_dump_address[] = {
-    {"text", (uint32_t)_stext, (uint32_t)_etext},
-    {"data", (uint32_t)_sdata, (uint32_t)_edata},
-    // {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
-    {"heap", (uint32_t)_sheap, (uint32_t)_eheap},
-    // SCS includes SCnSCB,SysTick,NVIC,SCB,CoreDebug
-    {"SCS", SCS_BASE, CoreDebug_BASE + sizeof(CoreDebug_Type)},
-    {"DWT", DWT_BASE, DWT_BASE + sizeof(DWT_Type)},
-    {"ITM", ITM_BASE, ITM_BASE + sizeof(ITM_Type)},
-    {"TPI", TPI_BASE, TPI_BASE + sizeof(TPI_Type)},
-    {NULL, 0, 0}};
 
 
 
@@ -399,7 +614,7 @@ void exception_printf(const char *fmt, ...) {
         // stp_write_log((uint8_t *)buf, (uint16_t)len);
     }
 }
-   
+
 void exception_init(void)
 {
     g_unaligned_buffer = &s_buffer[1];
@@ -492,7 +707,7 @@ void exception_dump(sContextStateFrame *frame)
         }
         dump_len = p_exaddr->end_address - p_exaddr->start_address;
         // printf("------------memmory region:%s:%d------------", p_exaddr->name, dump_len);
-        exception_printf("------------memmory region:%s:%d star_addr:0x%08x end_addr:0x%08x------------", 、
+        exception_printf("------------memmory region:%s:%d star_addr:0x%08x end_addr:0x%08x------------",
             p_exaddr->name, dump_len, p_exaddr->start_address, p_exaddr->end_address);
 
         memcpy(buffer, &p_exaddr->start_address, sizeof(p_exaddr->start_address));

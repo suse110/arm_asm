@@ -8,6 +8,7 @@
 #define EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER (SCB->ICSR&SCB_ICSR_VECTACTIVE_Msk)
 #define EXCEPTION_CURRENT_VECTACTIVE_ISR_NUMBER (EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER - 16)
 
+// #define FLOAT_POINT_EXCEPTION_DUMP_ENABLE
 typedef struct 
 {
     /*0*/ uint32_t sp;
@@ -141,12 +142,14 @@ void trigger_crash(int crash_id);
  * @warning Changing member order requires updating offsets in assembly
  */
 typedef struct {
+#ifdef FLOAT_POINT_EXCEPTION_DUMP_ENABLE
     /* ------------------------------------ */
     /* FPU State (Conditionally Saved) */
     /* ------------------------------------ */
     uint32_t s[32];     // FPU registers S0-S15 (auto-saved if FPU active), S16-S31 (manually saved)
     uint32_t fpscr;  // FPU status/control register
-
+#endif
+    uint32_t sp;
     /* ------------------------------------ */
     /* General-Purpose Registers (Manually Saved) */
     /* ------------------------------------ */
@@ -180,6 +183,7 @@ typedef struct {
     uint32_t faultmask;
     uint32_t basepri;
     uint32_t control;  // Stack selection and privilege
+    uint32_t exc_return;   // EXC_RETURN value
 
     /* ------------------------------------ */
     /* Fault Diagnostic Registers */
@@ -194,11 +198,12 @@ typedef struct {
     /* ------------------------------------ */
     /* Metadata */
     /* ------------------------------------ */
+    uint32_t sp_before_exception;
     uint32_t exception_id; // IPSR exception number
     uint32_t timestamp;    // DWT cycle count
-} ExceptionContext;
+} exception_context_t;
 
-extern ExceptionContext g_exc_ctx;
+extern exception_context_t g_exception_context;
 void analyze_exception(void);
 void exception_printf(const char *fmt, ...);
 #endif // __EXCEPTION_H__
