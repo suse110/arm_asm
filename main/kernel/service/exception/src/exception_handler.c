@@ -136,7 +136,7 @@ odd address for ARM Thumb code
         "b HardFault_Handler_C \n"\
     )
 
-void exception_common_entry(unsigned int *sp) {
+__attribute__((naked)) void exception_common_entry(unsigned int *sp) {
     __asm volatile (
         "ldr r1, =g_exception_context\n"
 #ifdef FLOAT_POINT_EXCEPTION_DUMP_ENABLE

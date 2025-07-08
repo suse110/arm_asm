@@ -5,8 +5,8 @@
 @SET HOME=%USERPROFILE%
 
 @REM PYTHONPATH 用于扩充Python查找模块文件的路径
-@set PYTHONPATH=D:\Tools\install\Python\Python27\Lib
-@set PYTHONHOME=D:\Tools\install\Python\Python27
+@REM @set PYTHONPATH=D:\Tools\python\Python310\Scripts
+@REM @set PYTHONHOME=D:\Tools\python\Python310
 
 @set ROOT_DIR=%CD%
 @set QEMU_ROOT=%ROOT_DIR%\tools\qemu\win\w64-202107062
@@ -18,4 +18,4 @@
 @set TOOL_ROOT=%ROOT_DIR%\tools\
 @set WIRESHARK_PATH=D:\Tools\Wireshark
 @set USR_PATH=D:\Tools\Git\bin;D:\Tools\msys64\usr\bin;D:\Tools\lua-5.3.6_Win32_bin;%WIRESHARK_PATH%
-@set PATH=%PYTHONPATH%;%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%;%USR_PATH%
+@set PATH=%PYTHONPATH%;%PYTHONHOME%;%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%;%USR_PATH%

@@ -38,7 +38,7 @@ static void trigger_mem_manage_fault(void) {
 // 触发总线fault异常
 static void trigger_bus_fault(void) {
     __asm volatile (
-        "LDR r0, =0x00000000\n"
+        "LDR r0, =0xFFFFFFFF\n"
         "LDR r1, [r0]\n"
         ::: "r0", "r1"
     ); // 从无效地址加载数据
