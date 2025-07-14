@@ -1,6 +1,6 @@
 #ifndef SERIAL_PROTOCOL_H
 #define SERIAL_PROTOCOL_H
-
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
@@ -74,6 +74,10 @@ ParamCheckResult check_int_param(const char* str, int32_t* value, int32_t min, i
 
 // 检查无符号整数参数范围
 ParamCheckResult check_uint_param(const char* str, uint32_t* value, uint32_t min, uint32_t max, const char* err_msg, SerialResponse* response);
+
+// 检查十六进制无符号整数参数范围
+ParamCheckResult check_uint_param_hex(const char* str, uint32_t* value, uint32_t min, uint32_t max, const char* err_msg, SerialResponse* response);
+
 
 // ================= 模块注册接口 =================
 void register_module(const char* module_name, ModuleCommandHandler handler);

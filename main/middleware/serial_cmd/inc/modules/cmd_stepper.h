@@ -1,5 +1,5 @@
-#ifndef STEPPER_MODULE_H
-#define STEPPER_MODULE_H
+#ifndef __CMD_STEPPER_H__
+#define __CMD_STEPPER_H__
 
 #include "../inc/serial_protocol.h"
 
@@ -27,4 +27,4 @@ SerialResponse stepper_errors_handler(const char(*params)[MAX_PARAM_LEN], uint8_
 SerialResponse stepper_syncmove_handler(const char(*params)[MAX_PARAM_LEN], uint8_t param_count);
 SerialResponse stepper_queueadd_handler(const char(*params)[MAX_PARAM_LEN], uint8_t param_count);
 
-#endif // STEPPER_MODULE_H
+#endif // __CMD_STEPPER_H__

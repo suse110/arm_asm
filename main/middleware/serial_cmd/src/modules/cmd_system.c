@@ -1,8 +1,10 @@
-#include "../inc/modules/system_module.h"
+#include "../inc/modules/cmd_system.h"
 #include "../inc/serial_protocol.h"
 #if defined(__ARM_ARCH_8M_MAIN__)
-#include "core_cm33.h"
-#elif defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#include "stm32l552xx.h"
+#elif defined(__ARM_ARCH_7M__)
+#include "stm32f1xx.h"
+#elif defined(__ARM_ARCH_7EM__)
 #include "stm32f401xe.h"
 #elif defined(__ARM_ARCH_6M__)
 #include "core_cm0.h"
@@ -65,7 +67,7 @@ static void trigger_alignment_fault(void) {
 }
 
 // 包装 switch case 语句的函数
-static bool trigger_exception_by_type(uint8_t exception_type, SerialResponse *response) {
+static bool trigger_exception_by_type(uint32_t exception_type, SerialResponse *response) {
     switch (exception_type) {
         case 0:
             trigger_hard_fault();
@@ -89,7 +91,7 @@ static bool trigger_exception_by_type(uint8_t exception_type, SerialResponse *re
             trigger_alignment_fault();
             break;
         default:
-            build_response(response, false, PARAM_FORMAT_ERROR, "Unsupported exception type %d", exception_type);
+            build_response(response, false, RESP_INVALID_PARAM, "Unsupported exception type %d", exception_type);
             return false;
     }
     return true;
@@ -101,7 +103,7 @@ SerialResponse system_exception_trigger_handler(const char(*params)[MAX_PARAM_LE
     ParamCheckResult check = check_param_count(param_count, 1, "Usage: #sys.exc <exception_type>", &response);
     if (check != PARAM_OK) return response;
     
-    uint8_t exception_type;
+    uint32_t exception_type;
     if (check_uint_param(params[0], &exception_type, 0, 255, "Invalid exception type (0-255)", &response) != PARAM_OK)
         return response;
     
@@ -127,16 +129,16 @@ static void print_register_bits(const char *reg_name, uint32_t value, const Regi
     bit_str[32] = '\0';
 
     // 打印寄存器值和二进制表示
-    printf("%s: 0x%08X (Binary: %s)\r\n", reg_name, value, bit_str);
+    printf("%s: 0x%08X (Binary: %s)\r\n", reg_name, (unsigned int)value, bit_str);
 
     // 打印每个位的含义
     for (size_t i = 0; i < desc_count; i++) {
         const RegisterBitDesc *desc = &bit_descs[i];
         uint32_t bit_mask = ((1UL << desc->bit_width) - 1) << desc->bit_pos;
         uint32_t bit_value = (value & bit_mask) >> desc->bit_pos;
-        printf("  Bit %u-%u: 0x%X - %s\r\n", 
+        printf("  Bit %lu-%lu: 0x%X - %s\r\n", 
                        desc->bit_pos + desc->bit_width - 1, desc->bit_pos, 
-                       bit_value, desc->desc);
+                       (unsigned int)bit_value, desc->desc);
     }
 }
 
@@ -191,7 +193,7 @@ static const RegisterBitDesc scb_ccr_bit_descs[] = {
     {10, 1, "NO_UNALIGN_SUPPORT"},
     {11, 1, "STKALIGN"}
 };
-
+#if __CORTEX_M == 4U
 // SCB->SHPR1 寄存器位描述
 static const RegisterBitDesc scb_shpr1_bit_descs[] = {
     {16, 8, "Priority of memory management fault handler"},
@@ -209,7 +211,7 @@ static const RegisterBitDesc scb_shpr3_bit_descs[] = {
     {24, 8, "Priority of PendSV handler"},
     {31, 1, "Priority of SysTick handler"}
 };
-
+#endif
 // SCB->SHCSR 寄存器位描述
 static const RegisterBitDesc scb_shcsr_bit_descs[] = {
     {0, 1, "Usage fault active"},
@@ -262,7 +264,7 @@ static const RegisterBitDesc scb_dfsr_bit_descs[] = {
     {5, 1, "Step debug event"},
     {6, 1, "EXTERNAL debug event"}
 };
-
+#if __CORTEX_M == 4U
 // SCB->PFR 寄存器位描述
 static const RegisterBitDesc scb_pfr_bit_descs[] = {
     {0, 4, "Primary processor feature"},
@@ -298,7 +300,7 @@ static const RegisterBitDesc scb_isar_bit_descs[] = {
     {24, 4, "Instruction set attribute"},
     {28, 4, "Instruction set attribute"}
 };
-
+#endif
 // SCB->CPACR 寄存器位描述
 static const RegisterBitDesc scb_cpacr_bit_descs[] = {
     {20, 2, "Access control for CP10"},
@@ -339,18 +341,14 @@ static const RegisterBitDesc dwt_cyccnt_bit_descs[] = {
     {0, 32, "Cycle count"}
 };
 
-// TPI 寄存器位描述
-static const RegisterBitDesc tpi_acpr_bit_descs[] = {
-    {0, 8, "Asynchronous clock prescaler value"}
-};
 
-static const RegisterBitDesc tpi_spcr_bit_descs[] = {
-    {0, 1, "SWOENA"},
-    {1, 2, "FORM"},
-    {3, 2, "STPRES"},
-    {5, 1, "INV"},
-    {6, 1, "CSOURCE"}
-};
+// static const RegisterBitDesc tpi_spcr_bit_descs[] = {
+//     {0, 1, "SWOENA"},
+//     {1, 2, "FORM"},
+//     {3, 2, "STPRES"},
+//     {5, 1, "INV"},
+//     {6, 1, "CSOURCE"}
+// };
 
 // ITM 寄存器位描述
 static const RegisterBitDesc itm_lar_bit_descs[] = {
@@ -403,14 +401,17 @@ static void show_armv7m_registers(SerialResponse *response) {
     print_register_bits("SCB->AIRCR", SCB->AIRCR, scb_aircr_bit_descs, sizeof(scb_aircr_bit_descs)/sizeof(scb_aircr_bit_descs[0]));
     print_register_bits("SCB->SCR", SCB->SCR, scb_scr_bit_descs, sizeof(scb_scr_bit_descs)/sizeof(scb_scr_bit_descs[0]));
     print_register_bits("SCB->CCR", SCB->CCR, scb_ccr_bit_descs, sizeof(scb_ccr_bit_descs)/sizeof(scb_ccr_bit_descs[0]));
+#if __CORTEX_M == 4U
     print_register_bits("SCB->SHPR1", *(uint32_t*)&SCB->SHP[0], scb_shpr1_bit_descs, sizeof(scb_shpr1_bit_descs)/sizeof(scb_shpr1_bit_descs[0]));
     print_register_bits("SCB->SHPR2", *(uint32_t*)&SCB->SHP[4], scb_shpr2_bit_descs, sizeof(scb_shpr2_bit_descs)/sizeof(scb_shpr2_bit_descs[0]));
     print_register_bits("SCB->SHPR3", *(uint32_t*)&SCB->SHP[8], scb_shpr3_bit_descs, sizeof(scb_shpr3_bit_descs)/sizeof(scb_shpr3_bit_descs[0]));
+#endif
     print_register_bits("SCB->SHCSR", SCB->SHCSR, scb_shcsr_bit_descs, sizeof(scb_shcsr_bit_descs)/sizeof(scb_shcsr_bit_descs[0]));
     print_register_bits("SCB->CFSR", SCB->CFSR, scb_cfsr_bit_descs, sizeof(scb_cfsr_bit_descs)/sizeof(scb_cfsr_bit_descs[0]));
     print_register_bits("SCB->HFSR", SCB->HFSR, scb_hfsr_bit_descs, sizeof(scb_hfsr_bit_descs)/sizeof(scb_hfsr_bit_descs[0]));
     print_register_bits("SCB->DFSR", SCB->DFSR, scb_dfsr_bit_descs, sizeof(scb_dfsr_bit_descs)/sizeof(scb_dfsr_bit_descs[0]));
     print_register_bits("SCB->MMFAR", SCB->MMFAR, NULL, 0);
+#if __CORTEX_M == 4U
     print_register_bits("SCB->BFAR", SCB->BFAR, NULL, 0);
     print_register_bits("SCB->AFSR", SCB->AFSR, NULL, 0);
     print_register_bits("SCB->PFR[0]", SCB->PFR[0], scb_pfr_bit_descs, sizeof(scb_pfr_bit_descs)/sizeof(scb_pfr_bit_descs[0]));
@@ -426,6 +427,7 @@ static void show_armv7m_registers(SerialResponse *response) {
     print_register_bits("SCB->ISAR[2]", SCB->ISAR[2], scb_isar_bit_descs, sizeof(scb_isar_bit_descs)/sizeof(scb_isar_bit_descs[0]));
     print_register_bits("SCB->ISAR[3]", SCB->ISAR[3], scb_isar_bit_descs, sizeof(scb_isar_bit_descs)/sizeof(scb_isar_bit_descs[0]));
     print_register_bits("SCB->ISAR[4]", SCB->ISAR[4], scb_isar_bit_descs, sizeof(scb_isar_bit_descs)/sizeof(scb_isar_bit_descs[0]));
+#endif
     print_register_bits("SCB->CPACR", SCB->CPACR, scb_cpacr_bit_descs, sizeof(scb_cpacr_bit_descs)/sizeof(scb_cpacr_bit_descs[0]));
 
     // CoreDebug 寄存器显示

@@ -1,5 +1,5 @@
-#ifndef SYSTEM_MODULE_H
-#define SYSTEM_MODULE_H
+#ifndef __CMD_SYSTEM_H__
+#define __CMD_SYSTEM_H__
 
 // 这里可以添加头文件包含语句
 // #include <xxx.h>
@@ -20,4 +20,4 @@ typedef struct {
 // void function_name(...);
 void system_module_init(void);
 
-#endif // SYSTEM_MODULE_H
+#endif // __CMD_SYSTEM_H__

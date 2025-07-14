@@ -1,4 +1,5 @@
-#include "../inc/modules/stepper_module.h"
+#ifdef BSP_STEPPER_MOTOR_ENABLE
+#include "../inc/modules/cmd_stepper.h"
 #include "../inc/serial_protocol.h"
 #include "stepper_motor.h"
 #include "main.h"
@@ -236,3 +237,5 @@ void stepper_module_init(void) {
     register_subcommand("stepper", "status", stepper_status_handler);
     register_subcommand("stepper", "set_direction", stepper_set_direction_handler);
 }
+
+#endif

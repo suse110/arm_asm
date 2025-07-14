@@ -1,9 +1,11 @@
 #include <stdarg.h>
+#include <stdlib.h>
 #include "serial_protocol.h"
 #include "serial.h"
-#include "modules/led_module.h"
-#include "modules/stepper_module.h"
-#include "modules/system_module.h"
+#include "modules/cmd_led.h"
+#include "modules/cmd_stepper.h"
+#include "modules/cmd_system.h"
+#include "modules/cmd_memory.h"
 
 // ================= 模块管理实现 =================
 static CommandModule registered_modules[MAX_MODULES];
@@ -66,7 +68,7 @@ static bool parse_command(const char* buffer, ParsedCommand* cmd) {
     // 提取子命令
     char* space_pos = strchr(dot_pos + 1, PROTOPARAM_DELIM);
     size_t subcmd_len = (space_pos != NULL) ? 
-                       (space_pos - (dot_pos + 1)) : 
+                       (size_t)(space_pos - (dot_pos + 1)) : 
                        strlen(dot_pos + 1);
     
     if (subcmd_len == 0 || subcmd_len >= MAX_SUBCOMMAND_LEN) return false;
@@ -93,7 +95,9 @@ static bool parse_command(const char* buffer, ParsedCommand* cmd) {
 static char rx_buffer[MAX_COMMAND_LEN];
 static uint8_t rx_index = 0;
 
-
+// __attribute__((weak)) bool serial_data_available(void) {return false;}
+// __attribute__((weak)) uint8_t serial_read_byte(void)  {return 0;}
+// __attribute__((weak)) void serial_send_string(const char* str) { (void)str;}
 void serial_protocol_process(void) {
     while(serial_data_available()) {
         char c = serial_read_byte();
@@ -102,7 +106,7 @@ void serial_protocol_process(void) {
         if (c == '\n' || c == '\r') {
             if (rx_index > 0) {
                 rx_buffer[rx_index] = '\0';
-                
+
                 ParsedCommand cmd = {0};
                 if (parse_command(rx_buffer, &cmd)) {
                     CommandModule* module = find_module(cmd.module);
@@ -177,10 +181,14 @@ void serial_protocol_init(void) {
     memset(rx_buffer, 0, sizeof(rx_buffer));
     memset(registered_modules, 0, sizeof(registered_modules));
     module_count = 0;
-
+    
     led_module_init();
+    #ifdef BSP_STEPPER_MOTOR_ENABLE
     stepper_module_init();
+    #endif
     system_module_init();
+    mem_module_init();
+    printf("Serial protocol initialized\r\n");
 }
 void build_response(SerialResponse* response, bool success, const char* message, const char* data_fmt, ...) {
     if (response == NULL) return;
@@ -259,6 +267,37 @@ ParamCheckResult check_uint_param(const char* str, uint32_t* value, uint32_t min
         return PARAM_RANGE_ERROR;
     }
     
+    *value = (uint32_t)val;
+    return PARAM_OK;
+}
+ParamCheckResult check_uint_param_hex(const char* str, uint32_t* value, uint32_t min, uint32_t max, const char* err_msg, SerialResponse* response) {
+    // 检查输入字符串是否以 "0x" 开头
+    if (str == NULL || strncmp(str, "0x", 2) != 0) {
+        if (response) {
+            response->success = false;
+            strncpy(response->message, RESP_INVALID_PARAM, MAX_MSG_LEN-1);
+            strncpy(response->data, err_msg, MAX_RESPONSE_LEN-1);
+            response->message[MAX_MSG_LEN-1] = '\0';
+            response->data[MAX_RESPONSE_LEN-1] = '\0';
+        }
+        return PARAM_RANGE_ERROR;
+    }
+
+    // 跳过 "0x" 前缀后进行转换
+    char* endptr;
+    unsigned long val = strtoul(str + 2, &endptr, 16);
+
+    // 检查转换有效性
+    if (*endptr != '\0' || val < min || val > max) {
+        if (response) {
+            response->success = false;
+            strncpy(response->message, RESP_INVALID_PARAM, MAX_MSG_LEN-1);
+            strncpy(response->data, err_msg, MAX_RESPONSE_LEN-1);
+            response->message[MAX_MSG_LEN-1] = '\0';
+            response->data[MAX_RESPONSE_LEN-1] = '\0';
+        }
+        return PARAM_RANGE_ERROR;
+    }
     *value = (uint32_t)val;
     return PARAM_OK;
 }
