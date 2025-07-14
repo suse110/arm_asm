@@ -5,15 +5,15 @@
 
 bool stp_paraser(uint8_t *buffer, uint32_t length, stp_pkt_t *stp_pkt)
 {
-    static stp_state_t state = STP_STATE_HEAD;
-    uint8_t *pdata = buffer;
-    uint8_t head;
-    uint8_t type;
-    uint16_t id;
-    uint16_t data_len;
-    uint16_t checksum;
-    uint32_t buf_len = length;
-    stp_pkt_t pkt;
+    // static stp_state_t state = STP_STATE_HEAD;
+    // uint8_t *pdata = buffer;
+    // uint8_t head;
+    // uint8_t type;
+    // uint16_t id;
+    // uint16_t data_len;
+    // uint16_t checksum;
+    // uint32_t buf_len = length;
+    // stp_pkt_t pkt;
 
     if (length < sizeof(stp_header_t)) {
         return false;

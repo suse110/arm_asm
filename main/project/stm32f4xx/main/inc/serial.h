@@ -5,7 +5,7 @@
 void serial_init(void) ;
 void serial_write(uint8_t *pData, uint16_t Size);
 void serial_read(uint8_t *pData, uint16_t Size);
-void srial_write_polling(uint8_t *pData, uint16_t Size);
+void serial_write_polling(uint8_t *pData, uint16_t Size);
 
 void serial_send_byte(uint8_t byte);
 void serial_send_string(const char* str);

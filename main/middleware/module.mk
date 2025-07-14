@@ -3,3 +3,4 @@ MIDDLEWARE_DIR = middleware
 include $(SDKPATH)/$(MIDDLEWARE_DIR)/ringbuffer/module.mk
 include $(SDKPATH)/$(MIDDLEWARE_DIR)/menu/module.mk
 include $(SDKPATH)/$(MIDDLEWARE_DIR)/utility/module.mk
+include $(SDKPATH)/$(MIDDLEWARE_DIR)/serial_cmd/module.mk

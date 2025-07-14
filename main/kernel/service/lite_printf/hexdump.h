@@ -1,5 +1,7 @@
 #ifndef __HEXDUMP_H__
 #define __HEXDUMP_H__
+#include<stdio.h>
+#include<string.h>
 #include<time.h>
 
 static void _hexdump(const char *funcname, const void *data, unsigned int len, const void *data1, unsigned int len1);
@@ -27,8 +29,9 @@ static char *get_time(void)
 #else
 #define get_sys_tick() 0
 #endif
-static void _hexdump(const char *funcname, const void *data, unsigned int len, const void *data1, unsigned int len1)
+static void __attribute__((unused)) _hexdump(const char *funcname, const void *data, unsigned int len, const void *data1, unsigned int len1)
 {
+    #undef print_with_tick
     #define print_with_tick(format, arg...)  printf("[%6lu] " format, tick, ##arg)
     char str[160], octet[10];
     int ofs, i, k, d;
@@ -62,7 +65,7 @@ static void _hexdump(const char *funcname, const void *data, unsigned int len, c
     print_with_tick("%s\r\n", fname);
 #endif
     for (ofs = 0; ofs < (int)len; ofs += 16) {
-        d = snprintf(str, sizeof(str), "| %08lx: ", ofs + base_addr);
+        d = snprintf(str, sizeof(str), "| %08x: ", ofs + base_addr);
 
         for (i = 0; i < 16; i++) {
             if ((i + ofs) < (int)len)
@@ -91,7 +94,7 @@ static void _hexdump(const char *funcname, const void *data, unsigned int len, c
         base_addr = (uintptr_t)data1;
         buf = (const unsigned char*)data1;
         for (ofs = 0; ofs < (int)len; ofs += 16) {
-            d = snprintf(str, sizeof(str), "| %08lx: ", ofs + base_addr);
+            d = snprintf(str, sizeof(str), "| %08x: ", ofs + base_addr);
 
             for (i = 0; i < 16; i++) {
                 if ((i + ofs) < (int)len)
@@ -118,19 +121,20 @@ static void _hexdump(const char *funcname, const void *data, unsigned int len, c
     }
 }
 
-static void hexdump_pure(const void *data, unsigned int len)
+static void __attribute__((unused)) hexdump_pure(const void *data, unsigned int len)
 {
+    #undef print_with_tick
     #define print_with_tick(format, arg...)  printf(format, ##arg)
     char str[160], octet[10];
     int ofs, i, k, d;
     const unsigned char *buf = (const unsigned char *)data;
-    unsigned int flen;
+
     uintptr_t base_addr = (uintptr_t)data;
 
     if (len == 0) return;
 
     for (ofs = 0; ofs < (int)len; ofs += 16) {
-        d = snprintf(str, sizeof(str), "| %08lx: ", ofs + base_addr);
+        d = snprintf(str, sizeof(str), "| %08x: ", ofs + base_addr);
 
         for (i = 0; i < 16; i++) {
             if ((i + ofs) < (int)len)

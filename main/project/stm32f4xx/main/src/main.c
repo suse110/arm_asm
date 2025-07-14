@@ -193,6 +193,7 @@ int main(void)
   SystemClock_Config();
 
   serial_init();
+  
   serial_protocol_init();
   /* Output a message on Hyperterminal using printf function */
  printf("1 -- UART Printf Example: retarget the C library printf function to the UART\r\n");

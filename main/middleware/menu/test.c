@@ -18,7 +18,9 @@ menu_node_item_t osi_menus[] = {
 };
 int test_action(void *e)
 {
+    (void)e;
     printf("[%s]\n", __func__);
+    return 0;
 }
 menu_node_item_t time_menus[] = {
     LEVEL(1,"time & timer",default_action)

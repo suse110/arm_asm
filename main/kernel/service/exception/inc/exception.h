@@ -202,6 +202,11 @@ typedef struct {
     uint32_t exception_id; // IPSR exception number
     uint32_t timestamp;    // DWT cycle count
 } exception_context_t;
+typedef struct {
+    char * region_name;
+    uint32_t start_address;
+    uint32_t end_address;
+} memory_region_type_t;
 
 extern exception_context_t g_exception_context;
 void analyze_exception(void);

@@ -10,7 +10,7 @@ menu_node_item_t header = {
 //将菜单项添加到链表中，不区分菜单级别，统一添加到一个链表中
 void add_menu(menu_node_item_t items[], int length)
 {
-    int level[MAX_LEVEL];
+    // int level[MAX_LEVEL];
     for (int i = 0; i < length; i ++) {
         // if(items[i].level == 1){
         // level[1] = i;
@@ -43,6 +43,7 @@ int default_action(void *e)
             break;
         }
     }
+    return 0;
 }
 
 void print_menu()

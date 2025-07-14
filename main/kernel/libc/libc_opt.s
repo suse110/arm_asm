@@ -2,7 +2,8 @@
 .section .text.memcpy, "ax"
 .global __wrap_memcpy
 .type __wrap_memcpy, %function
-.code 16
+.thumb
+.cpu cortex-m3
 #  void __wrap_memcpy(void *dest, const void *src, size_t len)
 __wrap_memcpy:
     cmp     r2, #3                      @ r2 - 3, check if len > 3

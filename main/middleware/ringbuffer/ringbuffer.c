@@ -445,13 +445,11 @@ void rb_init(ringbuffer_t *rb, uint8_t *buffer, uint32_t size)
     rb->buffer = buffer;
     rb->size = size;
     rb->wptr = rb->rptr = 0;
-    return rb;
 }
 
 bool rb_alloc(ringbuffer_t *rb, uint32_t size)
 {
     uint8_t *buffer;
-    ringbuffer_t *ret;
 #if RB_ADDRESS_POWER_OF_2
     //rb->size的值总是在调用者传进来的size参数的基础上向2的幂扩展
     //对rb->size取模运算可以转化为与运算.rb->wptr % rb->size 可以转化为 rb->wptr & (rb->size – 1)
@@ -565,7 +563,6 @@ uint32_t __rb_read(ringbuffer_t *rb, uint8_t *buffer, uint32_t len)
 
 uint32_t rb_write(ringbuffer_t *rb, const uint8_t *buffer, uint32_t len)
 {
-    unsigned long flags;
     uint32_t ret;
     enter_critical_section(flags);
     ret = __rb_write(rb, buffer, len);
@@ -575,7 +572,6 @@ uint32_t rb_write(ringbuffer_t *rb, const uint8_t *buffer, uint32_t len)
 
 uint32_t rb_read(ringbuffer_t *rb, uint8_t *buffer, uint32_t len)
 {
-    unsigned long flags;
     uint32_t ret;
     enter_critical_section(flags);
     ret = __rb_read(rb, buffer, len);

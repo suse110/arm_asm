@@ -136,249 +136,6 @@ odd address for ARM Thumb code
         "b HardFault_Handler_C \n"\
     )
 
-__attribute__((naked)) void exception_common_entry(unsigned int *sp) {
-    __asm volatile (
-        "ldr r1, =g_exception_context\n"
-#ifdef FLOAT_POINT_EXCEPTION_DUMP_ENABLE
-        /* === FPU State Preservation === */
-        /* 1. Check if FPU context exists (EXC_RETURN[4]) */
-        "tst lr, #0x10\n"
-        "bne save_core_regs\n"
-        
-        /* 2. Save full FPU state (S0-S31) */
-        "vstmia r1!, {s0-s31}\n"
-        
-        /* 3. Save FPSCR from exception stack */
-        "ldr r2, [r0, #32]\n"     // FPSCR is at SP+32 if FPU active
-        "str r2, [r1], #4\n"
-        "save_core_regs:\n"
-        "add r1, #(8 * 4)\n"        // Skip FPU area (8 regs * 4 bytes)
-#endif
-        "str r0, [r1], #4\n"        /* save sp */
-        /* === General-Purpose Registers === */
-        /* 4. Save R4-R11 (not auto-saved by HW) */
-        "stmia r1!, {r4-r11}\n"    // Matches struct member order
-        "mov r11, r2\n" //save fault type to r11
-        /* === Hardware Auto-Saved Registers === */
-        "ldmia r0!, {r2-r5}\n"      /* 5. Load R0-R3 from exception stack */
-        "stmia r1!, {r2-r5}\n"      /* 5. Store R0-R3 to exception context */
-        
-        "ldmia r0!, {r2-r5}\n" /* 6. Load R12, LR, PC, xPSR */
-        "stmia r1!, {r2-r5}\n" /* 6. Store R12, LR, PC, xPSR */
-        
-        /* === System Registers === */
-        /* 7. Save MSP/PSP */
-        "mrs r2, MSP\n"
-        "mrs r3, PSP\n"
-        "stmia r1!, {r2-r3, r12}\n" /* 8. Save PRIMASK (from R12) */
-        
-        /* 9. Save remaining system regs */
-        "mrs r2, FAULTMASK\n"
-        "mrs r3, BASEPRI\n"
-        "mrs r4, CONTROL\n"
-        "stmia r1!, {r2-r4, lr}\n"     // faultmask, basepri, control, EXC_RETURN
-        
-        /* === Finalize === */
-        /* 11. Call C analyzer */
-        "ldr r0, =g_exception_context\n"
-        "mov r1, r11\n"
-        "b exception_common_handler_c\n"
-    );
-}
-
-/* Macro to define exception handlers with consistent save sequence */
-#define DEFINE_EXCEPTION_HANDLER(name) \
-__attribute__((naked)) void name(void) { \
-    __asm volatile ( \
-        /* === PHASE 1: Immediate State Preservation === */ \
-        /* 1. Save PRIMASK to R12 (caller-saved reg) */ \
-        "mrs r12, PRIMASK\n\t" \
-        /* 2. Disable interrupts globally */ \
-        "cpsid i\n\t" \
-        /* === PHASE 2: Determine Stack Pointer === */ \
-        "tst lr, #4\n\t"          /* Check EXC_RETURN[2] for stack selection */ \
-        "ite eq\n\t" \
-        "mrseq r0, msp\n\t"       /* MSP if 0 */ \
-        "mrsne r0, psp\n\t"       /* PSP if 1 */ \
-        /* === PHASE 3: Jump to Common Handler === */ \
-        /* set exception number */ \
-        "b exception_common_entry\n\t" \
-    ); \
-}
-
-DEFINE_EXCEPTION_HANDLER(__NMI_Handler__)
-DEFINE_EXCEPTION_HANDLER(__HardFault_Handler__)
-DEFINE_EXCEPTION_HANDLER(__MemManage_Handler__)
-DEFINE_EXCEPTION_HANDLER(__BusFault_Handler__)
-DEFINE_EXCEPTION_HANDLER(__UsageFault_Handler__)
-DEFINE_EXCEPTION_HANDLER(__DebugMon_Handler__)
-
-__attribute__((optimize("O0"))) void __exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type)
-{
-    exception_dump(&sCrashInfo->frame);
-}
-// 定义故障信息结构体
-typedef struct {
-    uint32_t mask;
-    const char *name;
-} fault_info_t;
-
-// 定义各故障类型的信息表
-static const fault_info_t afsr_faults[] = {
-    {0xFFFFFFFF, "Alignment Fault occurred, AFSR: 0x%08x\n"}
-};
-
-static const fault_info_t cfsr_faults[] = {
-    {SCB_CFSR_DIVBYZERO_Msk, "  - Divide by Zero Fault\n"},
-    {SCB_CFSR_UNALIGNED_Msk, "  - Unaligned Access Fault\n"},
-    {SCB_CFSR_NOCP_Msk, "  - No Coprocessor Fault\n"},
-    {SCB_CFSR_INVPC_Msk, "  - Invalid PC Load Fault\n"},
-    {SCB_CFSR_INVSTATE_Msk, "  - Invalid State Fault\n"},
-    {SCB_CFSR_UNDEFINSTR_Msk, "  - Undefined Instruction Fault\n"},
-    {SCB_CFSR_BFARVALID_Msk, "  - Bus Fault Address Register Valid\n"},
-    {SCB_CFSR_MMARVALID_Msk, "  - Memory Management Fault Address Register Valid\n"},
-    {SCB_CFSR_MSTKERR_Msk, "  - Memory Management Stacking Error\n"},
-    {SCB_CFSR_MUNSTKERR_Msk, "  - Memory Management Unstacking Error\n"},
-    {SCB_CFSR_DACCVIOL_Msk, "  - Memory Management Data Access Violation\n"},
-    {SCB_CFSR_IACCVIOL_Msk, "  - Memory Management Instruction Access Violation\n"},
-    {SCB_CFSR_STKERR_Msk, "  - Bus Fault Stacking Error\n"},
-    {SCB_CFSR_UNSTKERR_Msk, "  - Bus Fault Unstacking Error\n"},
-    {SCB_CFSR_IMPRECISERR_Msk, "  - Imprecise Bus Fault\n"},
-    {SCB_CFSR_PRECISERR_Msk, "  - Precise Bus Fault\n"},
-    {SCB_CFSR_IBUSERR_Msk, "  - Instruction Bus Fault\n"}
-};
-
-static const fault_info_t dfsr_faults[] = {
-    {SCB_DFSR_HALTED_Msk, "  - Debug Halted Fault\n"},
-    {SCB_DFSR_BKPT_Msk, "  - Breakpoint Fault\n"},
-    {SCB_DFSR_DWTTRAP_Msk, "  - DWT Match Trap Fault\n"},
-    {SCB_DFSR_VCATCH_Msk, "  - Vector Catch Fault\n"},
-    {SCB_DFSR_EXTERNAL_Msk, "  - External Debug Request Fault\n"}
-};
-
-static const fault_info_t hfsr_faults[] = {
-    {SCB_HFSR_VECTTBL_Msk, "  - Vector Table Hard Fault\n"},
-    {SCB_HFSR_FORCED_Msk, "  - Forced Hard Fault\n"}
-};
-
-// 辅助函数：根据掩码表打印故障信息
-static void print_fault_details(uint32_t fault_val, const fault_info_t *faults, size_t count) {
-    for (size_t i = 0; i < count; i++) {
-        if (fault_val & faults[i].mask) {
-            exception_printf(faults[i].name);
-        }
-    }
-}
-
-// Following symbols are defined by the linker.
-// Start address for the initialization values of the .data section.
-extern uint32_t _sidata[];
-// Start address for the .data section
-extern uint32_t _sdata[];
-// End address for the .data section
-extern uint32_t _edata[];
-// Start address for the .bss section
-extern uint32_t _sbss[];
-// End address for the .bss section
-extern uint32_t _ebss[];
-// End address for stack
-extern uint32_t _estack[];
-
-extern uint32_t _stext[];
-extern uint32_t _etext[];
-extern uint32_t _s_ram_vtor[];
-extern uint32_t _e_ram_vtor[];
-extern uint32_t _sheap[];
-extern uint32_t _eheap[];
-
-exception_dump_address_t exception_dump_address[] = {
-    {"text", (uint32_t)_stext, (uint32_t)_etext},
-    {"data", (uint32_t)_sdata, (uint32_t)_edata},
-    // {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
-    {"heap", (uint32_t)_sheap, (uint32_t)_eheap},
-    // SCS includes SCnSCB,SysTick,NVIC,SCB,CoreDebug
-    {"SCS", SCS_BASE, CoreDebug_BASE + sizeof(CoreDebug_Type)},
-    {"DWT", DWT_BASE, DWT_BASE + sizeof(DWT_Type)},
-    {"ITM", ITM_BASE, ITM_BASE + sizeof(ITM_Type)},
-    {"TPI", TPI_BASE, TPI_BASE + sizeof(TPI_Type)},
-    {NULL, 0, 0}};
-
-
-void exception_memory_dump(exception_dump_address_t *address, uint32_t size)
-{
-    exception_printf("memory dump start:\n");
-
-    exception_printf("memory dump end.\n");
-
-}
-void exception_registers_dump(exception_context_t *exception_context)
-{
-    exception_printf(">>>>>>>>>>>>START START START START START START<<<<<<<<<<<<\n");
-    exception_printf("pc  : %08x  sp  : %08x  lr  : %08x  xpsr: %08x\n",
-                    exception_context->pc, exception_context->sp,
-                    exception_context->lr, exception_context->xpsr);
-    exception_printf("r0  : %08x  r1  : %08x  r2  : %08x  r3  : %08x\n",
-                    exception_context->r0, exception_context->r1,
-                    exception_context->r2, exception_context->r3);
-    exception_printf("r4  : %08x  r5  : %08x  r6  : %08x  r7  : %08x\n",
-                    exception_context->r4, exception_context->r5,
-                    exception_context->r6, exception_context->r7);
-    exception_printf("r8  : %08x  r9  : %08x  r10 : %08x  r11 : %08x\n",
-                    exception_context->r8, exception_context->r9,
-                    exception_context->r10, exception_context->r11);
-    exception_printf("r12 : %08x\n", exception_context->r12);
-    // 根据 fault 寄存器的值打印错误类型
-    if (exception_context->afsr) {
-        exception_printf(afsr_faults[0].name, exception_context->afsr);
-    }
-    if (exception_context->cfsr) {
-        exception_printf("Configurable Fault occurred, CFSR: 0x%08x\n", exception_context->cfsr);
-        print_fault_details(exception_context->cfsr, cfsr_faults, sizeof(cfsr_faults)/sizeof(cfsr_faults[0]));
-    }
-    if (exception_context->dfsr) {
-        exception_printf("Debug Fault occurred, DFSR: 0x%08x\n", exception_context->dfsr);
-        print_fault_details(exception_context->dfsr, dfsr_faults, sizeof(dfsr_faults)/sizeof(dfsr_faults[0]));
-    }
-    if (exception_context->hfsr) {
-        exception_printf("Hard Fault occurred, HFSR: 0x%08x\n", exception_context->hfsr);
-        print_fault_details(exception_context->hfsr, hfsr_faults, sizeof(hfsr_faults)/sizeof(hfsr_faults[0]));
-    }
-    if (SCB_CFSR_BFARVALID_Msk & exception_context->cfsr) {
-        exception_printf("Bus Fault Address: 0x%08x\n", exception_context->bfar);
-    }
-    if (SCB_CFSR_MEMFAULTSR_Msk & exception_context->cfsr) {
-        exception_printf("Memory Fault Address: 0x%08x\n", exception_context->mmfar);
-    }
-
-    exception_printf(">>>>>>>>>>>>END END END END END END<<<<<<<<<<<<\n");
-
-}
-
-__attribute__((optimize("O0"))) void exception_common_handler_c(exception_context_t *exception_context)
-{
-    exception_context->exception_id = EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER;
-
-    exception_context->afsr = SCB->AFSR;
-    exception_context->cfsr = SCB->CFSR;
-    exception_context->dfsr = SCB->DFSR;
-    exception_context->hfsr = SCB->HFSR;
-    exception_context->mmfar = SCB->MMFAR;
-    exception_context->bfar = SCB->BFAR;
-
-  const bool fpu_stack_rsvd = ((exception_context->exc_return & (1 << 4)) == 0);
-  const bool stack_force_align = ((exception_context->xpsr & (1 << 9)) != 0);
-
-  exception_context->sp_before_exception = (uint32_t)exception_context->sp + (fpu_stack_rsvd ? 0x68 : 0x20);
-
-  if (stack_force_align) {
-    exception_context->sp_before_exception += 0x4;
-  }
-  exception_registers_dump(exception_context);
-
-  while(1);
-}
-
-
 /**
  * HardFaultHandler_C:
  * This is called from the HardFault_HandlerAsm with a pointer the Fault stack
@@ -465,23 +222,6 @@ indicating the processor is in thumb mode11.
 /*Recovering from a UsageFault without a SYSRESET*/
 
 /*remote fault recovery*/
-
-// Prevent inlining to avoid persisting any variables on stack
-__attribute__((noinline)) static void prv_cinit(void)
-{
-    // Initialize data and bss
-    // Copy the data segment initializers from flash to SRAM
-    for (uint32_t *dst = _sdata, *src = _sidata; dst < _edata;)
-    {
-        *(dst++) = *(src++);
-    }
-
-    // Zero fill the bss segment.
-    for (uint32_t *dst = _sbss; dst < _ebss;)
-    {
-        *(dst++) = 0;
-    }
-}
 
 // force alignment so we can guarantee that g_unaligned_buffer does not
 // wind up 8 byte aligned
@@ -571,6 +311,29 @@ extern void Reset_Handler(void);
 extern void PendSV_Handler(void);
 extern void SysTick_Handler(void);
 
+
+
+// Following symbols are defined by the linker.
+// Start address for the initialization values of the .data section.
+extern uint32_t _sidata[];
+// Start address for the .data section
+extern uint32_t _sdata[];
+// End address for the .data section
+extern uint32_t _edata[];
+// Start address for the .bss section
+extern uint32_t _sbss[];
+// End address for the .bss section
+extern uint32_t _ebss[];
+// End address for stack
+extern uint32_t _estack[];
+
+extern uint32_t _stext[];
+extern uint32_t _etext[];
+extern uint32_t _s_ram_vtor[];
+extern uint32_t _e_ram_vtor[];
+extern uint32_t _sheap[];
+extern uint32_t _eheap[];
+
 #define IRQ_NUM_MAX 85
 // A minimal vector table for a Cortex M.
 __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16 + IRQ_NUM_MAX])(void) = {
@@ -595,6 +358,274 @@ __attribute__((section(".ram_isr_vector"))) void (*const pfnVectors[16 + IRQ_NUM
 
 
 
+
+// Prevent inlining to avoid persisting any variables on stack
+__attribute__((noinline)) static void prv_cinit(void)
+{
+    // Initialize data and bss
+    // Copy the data segment initializers from flash to SRAM
+    for (uint32_t *dst = _sdata, *src = _sidata; dst < _edata;)
+    {
+        *(dst++) = *(src++);
+    }
+
+    // Zero fill the bss segment.
+    for (uint32_t *dst = _sbss; dst < _ebss;)
+    {
+        *(dst++) = 0;
+    }
+}
+
+__attribute__((naked)) void exception_common_entry(unsigned int *sp) {
+    __asm volatile (
+        "ldr r1, =g_exception_context\n"
+#ifdef FLOAT_POINT_EXCEPTION_DUMP_ENABLE
+        /* === FPU State Preservation === */
+        /* 1. Check if FPU context exists (EXC_RETURN[4]) */
+        "tst lr, #0x10\n"
+        "bne save_core_regs\n"
+        
+        /* 2. Save full FPU state (S0-S31) */
+        "vstmia r1!, {s0-s31}\n"
+        
+        /* 3. Save FPSCR from exception stack */
+        "ldr r2, [r0, #32]\n"     // FPSCR is at SP+32 if FPU active
+        "str r2, [r1], #4\n"
+        "save_core_regs:\n"
+        "add r1, #(8 * 4)\n"        // Skip FPU area (8 regs * 4 bytes)
+#endif
+        "str r0, [r1], #4\n"        /* save sp */
+        /* === General-Purpose Registers === */
+        /* 4. Save R4-R11 (not auto-saved by HW) */
+        "stmia r1!, {r4-r11}\n"    // Matches struct member order
+        "mov r11, r2\n" //save fault type to r11
+        /* === Hardware Auto-Saved Registers === */
+        "ldmia r0!, {r2-r5}\n"      /* 5. Load R0-R3 from exception stack */
+        "stmia r1!, {r2-r5}\n"      /* 5. Store R0-R3 to exception context */
+        
+        "ldmia r0!, {r2-r5}\n" /* 6. Load R12, LR, PC, xPSR */
+        "stmia r1!, {r2-r5}\n" /* 6. Store R12, LR, PC, xPSR */
+        
+        /* === System Registers === */
+        /* 7. Save MSP/PSP */
+        "mrs r2, MSP\n"
+        "mrs r3, PSP\n"
+        "stmia r1!, {r2-r3, r12}\n" /* 8. Save PRIMASK (from R12) */
+        
+        /* 9. Save remaining system regs */
+        "mrs r2, FAULTMASK\n"
+        "mrs r3, BASEPRI\n"
+        "mrs r4, CONTROL\n"
+        "stmia r1!, {r2-r4, lr}\n"     // faultmask, basepri, control, EXC_RETURN
+        
+        /* === Finalize === */
+        /* 11. Call C analyzer */
+        "ldr r0, =g_exception_context\n"
+        "mov r1, r11\n"
+        "b exception_common_handler_c\n"
+        ".ltorg\n"
+    );
+}
+
+/* Macro to define exception handlers with consistent save sequence */
+#define DEFINE_EXCEPTION_HANDLER(name) \
+__attribute__((noinline, naked)) void name(void) { \
+    __asm volatile ( \
+        /* === PHASE 1: Immediate State Preservation === */ \
+        /* 1. Save PRIMASK to R12 (caller-saved reg) */ \
+        "mrs r12, PRIMASK\n\t" \
+        /* 2. Disable interrupts globally */ \
+        "cpsid i\n\t" \
+        /* === PHASE 2: Determine Stack Pointer === */ \
+        "tst lr, #4\n\t"          /* Check EXC_RETURN[2] for stack selection */ \
+        "ite eq\n\t" \
+        "mrseq r0, msp\n\t"       /* MSP if 0 */ \
+        "mrsne r0, psp\n\t"       /* PSP if 1 */ \
+        /* === PHASE 3: Jump to Common Handler === */ \
+        /* set exception number */ \
+        "b exception_common_entry\n\t" \
+    ); \
+}
+
+DEFINE_EXCEPTION_HANDLER(__NMI_Handler__)
+DEFINE_EXCEPTION_HANDLER(__HardFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__MemManage_Handler__)
+DEFINE_EXCEPTION_HANDLER(__BusFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__UsageFault_Handler__)
+DEFINE_EXCEPTION_HANDLER(__DebugMon_Handler__)
+
+__attribute__((optimize("O0"))) void __exception_common_handler_c(sCrashInfo *sCrashInfo, uint32_t fault_type)
+{
+    exception_dump(&sCrashInfo->frame);
+}
+// 定义故障信息结构体
+typedef struct {
+    uint32_t mask;
+    const char *name;
+} fault_info_t;
+
+// 定义各故障类型的信息表
+static const fault_info_t afsr_faults[] = {
+    {0xFFFFFFFF, "Alignment Fault occurred, AFSR: 0x%08x\n"}
+};
+
+static const fault_info_t cfsr_faults[] = {
+    {SCB_CFSR_DIVBYZERO_Msk, "  - Divide by Zero Fault\n"},
+    {SCB_CFSR_UNALIGNED_Msk, "  - Unaligned Access Fault\n"},
+    {SCB_CFSR_NOCP_Msk, "  - No Coprocessor Fault\n"},
+    {SCB_CFSR_INVPC_Msk, "  - Invalid PC Load Fault\n"},
+    {SCB_CFSR_INVSTATE_Msk, "  - Invalid State Fault\n"},
+    {SCB_CFSR_UNDEFINSTR_Msk, "  - Undefined Instruction Fault\n"},
+    {SCB_CFSR_BFARVALID_Msk, "  - Bus Fault Address Register Valid\n"},
+    {SCB_CFSR_MMARVALID_Msk, "  - Memory Management Fault Address Register Valid\n"},
+    {SCB_CFSR_MSTKERR_Msk, "  - Memory Management Stacking Error\n"},
+    {SCB_CFSR_MUNSTKERR_Msk, "  - Memory Management Unstacking Error\n"},
+    {SCB_CFSR_DACCVIOL_Msk, "  - Memory Management Data Access Violation\n"},
+    {SCB_CFSR_IACCVIOL_Msk, "  - Memory Management Instruction Access Violation\n"},
+    {SCB_CFSR_STKERR_Msk, "  - Bus Fault Stacking Error\n"},
+    {SCB_CFSR_UNSTKERR_Msk, "  - Bus Fault Unstacking Error\n"},
+    {SCB_CFSR_IMPRECISERR_Msk, "  - Imprecise Bus Fault\n"},
+    {SCB_CFSR_PRECISERR_Msk, "  - Precise Bus Fault\n"},
+    {SCB_CFSR_IBUSERR_Msk, "  - Instruction Bus Fault\n"}
+};
+
+static const fault_info_t dfsr_faults[] = {
+    {SCB_DFSR_HALTED_Msk, "  - Debug Halted Fault\n"},
+    {SCB_DFSR_BKPT_Msk, "  - Breakpoint Fault\n"},
+    {SCB_DFSR_DWTTRAP_Msk, "  - DWT Match Trap Fault\n"},
+    {SCB_DFSR_VCATCH_Msk, "  - Vector Catch Fault\n"},
+    {SCB_DFSR_EXTERNAL_Msk, "  - External Debug Request Fault\n"}
+};
+
+static const fault_info_t hfsr_faults[] = {
+    {SCB_HFSR_VECTTBL_Msk, "  - Vector Table Hard Fault\n"},
+    {SCB_HFSR_FORCED_Msk, "  - Forced Hard Fault\n"}
+};
+
+// 辅助函数：根据掩码表打印故障信息
+static void print_fault_details(uint32_t fault_val, const fault_info_t *faults, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        if (fault_val & faults[i].mask) {
+            exception_printf(faults[i].name);
+        }
+    }
+}
+
+memory_region_type_t memory_regions[] = {
+    {"text", (uint32_t)_stext, (uint32_t)_etext},
+    {"data", (uint32_t)_sdata, (uint32_t)_edata},
+    // {"ram_vtor",(uint32_t) _s_ram_vtor,(uint32_t) _e_ram_vtor},
+    {"heap", (uint32_t)_sheap, (uint32_t)_eheap},
+    // SCS includes SCnSCB,SysTick,NVIC,SCB,CoreDebug
+    {"SCS", SCS_BASE, CoreDebug_BASE + sizeof(CoreDebug_Type)},
+    {"DWT", DWT_BASE, DWT_BASE + sizeof(DWT_Type)},
+    {"ITM", ITM_BASE, ITM_BASE + sizeof(ITM_Type)},
+    {"TPI", TPI_BASE, TPI_BASE + sizeof(TPI_Type)},
+    {NULL, 0, 0}};
+
+
+
+void exception_registers_dump(exception_context_t *exception_context)
+{
+
+
+    bl_exception_printf("CM33 Fault Dump:\n");
+
+    if (exception_context->cfsr) {
+        bl_exception_printf("Configurable Fault occurred,CFSR:%x\n", exception_context->cfsr);
+        print_fault_details(exception_context->cfsr, cfsr_faults, sizeof(cfsr_faults)/sizeof(cfsr_faults[0]));
+    }
+    
+    if (exception_context->dfsr) {
+        bl_exception_printf("Debug Fault occurred,DFSR:%x\n", exception_context->dfsr);
+        print_fault_details(exception_context->dfsr, dfsr_faults, sizeof(dfsr_faults)/sizeof(dfsr_faults[0]));
+    }
+    
+    if (exception_context->hfsr) {
+        bl_exception_printf("Hard Fault occurred,HFSR:%x\n", exception_context->hfsr);
+        print_fault_details(exception_context->hfsr, hfsr_faults, sizeof(hfsr_faults)/sizeof(hfsr_faults[0]));
+    }
+    
+    if(SCB_CFSR_BFARVALID_Msk & exception_context->cfsr) {
+        bl_exception_printf("Bus Fault Address:%x\n", exception_context->bfar);
+    }
+    
+    if(SCB_CFSR_MEMFAULTSR_Msk & exception_context->cfsr) {
+        bl_exception_printf("Memory Fault Address:%x\n", exception_context->mmfar);
+    }
+
+    bl_exception_printf("CM33 Register dump begin:\n");
+
+#if 0
+    exception_printf("pc  : %08x  sp  : %08x  lr  : %08x  xpsr: %08x\n",
+                    exception_context->pc, exception_context->sp,
+                    exception_context->lr, exception_context->xpsr);
+    exception_printf("r0  : %08x  r1  : %08x  r2  : %08x  r3  : %08x\n",
+                    exception_context->r0, exception_context->r1,
+                    exception_context->r2, exception_context->r3);
+    exception_printf("r4  : %08x  r5  : %08x  r6  : %08x  r7  : %08x\n",
+                    exception_context->r4, exception_context->r5,
+                    exception_context->r6, exception_context->r7);
+    exception_printf("r8  : %08x  r9  : %08x  r10 : %08x  r11 : %08x\n",
+                    exception_context->r8, exception_context->r9,
+                    exception_context->r10, exception_context->r11);
+    exception_printf("r12 : %08x\n", exception_context->r12);
+#else
+    bl_exception_printf(
+        "r0:%x\nr1:%x\nr2:%x\nr3:%x\n"
+        "r4:%x\nr5:%x\nr6:%x\nr7:%x\n"
+        "r8:%x\nr9:%x\nr10:%x\nr11:%x\n"
+        "r12:%x\npc:%x\nlr:%x\npsr:%x\n"
+        "sp:%x\nmsp:%x\npsp:%x\nprimask:%x\n"
+        "faultmask:%x\nbasepri:%x\ncontrol:%x\n"
+        "exc_return:%x\nsp(before exception):%x\n",
+        exception_context->r0, exception_context->r1, exception_context->r2, exception_context->r3,
+        exception_context->r4, exception_context->r5, exception_context->r6, exception_context->r7,
+        exception_context->r8, exception_context->r9, exception_context->r10, exception_context->r11,
+        exception_context->r12, exception_context->pc, exception_context->lr, exception_context->xpsr,
+        exception_context->sp, exception_context->msp, exception_context->psp, exception_context->primask,
+        exception_context->faultmask, exception_context->basepri, exception_context->control,
+        exception_context->exc_return, exception_context->sp_before_exception
+    );
+#endif
+    bl_exception_printf("CM33 Register dump end:\n");
+    
+}
+
+__attribute__((optimize("O0"))) void exception_common_handler_c(exception_context_t *exception_context)
+{
+    exception_context->exception_id = EXCEPTION_CURRENT_VECTACTIVE_EXCEPTION_NUMBER;
+
+    exception_context->afsr = SCB->AFSR;
+    exception_context->cfsr = SCB->CFSR;
+    exception_context->dfsr = SCB->DFSR;
+    exception_context->hfsr = SCB->HFSR;
+    exception_context->mmfar = SCB->MMFAR;
+    exception_context->bfar = SCB->BFAR;
+
+    const bool fpu_stack_rsvd = ((exception_context->exc_return & (1 << 4)) == 0);
+    const bool stack_force_align = ((exception_context->xpsr & (1 << 9)) != 0);
+
+    exception_context->sp_before_exception = (uint32_t)exception_context->sp + (fpu_stack_rsvd ? 0x68 : 0x20);
+
+    if (stack_force_align) {
+    exception_context->sp_before_exception += 0x4;
+    }
+    bl_exception_printf("exception_mode:0x9c9c9c9c\n");
+    bl_exception_printf("cm33 pc:0x%x\n", exception_context->pc);
+    bl_exception_printf("cm33 lr:0x%x\n", exception_context->lr);
+
+    exception_printf("<<<<<<<< LOG START LOG START LOG START LOG START LOG START <<<<<<<<\n");
+
+    exception_registers_dump(exception_context);
+    exception_memory_dump(memory_regions, sizeof(memory_regions)/sizeof(memory_regions[0]));
+    exception_printf("<<<<<<<< LOG END LOG END LOG END LOG END LOG END <<<<<<<<\n");
+
+  while(1);
+}
+
+
+
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -610,7 +641,7 @@ void exception_printf(const char *fmt, ...) {
     int len = vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
     if (len > 0) {
-        srial_write_polling((uint8_t *)buf, (uint16_t)len);
+        serial_write_polling((uint8_t *)buf, (uint16_t)len);
         // stp_write_log((uint8_t *)buf, (uint16_t)len);
     }
 }
@@ -662,14 +693,14 @@ void do_exception_dump(exception_dump_buffer_t *db)
         dump_len += db->length;
     }
     // stp_write_exception(db->buffer, dump_len);
-    srial_write_polling(db->buffer, dump_len);
+    serial_write_polling(db->buffer, dump_len);
 }
 
 void exception_dump(sContextStateFrame *frame)
 {
     uint32_t dump_len;
     uint32_t i, j;
-    exception_dump_address_t *p_exaddr;
+    memory_region_type_t *p_exaddr;
     exception_dump_buffer_t db;
     uint8_t buffer[256] = {0};
     // printf(" [%s]", __func__);
@@ -693,10 +724,10 @@ void exception_dump(sContextStateFrame *frame)
 
         do_exception_dump(&db);
     }
-    foreach_index(i, 0, sizeof(exception_dump_address) / sizeof(exception_dump_address[0]))
+    foreach_index(i, 0, sizeof(memory_regions) / sizeof(memory_regions[0]))
     {
-        p_exaddr = &exception_dump_address[i];
-        if (p_exaddr->name == NULL)
+        p_exaddr = &memory_regions[i];
+        if (p_exaddr->region_name == NULL)
         {
             break;
         }
@@ -706,15 +737,15 @@ void exception_dump(sContextStateFrame *frame)
             continue;
         }
         dump_len = p_exaddr->end_address - p_exaddr->start_address;
-        // printf("------------memmory region:%s:%d------------", p_exaddr->name, dump_len);
+        // printf("------------memmory region:%s:%d------------", p_exaddr->region_name, dump_len);
         exception_printf("------------memmory region:%s:%d star_addr:0x%08x end_addr:0x%08x------------",
-            p_exaddr->name, dump_len, p_exaddr->start_address, p_exaddr->end_address);
+            p_exaddr->region_name, dump_len, p_exaddr->start_address, p_exaddr->end_address);
 
         memcpy(buffer, &p_exaddr->start_address, sizeof(p_exaddr->start_address));
-        memcpy(buffer + sizeof(p_exaddr->start_address), p_exaddr->name, strlen(p_exaddr->name));
+        memcpy(buffer + sizeof(p_exaddr->start_address), p_exaddr->region_name, strlen(p_exaddr->region_name));
         db.id = EXECPTION_DUMP_ID_REGION_START;
         db.region = i;
-        db.length = strlen(p_exaddr->name) + sizeof(p_exaddr->start_address);
+        db.length = strlen(p_exaddr->region_name) + sizeof(p_exaddr->start_address);
         db.content = buffer;
         do_exception_dump(&db);
 
@@ -747,4 +778,332 @@ void exception_dump(sContextStateFrame *frame)
     db.length = 0;
     db.content = NULL;
     do_exception_dump(&db);
+}
+
+
+#include <stdarg.h>
+#include <stdint.h>
+#include <stddef.h>
+
+#define __ADV_DBG_PRINT__
+#define RACE_PROTOCOL_EXCEPTION_STRING_LOG (0x0F00 | 0x12)
+#define RACE_PROTOCOL_EXCEPTION_BINARY_LOG (0x0F00 | 0x13)
+#define RACE_HEAD_CHANNEL_BYTE 0x05
+#define RACE_TYPE_NOTIFICATION 0x5D
+#define MAX_EXCEPTION_DATA_LENGTH 1024
+#define BL_MAX_CHARS 512
+#define BL_MAX_FRACT 10000
+#define BL_NUM_FRACT 4
+#define BL_LEN 20
+#define BL_EXCEPTION_MAX_CHARS ((1024+10)*2 + 32)
+typedef struct {
+    uint8_t pktId;
+    uint8_t type;
+    uint16_t length;
+    uint16_t id;
+} __attribute__((packed)) exception_race_t;
+
+typedef struct {
+    exception_race_t race;
+    uint32_t counter;
+} __attribute__((packed)) exception_header_t;
+
+static volatile uint32_t g_exception_string_log_count = 0;
+static volatile uint32_t g_exception_binary_log_count = 0;
+static char buf[BL_MAX_CHARS] = {0};
+static char excp_buf[BL_EXCEPTION_MAX_CHARS];
+// 二进制转十六进制
+void bin2hex(const char *in, int len, char *out) {
+    static const char hex[] = "0123456789ABCDEF";
+    for(int i=0; i<len; i++) {
+        *out++ = hex[(in[i] >> 4) & 0xF];
+        *out++ = hex[in[i] & 0xF];
+    }
+    *out = 0; // 字符串结尾
+}
+
+#define BL_SLIM_UDIV_R(N, D, R) (((R)=(N)%(D)), ((N)/(D)))
+#define BL_SLIM_UDIV(N, D) ((N)/(D))
+#define BL_SLIM_UMOD(N, D) ((N)%(D))
+
+// 整数转字符串
+static void bl_itoa(char **buf, uint32_t i, uint32_t base) {
+    char *s;
+    uint32_t rem;
+    static char rev[BL_LEN + 1];
+    
+    rev[BL_LEN] = 0;
+    if (i == 0) {
+        (*buf)[0] = '0';
+        ++(*buf);
+        return;
+    }
+    s = &rev[BL_LEN];
+    while (i) {
+        i = BL_SLIM_UDIV_R(i, base, rem);
+        if (rem < 10) {
+            *--s = rem + '0';
+        } else if (base == 16) {
+            *--s = "abcdef"[rem - 10];
+        }
+    }
+    while (*s) {
+        (*buf)[0] = *s++;
+        ++(*buf);
+    }
+}
+
+// 浮点数处理
+static void bl_itof(char **buf, int32_t i) {
+    char *s;
+    int32_t rem, j;
+    static char rev[BL_LEN + 1];
+    
+    rev[BL_LEN] = 0;
+    s = &rev[BL_LEN];
+    for (j = 0; j < BL_NUM_FRACT; j++) {
+        i = BL_SLIM_UDIV_R(i, 10, rem);
+        *--s = rem + '0';
+    }
+    while (*s) {
+        (*buf)[0] = *s++;
+        ++(*buf);
+    }
+}
+
+#define __ADV_DBG_PRINT__
+static int bl_vsnprintf(char *out_buf, size_t bufsize, const char *fmt, va_list ap)
+{
+    int32_t ival;
+    char *p, *sval;
+    char *bp, cval;
+    int64_t dval;
+    int32_t fract;
+    uint32_t uxval;
+#ifdef __ADV_DBG_PRINT__
+    uint32_t uival, uival1, uival2;
+    char *bp_old;
+    int32_t i, j;
+#endif /* __ADV_DBG_PRINT__ */
+
+    bp = out_buf;
+    *bp = 0;
+
+    for (p = (char *)fmt; *p && (bp - out_buf) < (int)(bufsize - 1); p++) {
+        if (*p != '%') {
+            *bp++ = *p;
+            continue;
+        }
+
+        switch (*++p) {
+            case 'd':
+                ival = va_arg(ap, int32_t);
+                if (ival < 0) {
+                    *bp++ = '-';
+                    ival = -ival;
+                }
+                bl_itoa(&bp, ival, 10);
+                break;
+
+            case 'o':
+                ival = va_arg(ap, int32_t);
+                if (ival < 0) {
+                    *bp++ = '-';
+                    ival = -ival;
+                }
+                *bp++ = '0';
+                bl_itoa(&bp, ival, 8);
+                break;
+
+            case 'x':
+                *bp++ = '0';
+                *bp++ = 'x';
+                uxval = va_arg(ap, uint32_t);
+                bl_itoa(&bp, uxval, 16);
+                break;
+
+#ifdef __ADV_DBG_PRINT__
+            case 'u':
+                uival = va_arg(ap, unsigned int);
+                *bp++ = '0';
+                *bp++ = 'x';
+                bp_old = bp;
+                uival1 = uival >> 16;
+                uival2 = uival & 0x0000ffff;
+                bl_itoa(&bp, uival1, 16);
+                i = (unsigned int)bp - (unsigned int)bp_old;
+                if (i < 4) {
+                    for (j = 3; j > (3 - i); j--) {
+                        bp_old[j] = bp_old[j - (3 - i) - 1];
+                    }
+                    for (j = 0; j <= (3 - i); j++)
+                        bp_old[j] = '0';
+                }
+                bp = bp_old + 4;
+                bp_old = bp;
+                bl_itoa(&bp, uival2, 16);
+                i = (unsigned int)bp - (unsigned int)bp_old;
+                if (i < 4) {
+                    for (j = 3; j > (3 - i); j--)
+                        bp_old[j] = bp_old[j - (3 - i) - 1];
+                }
+                for (j = 0; j <= (3 - i); j++)
+                    bp_old[j] = '0';
+                bp = bp_old + 4;
+                break;
+#endif /* __ADV_DBG_PRINT__ */
+
+            case 'p':
+                ival = va_arg(ap, int32_t);
+                *bp++ = '0';
+                *bp++ = 'x';
+                bl_itoa(&bp, ival, 16);
+                break;
+
+            case 'c':
+                cval = va_arg(ap, int32_t);
+                *bp++ = cval;
+                break;
+
+            case 'f':
+                dval = va_arg(ap, int64_t);
+                if (dval < 0) {
+                    *bp++ = '-';
+                    dval = -dval;
+                }
+                if (dval >= 1.0) {
+                    bl_itoa(&bp, (int32_t)dval, 10);
+                } else {
+                    *bp++ = '0';
+                }
+                *bp++ = '.';
+                fract = (int32_t)((dval - (int64_t)(int32_t)dval) * (int64_t)(BL_MAX_FRACT));
+                bl_itof(&bp, fract);
+                break;
+
+            case 's':
+                for (sval = va_arg(ap, char *); *sval && (bp - out_buf) < (int)(bufsize - 1); sval++) {
+                    *bp++ = *sval;
+                }
+                break;
+        }
+    }
+    *bp = 0;
+    return (int)(bp - out_buf);
+}
+void bl_send_buffer(const char* buffer, uint32_t length) {
+    const char *bp;
+    uint32_t i;
+    for (bp = buffer, i = 0; i < length; i++) {
+        // hal_uart_put_char(HAL_UART_0, *bp++);
+        putchar(*bp++);
+    }
+}
+static int bl_snprintf(char *out_buf, size_t bufsize, const char *fmt, ...)
+{
+    va_list ap;
+    int ret;
+    va_start(ap, fmt);
+    ret = bl_vsnprintf(out_buf, bufsize, fmt, ap);
+    va_end(ap);
+    return ret;
+}
+void bl_exception_printf(char *fmt, ...)
+{
+    int head_len, buf_len;
+    va_list ap;
+    va_start(ap, fmt);
+    uint8_t len_buf[32];
+    uint8_t *pbuf = (uint8_t *)&buf;
+    
+    buf_len = bl_vsnprintf(&buf[10], BL_MAX_CHARS, fmt, ap);
+    if (buf_len < 0) {
+        va_end(ap);
+        return;
+    }
+    va_end(ap);
+
+    head_len = bl_snprintf((char *)&excp_buf[0], sizeof(len_buf), "[RxP %d] ", (buf_len+10));
+
+    /* Insert the race header here */
+    exception_header_t *p_head = (exception_header_t*)(pbuf);
+    p_head->race.pktId = RACE_HEAD_CHANNEL_BYTE;
+    p_head->race.type = RACE_TYPE_NOTIFICATION;
+    p_head->race.length = buf_len + 4;
+    p_head->race.id = RACE_PROTOCOL_EXCEPTION_STRING_LOG;
+    p_head->counter = (g_exception_string_log_count & 0x000000FF);
+    p_head->counter = (g_exception_string_log_count & 0x0000FF00);
+    p_head->counter = (g_exception_string_log_count & 0x000FF0000);
+    p_head->counter = (g_exception_string_log_count & 0xFF000000);
+
+    g_exception_string_log_count++;
+
+    bin2hex((char*)pbuf, buf_len + 10, &excp_buf[head_len]);
+
+    bl_send_buffer(excp_buf, (buf_len+10)*2 + head_len);
+    putchar('\n');
+}
+
+
+// 发送二进制异常数据
+void bl_exception_dump_binary(uint8_t* data, uint32_t size) {
+    uint8_t *curr_data;
+    uint32_t curr_size;
+    uint8_t len_buf[32];
+    int head_len;
+    curr_data = (uint8_t *)data;
+    
+    while (size > 0) {
+        if (size >= MAX_EXCEPTION_DATA_LENGTH) {
+            curr_size = MAX_EXCEPTION_DATA_LENGTH;
+            size -= MAX_EXCEPTION_DATA_LENGTH;
+        } else {
+            curr_size = size;
+            size = 0;
+        }
+        
+        exception_header_t *p_head = (exception_header_t*)&buf[0];
+        p_head->race.pktId = RACE_HEAD_CHANNEL_BYTE;
+        p_head->race.type = RACE_TYPE_NOTIFICATION;
+        p_head->race.length = curr_size + 4;
+        p_head->race.id = RACE_PROTOCOL_EXCEPTION_BINARY_LOG;
+        p_head->counter = g_exception_binary_log_count++;
+        
+        // 计算整个包长度并添加 [Rxp %d] 头部
+        int total_length = (curr_size + sizeof(exception_header_t)) * 2;
+        head_len = bl_snprintf((char *)&excp_buf[0], sizeof(len_buf), "[RxP %d] ", curr_size + sizeof(exception_header_t));
+
+        bin2hex((char*)p_head, sizeof(exception_header_t), &excp_buf[head_len]);
+        bin2hex((char*)curr_data, curr_size, &excp_buf[sizeof(exception_header_t)*2 + head_len]);
+        bl_send_buffer(excp_buf, total_length + head_len);
+        putchar('\n');
+
+        curr_data += curr_size;
+    }
+}
+// 发送缓冲区数据
+
+void exception_memory_dump(memory_region_type_t *region, uint32_t size)
+{
+    bl_exception_printf("CM33 Regions Information:\n");
+
+    for (uint32_t i = 0; i < size; i++) {
+        bl_exception_printf("Region-%s: start_address = 0x%x, end_address = 0x%x\n", 
+                          region[i].region_name, 
+                          region[i].start_address, 
+                          region[i].end_address);
+    }
+    
+    bl_exception_printf("CM33 Regions Data:\n");
+
+    for (uint32_t i = 0; i < size; i++) {
+        uint32_t region_size = region[i].end_address - region[i].start_address;
+        if ((region[i].start_address != 0) && (region_size != 0)) {
+            bl_exception_dump_binary((uint8_t*)region[i].start_address, region_size);
+        }
+    }
+    bl_exception_printf("memory dump completed.\n");
+    bl_exception_printf("cm33 heap block dump begin\n");
+    bl_exception_printf("cm33 reach blk end\n");
+
 }

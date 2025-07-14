@@ -262,9 +262,13 @@ if (__HAL_UART_GET_FLAG(&UartHandle, UART_FLAG_IDLE)) {
     }
 #endif
 }
-void srial_write_polling(uint8_t *pData, uint16_t Size)
+void serial_write_polling(uint8_t *pData, uint16_t Size)
 {
     HAL_UART_Transmit(&UartHandle, pData, Size, 0xFFFF);
+}
+void serial_read_polling(uint8_t *pData, uint16_t Size)
+{
+    HAL_UART_Receive(&UartHandle, pData, Size, 0xFFFF);
 }
 void serial_write(uint8_t *pData, uint16_t Size)
 {
@@ -285,7 +289,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  serial_write((uint8_t *)&ch, 1); 
+  serial_write_polling((uint8_t *)&ch, 1); 
 
   return ch;
 }
@@ -294,8 +298,7 @@ GETCHAR_PROTOTYPE
   char ch;
   /* Place your implementation of fputc here */
   /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
-  ch = serial_read_byte();
-
+  serial_read_polling((uint8_t *)&ch, 1);
   return ch;
 }
 

@@ -1,5 +1,6 @@
 #use stdlib
 CHIP_COFNIG = stm32f4xx
+BOARD_TYPE = stm32f401re-nucleo
 NOSTDLIB_ENABLE = n
 
 RTOS_ENABLE			= y

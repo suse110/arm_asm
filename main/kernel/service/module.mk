@@ -73,5 +73,8 @@ CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/syslog/inc
 #stp
 SRC += $(SERVICE_DIR)/stp/stp.c
 CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/stp
+ifeq ($(NOSTDLIB_ENABLE),y)
+include $(SDKPATH)/kernel/libc/module.mk
+endif
 
 # include $(SDKPATH)/$(SERVICE_DIR)/hibribus/module.mk
