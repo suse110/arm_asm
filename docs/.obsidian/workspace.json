@@ -1,0 +1,306 @@
+{
+  "main": {
+    "id": "bec06ffef08bfc89",
+    "type": "split",
+    "children": [
+      {
+        "id": "36667ab877a4eecb",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "0833767858228c2f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/debug.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "debug"
+            }
+          },
+          {
+            "id": "e3706eaf8b8024ba",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/config option/CONFIG_TIMING_FUNCTIONS_NEED_AT_BOOT.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CONFIG_TIMING_FUNCTIONS_NEED_AT_BOOT"
+            }
+          },
+          {
+            "id": "5f099c2daaa2f91b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/config option/CONFIG_STACK_CANARIES.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CONFIG_STACK_CANARIES"
+            }
+          },
+          {
+            "id": "80d3c57c2143fc91",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/bootup.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "bootup"
+            }
+          },
+          {
+            "id": "89d42ef25d20ccce",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/bootup.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "bootup"
+            }
+          },
+          {
+            "id": "2750dd673a3e6e69",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/footprint.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "footprint"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "19c9863706ccb298",
+    "type": "split",
+    "children": [
+      {
+        "id": "fe55247eaba70f0f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a3a70c412c0e5738",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "71bd41e755be5c63",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "853cf7c8df4f1981",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 352.5
+  },
+  "right": {
+    "id": "dc8c575e58a13de0",
+    "type": "split",
+    "children": [
+      {
+        "id": "257fd258f5210aa9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "976f6f2c8326381e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "3-systems/os/zephyr/thread/thread state.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": false
+              },
+              "icon": "links-coming-in",
+              "title": "thread state 的反向链接列表"
+            }
+          },
+          {
+            "id": "a32b14ecd0ec416e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "3-systems/os/zephyr/footprint.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "footprint 的出链列表"
+            }
+          },
+          {
+            "id": "7a5e9e2190a83826",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "b425ee7a1201f30a",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "5d3dfd2459d1e63e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "6-project/env/pyenv.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "pyenv 的大纲"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "bases:新建数据库": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "2750dd673a3e6e69",
+  "lastOpenFiles": [
+    "2-hardware/communication/bt/start_capture_bt.bat",
+    "2-hardware/communication/bt/windows_wireshark_bt_capture.md",
+    "2-hardware/communication/bt/bt.md",
+    "2-hardware/communication/bt",
+    "5-tools/python/struct.md",
+    "5-tools/python",
+    "5-tools/wsl/禁用windows环境变量.md",
+    "5-tools/wsl",
+    "5-tools/ubuntu/ubunu20.04源.md",
+    "5-tools/ubuntu/pip.md",
+    "5-tools/ubuntu",
+    "5-tools/vscode/debug.md",
+    "5-tools/vscode",
+    "5-tools/wireshark/Wireshark-user-guide-a4_v1.0.0.pdf",
+    "5-tools/wireshark/monitor_serial_port.md",
+    "5-tools/wireshark",
+    "3-systems/os/os/xv6/dev_env.md",
+    "3-systems/os/os/xv6",
+    "3-systems/os/os",
+    "6-project/env/wsl-常用命令.md",
+    "6-project/env/wsl-安装到非系统盘.md",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/zrt_lookup.html",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/zhifubao.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/yuedu30@240.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/weixin.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/tobarThumbUpactive.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/tobarCollectionActive.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/tobarCollect.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/tel.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/qixiebiaobing1@240.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/pay-time-out.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/pay-help.png",
+    "2-hardware/peripherals/steper/步进电机28BYJ-48的驱动（arduino，STM32平台），最全的驱动详细原理，驱动电路分析，驱动代码解释/3_anchoretor.md",
+    "2-hardware/peripherals/key/debounce.md",
+    "2-hardware/communication/uart/uart.md",
+    "2-hardware/communication/i2c/i2c.md",
+    "2-hardware/chip_vendors/st/STM32F4/uart/stm32_uart.md",
+    "2-hardware/chip_vendors/st/STM32F4/rcc/stm32_rcc.md",
+    "2-hardware/chip_vendors/st/STM32F4/dma/stm32_dma.md",
+    "1-architecture/cache/cache.md",
+    "1-architecture/arm/os.md",
+    "1-architecture/arm/instruction.md",
+    "1-architecture/arm/gnu_as.md",
+    "1-architecture/arm/exception/callgraph.md",
+    "1-architecture/arm/asm.md",
+    "1-architecture/arm/aapcs.md"
+  ]
+}
