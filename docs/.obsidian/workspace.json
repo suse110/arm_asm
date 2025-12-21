@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "6-project/git/git如何添加ssh key.md",
+                "file": "6-project/env/Scons.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "git如何添加ssh key"
+              "title": "Scons"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "6-project/git/git如何添加ssh key.md",
+                "file": "6-project/env/Scons.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "git如何添加ssh key 的反向链接列表"
+              "title": "Scons 的反向链接列表"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "6-project/git/git如何添加ssh key.md",
+                "file": "6-project/env/Scons.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "git如何添加ssh key 的出链列表"
+              "title": "Scons 的出链列表"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "6-project/git/git如何添加ssh key.md",
+                "file": "6-project/env/Scons.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "git如何添加ssh key 的大纲"
+              "title": "Scons 的大纲"
             }
           }
         ]
@@ -183,43 +183,18 @@
       "bases:创建新数据库": false
     }
   },
-  "active": "80bdd2b449e75f58",
+  "active": "a3a70c412c0e5738",
   "lastOpenFiles": [
-    "5-tools/debug/trace32/training_hll.pdf",
-    "5-tools/debug/trace32/training_debugger.pdf",
-    "5-tools/debug/trace32/practice_ref.pdf",
-    "5-tools/debug/trace32/practice.md",
-    "5-tools/debug/trace32/ide_func.pdf",
-    "5-tools/debug/trace32/general_ref_d.pdf",
-    "5-tools/debug/trace32/directory.pdf",
-    "5-tools/debug/trace32/demo.pdf",
-    "5-tools/debug/trace32",
-    "4-programming/python/struct.md",
-    "4-programming/python",
-    "2-hardware/communication/bt/windows_wireshark_bt_capture.md",
-    "2-hardware/communication/bt/start_capture_bt.bat",
-    "2-hardware/communication/bt/bt.md",
-    "2-hardware/communication/bt",
-    "6-project/env/ubuntu/ubunu20.04源.md",
-    "6-project/env/ubuntu/pip.md",
+    "6-project/git/git如何添加ssh key.md",
+    "6-project/git/gitalias.txt",
+    "6-project/git",
+    "6-project/env/wsl/禁用windows环境变量.md",
     "6-project/env/wsl/wsl-常用命令.md",
     "6-project/env/wsl/wsl-安装到非系统盘.md",
-    "6-project/env/wsl/禁用windows环境变量.md",
-    "5-tools/debug/wireshark/monitor_serial_port.md",
-    "5-tools/debug/vscode/debug.md",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802695779.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802541855.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802416417.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802146285.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650801851578.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650799912590.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182248.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650792395070.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182035.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650789787423.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/stm32_uart.md",
-    "2-hardware/chip_vendors/st/STM32F4/rcc/stm32_rcc.md",
-    "2-hardware/chip_vendors/st/STM32F4/dma/stm32_dma.md",
+    "6-project/env/wsl",
+    "6-project/env/ubuntu/ubunu20.04源.md",
+    "6-project/env/ubuntu/pip.md",
+    "6-project/env/ubuntu",
     "6-project/env/qemu/windows_install_qemu.md",
     "6-project/env/qemu/windows_build_qemu.md",
     "6-project/env/qemu/vscode_qemu.md",
@@ -227,9 +202,34 @@
     "6-project/env/qemu/qemu_api.md",
     "6-project/env/qemu/qemu_add_device.md",
     "6-project/env/qemu/linux_build_windows_qemu.md",
+    "6-project/env/qemu/hello-arm.html",
+    "5-tools/debug/wireshark/Wireshark-user-guide-a4_v1.0.0.pdf",
+    "5-tools/debug/wireshark/monitor_serial_port.md",
+    "5-tools/debug/wireshark",
+    "5-tools/debug/vscode/debug.md",
+    "5-tools/debug/vscode",
+    "5-tools/debug/trace32/training_hll.pdf",
+    "5-tools/debug/trace32/training_debugger.pdf",
+    "5-tools/debug/trace32/practice.md",
+    "4-programming/python/struct.md",
     "3-systems/os/xv6/dev_env.md",
     "3-systems/os/freertos/task.md",
-    "1-architecture/arm/DebugMonitor.md",
-    "1-architecture/arm/os.md"
+    "2-hardware/communication/bt/windows_wireshark_bt_capture.md",
+    "2-hardware/communication/bt/bt.md",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802695779.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802541855.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802416417.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802146285.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650801851578.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182248.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650799912590.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182035.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650792395070.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650787436926.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/stm32_uart.md",
+    "2-hardware/chip_vendors/st/STM32F4/rcc/stm32_rcc.md",
+    "2-hardware/chip_vendors/st/STM32F4/dma/stm32_dma.md",
+    "1-architecture/arm/os.md",
+    "1-architecture/arm/instruction.md"
   ]
 }

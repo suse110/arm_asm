@@ -6,3 +6,4 @@ git config --global alias.pl  pull --rebase
 git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(bold blue)%s%Creset %Cgreen(%cr) <%an>%Creset' --abbrev-commit --date=relative"
 git config --global alias.lga "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(bold blue)%s%Creset %Cgreen(%cr) <%an>%Creset' --abbrev-commit --date=relative --author suse110"
 git config --global alias.last "log -1"
+git config --global core.editor "'F:/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin"
