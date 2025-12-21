@@ -1,0 +1,235 @@
+{
+  "main": {
+    "id": "bec06ffef08bfc89",
+    "type": "split",
+    "children": [
+      {
+        "id": "02d3df60deccddb1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "80bdd2b449e75f58",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "6-project/git/git如何添加ssh key.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "git如何添加ssh key"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "19c9863706ccb298",
+    "type": "split",
+    "children": [
+      {
+        "id": "fe55247eaba70f0f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a3a70c412c0e5738",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "71bd41e755be5c63",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "853cf7c8df4f1981",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 514.5
+  },
+  "right": {
+    "id": "dc8c575e58a13de0",
+    "type": "split",
+    "children": [
+      {
+        "id": "257fd258f5210aa9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "976f6f2c8326381e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "6-project/git/git如何添加ssh key.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "git如何添加ssh key 的反向链接列表"
+            }
+          },
+          {
+            "id": "a32b14ecd0ec416e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "6-project/git/git如何添加ssh key.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "git如何添加ssh key 的出链列表"
+            }
+          },
+          {
+            "id": "7a5e9e2190a83826",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "b425ee7a1201f30a",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "5d3dfd2459d1e63e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "6-project/git/git如何添加ssh key.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "git如何添加ssh key 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:创建新数据库": false
+    }
+  },
+  "active": "80bdd2b449e75f58",
+  "lastOpenFiles": [
+    "wsl/禁用windows环境变量.md",
+    "wsl",
+    "wireshark/Wireshark-user-guide-a4_v1.0.0.pdf",
+    "wireshark/monitor_serial_port.md",
+    "wireshark",
+    "vscode/debug.md",
+    "vscode",
+    "ubuntu/ubunu20.04源.md",
+    "ubuntu/pip.md",
+    "ubuntu",
+    "trace32/training_hll.pdf",
+    "trace32/training_debugger.pdf",
+    "trace32/practice_ref.pdf",
+    "trace32/practice.md",
+    "trace32/ide_func.pdf",
+    "trace32/demo.pdf",
+    "st/STM32F4/uart/image/uart/1650802695779.png",
+    "st/STM32F4/uart/image/uart/1650802541855.png",
+    "st/STM32F4/uart/image/uart/1650802416417.png",
+    "st/STM32F4/uart/image/uart/1650802146285.png",
+    "st/STM32F4/uart/image/uart/1650801851578.png",
+    "st/STM32F4/uart/image/uart/1650799912590.png",
+    "st/STM32F4/uart/image/uart/1650794182248.png",
+    "st/STM32F4/uart/image/uart/1650792395070.png",
+    "st/STM32F4/uart/image/uart/1650794182035.png",
+    "st/STM32F4/uart/image/uart/1650789787423.png",
+    "st/STM32F4/uart/stm32_uart.md",
+    "st/STM32F4/rcc/stm32_rcc.md",
+    "st/STM32F4/dma/stm32_dma.md",
+    "qemu/windows_install_qemu.md",
+    "qemu/windows_build_qemu.md",
+    "qemu/vscode_qemu.md",
+    "qemu/qemu_device_init_flow.md",
+    "qemu/qemu_api.md",
+    "qemu/qemu_add_device.md",
+    "qemu/linux_build_windows_qemu.md",
+    "python/struct.md",
+    "os/xv6/dev_env.md",
+    "freertos/task.md",
+    "debug/vs_code_debug.md",
+    "debug/openocd.md",
+    "debug/gdb.md",
+    "bt/windows_wireshark_bt_capture.md",
+    "bt/bt.md",
+    "arm/os.md",
+    "arm/instruction.md"
+  ]
+}
