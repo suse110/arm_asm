@@ -7,9 +7,14 @@
  */
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 512K
+  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 384K
+  COREDUMP_STORAGE_FLASH (r) : ORIGIN = 0x8060000, LENGTH = 128K
   RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 96K
 }
+
+__MemfaultCoreStorageStart = ORIGIN(COREDUMP_STORAGE_FLASH);
+__MemfaultCoreStorageEnd = ORIGIN(COREDUMP_STORAGE_FLASH) + LENGTH(COREDUMP_STORAGE_FLASH);
+__MemfaultCoreStorageSectorNumber = 23;
 
 /* Linker script to place sections and symbol values. Should be used together
  * with other linker script that defines memory regions FLASH and RAM.
@@ -165,7 +170,9 @@ SECTIONS
 		_edata = __data_end__;
 
 	} > RAM
-	
+    .noinit (NOLOAD): {
+        KEEP(*(*.noinit.mflt*)) 
+    } >RAM
 	.ram_isr_vector :
 	{
 		. = ALIGN(512);
