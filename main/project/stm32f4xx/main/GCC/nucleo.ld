@@ -164,7 +164,9 @@ SECTIONS
         _edata = __data_end__;
 
     } > RAM
-    
+    .noinit (NOLOAD): {
+        KEEP(*(*.noinit.mflt*)) 
+    } >RAM
     .ram_isr_vector :
     {
         . = ALIGN(512);
