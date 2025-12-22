@@ -128,7 +128,9 @@ Default_Handler:
 Infinite_Loop:
   # bkpt 1
   mov r0, 6
-  bl trigger_crash
+#ifdef EXCEPTION_ENABLE
+  @ bl trigger_crash
+#endif
   b  Infinite_Loop
   .size  Default_Handler, .-Default_Handler
 
@@ -300,19 +302,19 @@ g_pfnVectors:
 
   #  .weak      SVC_Handler
   #  .thumb_set SVC_Handler,Default_Handler
-
-  #  .weak      DebugMon_Handler
-  #  .thumb_set DebugMon_Handler,Default_Handler
-
+#ifndef EXCEPTION_ENABLE
+    .weak      DebugMon_Handler
+    .thumb_set DebugMon_Handler,Default_Handler
+#endif
   #  .weak      PendSV_Handler
   #  .thumb_set PendSV_Handler,Default_Handler
 
   #  .weak      SysTick_Handler
   #  .thumb_set SysTick_Handler,Default_Handler              
-  
-  #  .weak      WWDG_IRQHandler                   
-  #  .thumb_set WWDG_IRQHandler,Default_Handler      
-                  
+#ifndef EXCEPTION_ENABLE
+    .weak      WWDG_IRQHandler                   
+    .thumb_set WWDG_IRQHandler,Default_Handler      
+#endif                
    .weak      PVD_IRQHandler      
    .thumb_set PVD_IRQHandler,Default_Handler
                

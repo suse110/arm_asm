@@ -66,7 +66,9 @@
 
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
-
+#ifdef MEMFAULT_ENABLE
+#include "memfault/ports/freertos_trace.h"
+#endif
 /*-----------------------------------------------------------
  * Application specific definitions.
  *
@@ -105,14 +107,15 @@
 #define configUSE_MALLOC_FAILED_HOOK    0
 #define configUSE_APPLICATION_TASK_TAG  0
 #define configUSE_COUNTING_SEMAPHORES   1
-#define configGENERATE_RUN_TIME_STATS   0
+#define configGENERATE_RUN_TIME_STATS   1
+#define configRECORD_STACK_HIGH_ADDRESS 1
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES           0
 #define configMAX_CO_ROUTINE_PRIORITIES ( 2 )
 
 /* Software timer definitions. */
-#define configUSE_TIMERS                0
+#define configUSE_TIMERS                1
 #define configTIMER_TASK_PRIORITY       ( 2 )
 #define configTIMER_QUEUE_LENGTH        10
 #define configTIMER_TASK_STACK_DEPTH    ( configMINIMAL_STACK_SIZE * 2 )
@@ -164,7 +167,15 @@ standard names. */
 
 /* IMPORTANT: This define MUST be commented when used with STM32Cube firmware, 
               to prevent overwriting SysTick_Handler defined within STM32Cube HAL */
-/* #define xPortSysTickHandler SysTick_Handler */
+#define xPortSysTickHandler SysTick_Handler
+#include "stm32f4xx.h"
+// 使用DWT CYCCNT寄存器（32位周期计数器）
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() do { \
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; \
+    DWT->CYCCNT = 0; \
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; \
+} while(0)
 
+#define portGET_RUN_TIME_COUNTER_VALUE()    DWT->CYCCNT
 #endif /* FREERTOS_CONFIG_H */
 

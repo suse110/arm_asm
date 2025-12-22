@@ -20,7 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#ifdef MEMFAULT_ENABLE
+#include "memfault/components.h"
+#endif
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -42,6 +44,47 @@ static void SystemClock_Config(void);
 
 #define HARDWARE_VERSION               "V1.0.0"
 #define SOFTWARE_VERSION               "V0.1.0"
+TIM_HandleTypeDef htim2;
+
+// 初始化定时器（1MHz计数，1μs分辨率）
+uint32_t timer_clock;
+uint32_t GetTimerClock(TIM_TypeDef *TIMx) {
+    uint32_t pclk;
+    if (TIMx == TIM1 ||TIMx == TIM9 || TIMx == TIM10 || TIMx == TIM11) {
+        pclk = HAL_RCC_GetPCLK2Freq(); // APB2定时器
+        if ((RCC->CFGR & RCC_CFGR_PPRE2) != RCC_CFGR_PPRE2_DIV1) pclk *= 2;
+    } else {
+        pclk = HAL_RCC_GetPCLK1Freq(); // APB1定时器
+        if ((RCC->CFGR & RCC_CFGR_PPRE1) != RCC_CFGR_PPRE1_DIV1) pclk *= 2;
+    }
+    return pclk;
+}
+void TIM2_Init(void) {
+
+    __HAL_RCC_TIM2_CLK_ENABLE();
+    timer_clock = GetTimerClock(TIM2); // 获取实际定时器时钟
+    htim2.Instance = TIM2;
+    htim2.Init.Prescaler = timer_clock / 1000000 - 1;  // 1μs/tick
+    htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+    htim2.Init.Period = 0xFFFFFFFF;  // 32位最大值
+    if (HAL_TIM_Base_Init(&htim2) != HAL_OK) {
+        printf("HAL_TIM_Base_Init failed\r\n");
+    }
+    if (HAL_TIM_Base_Start(&htim2) != HAL_OK) {
+        printf("HAL_TIM_Base_Start failed\r\n");
+    }
+}
+
+// 获取当前计数值（μs）
+uint32_t GetMicros_TIM2(void) {
+    return __HAL_TIM_GET_COUNTER(&htim2);
+}
+
+// 微秒级延时
+void Delay_us_TIM2(uint32_t us) {
+    uint32_t start = GetMicros_TIM2();
+    while (GetMicros_TIM2() - start < us);
+}
 // Task to be created.
 uint8_t tst_buffer[256];
 void vTaskCode( void * pvParameters )
@@ -54,6 +97,7 @@ void vTaskCode( void * pvParameters )
 
         snprintf(tst_buffer, sizeof(tst_buffer), "------------vTaskCoded------------\n");
         stp_write_log(tst_buffer, strlen(tst_buffer));
+        printf("------------vTaskCoded------------\n");
       // while(i++ < 1000000);
       // while(j++ < 1000000);
       i = 0;
@@ -96,6 +140,9 @@ void HAL_MspInit(void)
   */
 int main(void)
 {
+#ifdef MEMFAULT_ENABLE
+  memfault_platform_boot();
+#endif
  /* This sample code shows how to use STM32F4xx GPIO HAL API to toggle PA05 IOs 
     connected to LED2 on STM32F4xx-Nucleo board  
     in an infinite loop.
@@ -111,9 +158,17 @@ int main(void)
   /* Configure the system clock to 84 MHz */
   SystemClock_Config();
 
-
+  serial_init();
+  serial_protocol_init();
+ printf("1 -- UART Printf Example: retarget the C library printf function to the UART\r\n");
+  BSP_LED_Init(LED2);
+  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
+  HAL_SetTickFreq(HAL_TICK_FREQ_1KHZ);
+  TIM2_Init();
 // BSP_LED_Off(LED2);
+#ifdef SYSLOG_ENABLE
   syslog_init();
+#endif
   /* Output a message on Hyperterminal using printf function */
   // while(1)
   printf(" -- hello world --");

@@ -411,9 +411,11 @@ define ss
     printf "xPSR=0x%08X \n",$__xpsr
 end
 
-target remote localhost:3333
-load
+target extended-remote localhost:3333
+# load
 set disassemble-next-line on
 set pagination off
-b Reset_Handler
-c
+# b Reset_Handler
+# c
+monitor reset 
+monitor halt
