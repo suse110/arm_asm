@@ -20,7 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#ifdef MEMFAULT_ENABLE
+#include "memfault/components.h"
+#endif
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -177,6 +179,9 @@ void gpio_test(void)
 }
 int main(void)
 {
+#ifdef MEMFAULT_ENABLE
+  memfault_platform_boot();
+#endif
  /* This sample code shows how to use STM32F4xx GPIO HAL API to toggle PA05 IOs 
     connected to LED2 on STM32F4xx-Nucleo board  
     in an infinite loop.

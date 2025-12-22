@@ -67,7 +67,9 @@ SRC += $(SERVICE_DIR)/syslog/src/portable/stm32/serial.c
 endif
 endif
 endif
-
+ifeq ($(SERIAL_CMD_ENABLE),y)
+include $(SDKPATH)/$(SERVICE_DIR)/serial_cmd/module.mk
+endif
 CFLAGS += -I$(SDKPATH)/$(SERVICE_DIR)/syslog/inc
 
 #stp
