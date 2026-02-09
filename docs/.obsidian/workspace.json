@@ -83,12 +83,20 @@
             "state": {
               "type": "markdown",
               "state": {
+<<<<<<< HEAD
                 "file": "3-systems/os/zephyr/config option/CONFIG_STACK_SENTINEL.md",
+=======
+                "file": "3-systems/os/zephyr/footprint.md",
+>>>>>>> 7aae10271812e6e40f5b5d134186b95262109d6c
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
+<<<<<<< HEAD
               "title": "CONFIG_STACK_SENTINEL"
+=======
+              "title": "footprint"
+>>>>>>> 7aae10271812e6e40f5b5d134186b95262109d6c
             }
           }
         ],
@@ -184,12 +192,20 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+<<<<<<< HEAD
                 "file": "3-systems/os/zephyr/config option/CONFIG_STACK_SENTINEL.md",
+=======
+                "file": "3-systems/os/zephyr/footprint.md",
+>>>>>>> 7aae10271812e6e40f5b5d134186b95262109d6c
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
+<<<<<<< HEAD
               "title": "CONFIG_STACK_SENTINEL 的出链列表"
+=======
+              "title": "footprint 的出链列表"
+>>>>>>> 7aae10271812e6e40f5b5d134186b95262109d6c
             }
           },
           {
@@ -256,6 +272,7 @@
   },
   "active": "2750dd673a3e6e69",
   "lastOpenFiles": [
+<<<<<<< HEAD
     "3-systems/os/xv6/dev_env.md",
     "3-systems/os/zephyr/footprint.md",
     "2-hardware/chip_vendors/st/DS10086.pdf",
@@ -302,5 +319,53 @@
     "1-architecture/arm/gnu_as.md",
     "1-architecture/arm/exception/callgraph.md",
     "1-architecture/arm/asm.md"
+=======
+    "3-systems/os/zephyr/layout/iterable_sections_usage.md",
+    "3-systems/os/zephyr/footprint.md",
+    "3-systems/os/zephyr/config option/CONFIG_USE_SWITCH.md",
+    "3-systems/os/zephyr/iterable_sections_usage.md",
+    "3-systems/os/zephyr/layout",
+    "3-systems/os/zephyr/build/zephyr_cmake_system.md",
+    "3-systems/os/zephyr/build/cmake_multiple_targets.md",
+    "3-systems/os/zephyr/build/cmake_cheatsheet.md",
+    "3-systems/os/zephyr/build/cmake_ninja_tutorial.md",
+    "3-systems/os/zephyr/zephyr_cmake_system.md",
+    "3-systems/os/zephyr/thread_analyzer_analysis.md",
+    "3-systems/os/zephyr/smp_amp_guide.md",
+    "3-systems/os/zephyr/mpu_stack_guard.md",
+    "3-systems/os/zephyr/cmake_ninja_tutorial.md",
+    "3-systems/os/zephyr/cmake_multiple_targets.md",
+    "3-systems/os/zephyr/cmake_cheatsheet.md",
+    "3-systems/os/zephyr/build",
+    "3-systems/os/zephyr/bootup.md",
+    "3-systems/os/zephyr/thread/struct _cpu.md",
+    "5-tools/opencode/start.md",
+    "3-systems/os/zephyr/debug.md",
+    "3-systems/os/zephyr/env_setup.md",
+    "3-systems/os/zephyr/config option/CONFIG_MPU_STACK_GUARD.md",
+    "3-systems/os/zephyr/config option/CONFIG_MPU_STACK_GUARD.md",
+    "3-systems/os/zephyr/config option/CONFIG_STACK_SENTINEL.md",
+    "3-systems/os/zephyr/config option/CONFIG_STACK_CANARIES.md",
+    "3-systems/os/zephyr/config option/CONFIG_CUSTOM_LINKER_SCRIPT.md",
+    "5-tools/opencode",
+    "3-systems/os/zephyr/log.md",
+    "3-systems/os/zephyr/zephyr-3.7.0.pdf",
+    "3-systems/os/zephyr/zephyr-4.3.99.pdf",
+    "3-systems/os/zephyr/config option",
+    "3-systems/os/zephyr/thread",
+    "5-tools/debug/jtag.pdf",
+    "5-tools/debug/general_ref_d.pdf",
+    "5-tools/debug/5-JTAG.pdf",
+    "2-hardware/communication/uart/image/uart/1644635376457.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802695779.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802541855.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802416417.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802146285.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650801851578.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182248.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650799912590.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182035.png",
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650792395070.png"
+>>>>>>> 7aae10271812e6e40f5b5d134186b95262109d6c
   ]
 }
