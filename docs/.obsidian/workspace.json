@@ -4,24 +4,95 @@
     "type": "split",
     "children": [
       {
-        "id": "02d3df60deccddb1",
+        "id": "36667ab877a4eecb",
         "type": "tabs",
         "children": [
           {
-            "id": "80bdd2b449e75f58",
+            "id": "0833767858228c2f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "6-project/env/Scons.md",
+                "file": "3-systems/os/zephyr/debug.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Scons"
+              "title": "debug"
+            }
+          },
+          {
+            "id": "e3706eaf8b8024ba",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/config option/CONFIG_TIMING_FUNCTIONS_NEED_AT_BOOT.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CONFIG_TIMING_FUNCTIONS_NEED_AT_BOOT"
+            }
+          },
+          {
+            "id": "5f099c2daaa2f91b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/config option/CONFIG_STACK_CANARIES.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CONFIG_STACK_CANARIES"
+            }
+          },
+          {
+            "id": "80d3c57c2143fc91",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/bootup.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "bootup"
+            }
+          },
+          {
+            "id": "89d42ef25d20ccce",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/bootup.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "bootup"
+            }
+          },
+          {
+            "id": "2750dd673a3e6e69",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "3-systems/os/zephyr/footprint.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "footprint"
             }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -78,7 +149,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 514.5
+    "width": 352.5
   },
   "right": {
     "id": "dc8c575e58a13de0",
@@ -94,17 +165,17 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "6-project/env/Scons.md",
+                "file": "3-systems/os/zephyr/thread/thread state.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
                 "showSearch": false,
                 "searchQuery": "",
                 "backlinkCollapsed": false,
-                "unlinkedCollapsed": true
+                "unlinkedCollapsed": false
               },
               "icon": "links-coming-in",
-              "title": "Scons 的反向链接列表"
+              "title": "thread state 的反向链接列表"
             }
           },
           {
@@ -113,12 +184,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "6-project/env/Scons.md",
+                "file": "3-systems/os/zephyr/footprint.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Scons 的出链列表"
+              "title": "footprint 的出链列表"
             }
           },
           {
@@ -156,66 +227,72 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "6-project/env/Scons.md",
+                "file": "6-project/env/pyenv.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Scons 的大纲"
+              "title": "pyenv 的大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
+      "bases:新建数据库": false,
       "switcher:打开快速切换": false,
       "graph:查看关系图谱": false,
       "canvas:新建白板": false,
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
-      "command-palette:打开命令面板": false,
-      "bases:创建新数据库": false
+      "command-palette:打开命令面板": false
     }
   },
-  "active": "a3a70c412c0e5738",
+  "active": "2750dd673a3e6e69",
   "lastOpenFiles": [
-    "6-project/git/git如何添加ssh key.md",
-    "6-project/git/gitalias.txt",
-    "6-project/git",
-    "6-project/env/wsl/禁用windows环境变量.md",
-    "6-project/env/wsl/wsl-常用命令.md",
-    "6-project/env/wsl/wsl-安装到非系统盘.md",
-    "6-project/env/wsl",
-    "6-project/env/ubuntu/ubunu20.04源.md",
-    "6-project/env/ubuntu/pip.md",
-    "6-project/env/ubuntu",
-    "6-project/env/qemu/windows_install_qemu.md",
-    "6-project/env/qemu/windows_build_qemu.md",
-    "6-project/env/qemu/vscode_qemu.md",
-    "6-project/env/qemu/qemu_device_init_flow.md",
-    "6-project/env/qemu/qemu_api.md",
-    "6-project/env/qemu/qemu_add_device.md",
-    "6-project/env/qemu/linux_build_windows_qemu.md",
-    "6-project/env/qemu/hello-arm.html",
-    "5-tools/debug/wireshark/Wireshark-user-guide-a4_v1.0.0.pdf",
-    "5-tools/debug/wireshark/monitor_serial_port.md",
-    "5-tools/debug/wireshark",
-    "5-tools/debug/vscode/debug.md",
-    "5-tools/debug/vscode",
-    "5-tools/debug/trace32/training_hll.pdf",
-    "5-tools/debug/trace32/training_debugger.pdf",
-    "5-tools/debug/trace32/practice.md",
-    "4-programming/python/struct.md",
-    "3-systems/os/xv6/dev_env.md",
-    "3-systems/os/freertos/task.md",
-    "2-hardware/communication/bt/windows_wireshark_bt_capture.md",
-    "2-hardware/communication/bt/bt.md",
+    "3-systems/os/zephyr/layout/iterable_sections_usage.md",
+    "3-systems/os/zephyr/footprint.md",
+    "3-systems/os/zephyr/config option/CONFIG_USE_SWITCH.md",
+    "3-systems/os/zephyr/iterable_sections_usage.md",
+    "3-systems/os/zephyr/layout",
+    "3-systems/os/zephyr/build/zephyr_cmake_system.md",
+    "3-systems/os/zephyr/build/cmake_multiple_targets.md",
+    "3-systems/os/zephyr/build/cmake_cheatsheet.md",
+    "3-systems/os/zephyr/build/cmake_ninja_tutorial.md",
+    "3-systems/os/zephyr/zephyr_cmake_system.md",
+    "3-systems/os/zephyr/thread_analyzer_analysis.md",
+    "3-systems/os/zephyr/smp_amp_guide.md",
+    "3-systems/os/zephyr/mpu_stack_guard.md",
+    "3-systems/os/zephyr/cmake_ninja_tutorial.md",
+    "3-systems/os/zephyr/cmake_multiple_targets.md",
+    "3-systems/os/zephyr/cmake_cheatsheet.md",
+    "3-systems/os/zephyr/build",
+    "3-systems/os/zephyr/bootup.md",
+    "3-systems/os/zephyr/thread/struct _cpu.md",
+    "5-tools/opencode/start.md",
+    "3-systems/os/zephyr/debug.md",
+    "3-systems/os/zephyr/env_setup.md",
+    "3-systems/os/zephyr/config option/CONFIG_MPU_STACK_GUARD.md",
+    "3-systems/os/zephyr/config option/CONFIG_MPU_STACK_GUARD.md",
+    "3-systems/os/zephyr/config option/CONFIG_STACK_SENTINEL.md",
+    "3-systems/os/zephyr/config option/CONFIG_STACK_CANARIES.md",
+    "3-systems/os/zephyr/config option/CONFIG_CUSTOM_LINKER_SCRIPT.md",
+    "5-tools/opencode",
+    "3-systems/os/zephyr/log.md",
+    "3-systems/os/zephyr/zephyr-3.7.0.pdf",
+    "3-systems/os/zephyr/zephyr-4.3.99.pdf",
+    "3-systems/os/zephyr/config option",
+    "3-systems/os/zephyr/thread",
+    "5-tools/debug/jtag.pdf",
+    "5-tools/debug/general_ref_d.pdf",
+    "5-tools/debug/5-JTAG.pdf",
+    "2-hardware/communication/uart/image/uart/1644635376457.png",
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802695779.png",
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802541855.png",
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650802416417.png",
@@ -224,12 +301,6 @@
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182248.png",
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650799912590.png",
     "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650794182035.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650792395070.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650787436926.png",
-    "2-hardware/chip_vendors/st/STM32F4/uart/stm32_uart.md",
-    "2-hardware/chip_vendors/st/STM32F4/rcc/stm32_rcc.md",
-    "2-hardware/chip_vendors/st/STM32F4/dma/stm32_dma.md",
-    "1-architecture/arm/os.md",
-    "1-architecture/arm/instruction.md"
+    "2-hardware/chip_vendors/st/STM32F4/uart/image/uart/1650792395070.png"
   ]
 }
