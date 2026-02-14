@@ -109,6 +109,31 @@ set(STM32F4XX_NUCLEO_INCS
 )
 
 # ============================================================================
+# STM32F10x Standard Peripheral Library (drivers/chip/stm32f10x/module.mk)
+# ============================================================================
+set(STM32F10X_STDPERIPH_SRCS
+    drivers/chip/stm32f10x/STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.c
+    drivers/chip/stm32f10x/STM32F10x_StdPeriph_Driver/src/stm32f10x_rcc.c
+    drivers/chip/stm32f10x/STM32F10x_StdPeriph_Driver/src/stm32f10x_usart.c
+    drivers/chip/stm32f10x/STM32F10x_StdPeriph_Driver/src/misc.c
+)
+set(STM32F10X_STDPERIPH_INCS
+    drivers/chip/stm32f10x/STM32F10x_StdPeriph_Driver/inc
+    drivers/CMSIS/Include
+    drivers/CMSIS/Device/ST/STM32F10x____
+    drivers/CMSIS/Device/ST/STM32F1xx/Include
+)
+
+# ============================================================================
+# LM3S811 Driver
+# ============================================================================
+set(LM3S811_SRCS
+)
+set(LM3S811_INCS
+    drivers/CMSIS/Include
+)
+
+# ============================================================================
 # STM32L5xx HAL Driver (drivers/chip/stm32l5xx/module.mk)
 # ============================================================================
 set(HAL_L5_SRCS
@@ -402,6 +427,12 @@ function(aggregate_module_sources)
             list(APPEND MODULE_SRCS ${STM32L5XX_NUCLEO_SRCS})
             list(APPEND MODULE_INCS ${STM32L5XX_NUCLEO_INCS})
             list(APPEND MODULE_DEFS HAL_DRIVER_ENABLE)
+        elseif(CHIP_CONFIG STREQUAL "stm32f10x")
+            list(APPEND MODULE_SRCS ${STM32F10X_STDPERIPH_SRCS})
+            list(APPEND MODULE_INCS ${STM32F10X_STDPERIPH_INCS})
+        elseif(CHIP_CONFIG STREQUAL "lm3s811")
+            list(APPEND MODULE_SRCS ${LM3S811_SRCS})
+            list(APPEND MODULE_INCS ${LM3S811_INCS})
         endif()
     endif()
 
