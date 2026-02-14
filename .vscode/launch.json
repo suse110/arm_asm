@@ -16,23 +16,23 @@
                 // "target/stm32l5x.cfg"
             ],
             "interface": "swd",
-            // "executable": "./main/build/stm32f4xx/FreeRTOS_demo/FreeRTOS_demo.elf",
-            "executable": "./main/build/stm32f4xx/main/main.elf",
-            "svdFile": "./main/drivers/CMSIS/SVD/STM32F401xE.svd",
+            "executable": "${workspaceRoot}/main/build/stm32f4xx/FreeRTOS_demo/FreeRTOS_demo.elf",
+            // "executable": "${workspaceRoot}/main/build/stm32f4xx/main/main.elf",
+            "svdFile": "${workspaceRoot}/main/drivers/CMSIS/SVD/STM32F401xE.svd",
             "device": "STM32F401RE",
 
-            // "executable": "./main/build/stm32l5xx/main/main.elf",
-            // "svdFile": "./main/drivers/CMSIS/SVD/STM32L552.svd",
+            // "executable": "${workspaceRoot}/main/build/stm32l5xx/main/main.elf",
+            // "svdFile": "${workspaceRoot}/main/drivers/CMSIS/SVD/STM32L552.svd",
             // "device": "STM32F552ZE",
-            "runToMain": false,
+            "runToEntryPoint": "main",
 
 
             // "showDevDebugOutput": "parsed",
             "preLaunchCommands": [
-                // "dir D:/src/os/arm_asm/main/project/stm32l5xx/main/GCC"
-                "dir D:/src/os/arm_asm/main/project/stm32f4xx/main/GCC"
-                // "dir D:/src/os/arm_asm/main/project/stm32f4xx/FreeRTOS_demo/GCC"
-                // "dir /mnt/d/src/os/arm_asm/main/project/stm32f4xx/FreeRTOS_demo/GCC"
+                // "dir ${workspaceRoot}/main/project/stm32l5xx/main/GCC"
+                // "dir ${workspaceRoot}/main/project/stm32f4xx/main/GCC"
+                "dir ${workspaceRoot}/main/project/stm32f4xx/FreeRTOS_demo/GCC"
+                // "dir /mnt/I/workspace/os/myos/arm_asm/main/project/stm32f4xx/FreeRTOS_demo/GCC"
             ],
 
             // "gdbPath": "arm-none-eabi-gdb"
