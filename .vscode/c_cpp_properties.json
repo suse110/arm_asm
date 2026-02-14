@@ -13,7 +13,7 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "${workspaceFolder}\\tools\\arm-none-eabi\\Sourcery_CodeBench_Lite_for_ARM_EABI\\bin\\arm-none-eabi-gcc.exe",
+            "compilerPath": "${workspaceFolder}\\tools\\toolchain\\gcc-arm-none-eabi-10-2020-q4-major\\bin\\arm-none-eabi-gcc.exe",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-gcc-arm"
