@@ -51,7 +51,7 @@ include ./feature.mk
 
 include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
 include $(SDKPATH)/kernel/service/module.mk
-include $(SDKPATH)/kernel/third/unit-test/cutest/module.mk
+include $(SDKPATH)/kernel/third/unit-test/module.mk
 include $(SDKPATH)/middleware/module.mk
 
 include $(SDKPATH)/rule.mk
