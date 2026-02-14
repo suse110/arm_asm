@@ -1,6 +1,7 @@
 #ifndef __SERIAL_H__
 #define __SERIAL_H__
-#include "stdbool.h"
+#include <stdint.h>
+#include <stdbool.h>
 // #define UART_USE_DMA
 void serial_init(void) ;
 void serial_write(uint8_t *pData, uint16_t Size);
