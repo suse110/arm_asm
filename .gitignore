@@ -24,3 +24,4 @@ main/**/*.exe
 **/CmBacktrace
 **/early-bringup-tool
 **/*gdb_history
+**/build
