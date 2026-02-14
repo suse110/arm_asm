@@ -13,9 +13,10 @@
 @REM @set ARM_NONE_EABI=%ROOT_DIR%\tools\arm-none-eabi\Sourcery_CodeBench_Lite_for_ARM_EABI\bin
 @set ARM_NONE_EABI=%ROOT_DIR%\tools\xpack\xpack-arm-none-eabi-gcc-10.2.1-1.1-win32-x64\bin
 @set ARM_LINUX_EABI=D:\Tools\install\linux-version\gcc\gcc-arm-10.3-2021.07-x86_64-arm-none-linux-gnueabihf\bin
+@set WINBUILD_TOOL_ROOT=%ROOT_DIR%\tools\toolchain\xpack\xpack-windows-build-tools-4.2.1-2-win32-x64\xpack-windows-build-tools-4.2.1-2\bin
 @set OPENOCD_ROOT=%ROOT_DIR%\tools\openocd\OpenOCD-20210519-0.11.0\bin
 @set HEXDUMP_ROOT=%ROOT_DIR%\tools\hexdump
 @set TOOL_ROOT=%ROOT_DIR%\tools\
 @set WIRESHARK_PATH=D:\Tools\Wireshark
-@set USR_PATH=D:\Tools\Git\bin;D:\Tools\msys64\usr\bin;D:\Tools\lua-5.3.6_Win32_bin;%WIRESHARK_PATH%
+@set USR_PATH=D:\Tools\Git\bin;D:\Tools\msys64\usr\bin;D:\Tools\lua-5.3.6_Win32_bin;%WIRESHARK_PATH%;%WINBUILD_TOOL_ROOT%
 @set PATH=%PYTHONPATH%;%PYTHONHOME%;%PATH%;%QEMU_ROOT%;%ARM_NONE_EABI%;%ARM_LINUX_EABI%;%OPENOCD_ROOT%;%HEXDUMP_ROOT%;%TOOL_ROOT%;%USR_PATH%
