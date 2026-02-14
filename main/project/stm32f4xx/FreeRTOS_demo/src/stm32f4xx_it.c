@@ -41,7 +41,7 @@
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
 /******************************************************************************/
-#if 0
+#if 1
 /**
   * @brief  This function handles NMI exception.
   * @param  None
@@ -56,7 +56,7 @@ void NMI_Handler(void)
   * @param  None
   * @retval None
   */
-#if 0
+#if 1
 void HardFault_Handler(void)
 {
   printf("[%s]\n", __func__);
@@ -67,9 +67,9 @@ void HardFault_Handler(void)
   //   "BL      cm_backtrace_fault\n"
   // );
     //dump_stack()
-  printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
-  print_call_stack(cmb_get_sp());
-  #ifdef CM_BACKTRACE_ENABLE
+#ifdef CM_BACKTRACE_ENABLE
+    printf("[%s] lr = 0x%x, sp = 0x%x\r\n", __func__, cmb_get_lr(), cmb_get_sp());
+    print_call_stack(cmb_get_sp());
     cm_backtrace_fault(cmb_get_lr(), cmb_get_sp());
   #endif
   for(;;);
@@ -120,10 +120,10 @@ void UsageFault_Handler(void)
   * @param  None
   * @retval None
   */
-void SVC_Handler(void)
-{
-  printf("This is [%s]\n", __func__);
-}
+// void SVC_Handler(void)
+// {
+//   printf("This is [%s]\n", __func__);
+// }
 #endif
 /**
   * @brief  This function handles Debug Monitor exception.
@@ -177,20 +177,17 @@ void DebugMon_Handler(void)
   * @}
   */
 
-// HAL库的中断回调函数
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
     if (GPIO_Pin == KEY_BUTTON_PIN) {
-        // 按键按下后的处理逻辑
         printf("key pressed\n");
-        BSP_LED_Toggle(LED2); // 示例：切换LED状态
+        BSP_LED_Toggle(LED2);
     }
 }
-// 外部中断服务函数
 void USART2_IRQHandler(void) {
   UART_IRQHandler();
 }
 void EXTI15_10_IRQHandler(void) {
-    HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN); // 处理中断标志
+    HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
 }
 /* Interrupt Handlers (stm32f4xx_it.c) */
 void DMA1_Stream5_IRQHandler(void)

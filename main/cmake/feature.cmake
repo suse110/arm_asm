@@ -43,6 +43,9 @@ option(SERIAL_CMD_ENABLE "Enable serial command" ON)
 # FreeRTOS support
 option(FREERTOS_ENABLE "Enable FreeRTOS" OFF)
 
+# CuTest unit testing
+option(CUTEST_ENABLE "Enable CuTest unit testing" OFF)
+
 # Memfault support
 option(MEMFAULT_ENABLE "Enable Memfault" OFF)
 

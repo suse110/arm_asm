@@ -11,17 +11,17 @@ function(add_module_sources)
     set(oneValueArgs)
     set(multiValueArgs SOURCES INCLUDES DEFINES)
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    
+
     if(ARG_SOURCES)
         list(APPEND MODULE_SRCS ${ARG_SOURCES})
         set(MODULE_SRCS ${MODULE_SRCS} PARENT_SCOPE)
     endif()
-    
+
     if(ARG_INCLUDES)
         list(APPEND MODULE_INCS ${ARG_INCLUDES})
         set(MODULE_INCS ${MODULE_INCS} PARENT_SCOPE)
     endif()
-    
+
     if(ARG_DEFINES)
         list(APPEND MODULE_DEFS ${ARG_DEFINES})
         set(MODULE_DEFS ${MODULE_DEFS} PARENT_SCOPE)
@@ -106,6 +106,84 @@ set(STM32F4XX_NUCLEO_SRCS
 )
 set(STM32F4XX_NUCLEO_INCS
     drivers/chip/stm32f4xx/BSP/STM32F4xx-Nucleo
+)
+
+# ============================================================================
+# STM32L5xx HAL Driver (drivers/chip/stm32l5xx/module.mk)
+# ============================================================================
+set(HAL_L5_SRCS
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_cortex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_dma.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_dma_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_exti.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_flash.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_flash_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_flash_ramfunc.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_gpio.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_gtzc.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_hash.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_hash_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_icache.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_pwr.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_pwr_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_rcc.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_rcc_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_sram.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_uart.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_uart_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_usart.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_hal_usart_ex.c
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/src/stm32l5xx_ll_utils.c
+)
+
+set(HAL_L5_INCS
+    drivers/chip/stm32l5xx/STM32L5xx_HAL_Driver/inc
+    drivers/CMSIS/Include
+    drivers/CMSIS/Device/ST/STM32L5xx/Include
+)
+
+# ============================================================================
+# STM32L5xx Nucleo BSP
+# ============================================================================
+set(STM32L5XX_NUCLEO_SRCS
+    drivers/chip/stm32l5xx/BSP/STM32L5xx_Nucleo/stm32l5xx_nucleo.c
+    drivers/chip/stm32l5xx/BSP/STM32L5xx_Nucleo/stm32l5xx_nucleo_usbpd_pwr.c
+)
+set(STM32L5XX_NUCLEO_INCS
+    drivers/chip/stm32l5xx/BSP/STM32L5xx_Nucleo
+)
+
+# ============================================================================
+# FreeRTOS Kernel (kernel/rtos/freertos/module.mk)
+# ============================================================================
+set(FREERTOS_SRCS
+    kernel/rtos/freertos/FreeRTOS-Kernel/croutine.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/event_groups.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/list.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/queue.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/stream_buffer.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/tasks.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/timers.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/portable/GCC/ARM_CM4F/port.c
+    kernel/rtos/freertos/FreeRTOS-Kernel/portable/MemMang/heap_4.c
+)
+set(FREERTOS_INCS
+    kernel/rtos/freertos/FreeRTOS-Kernel/include
+    kernel/rtos/freertos/FreeRTOS-Kernel/portable/GCC/ARM_CM4F
+)
+set(FREERTOS_DEFS
+    FREERTOS_ENABLE
+)
+
+# ============================================================================
+# CuTest Unit Testing (kernel/third/unit-test/module.mk)
+# ============================================================================
+set(CUTEST_SRCS
+    kernel/third/unit-test/cutest/CuTest.c
+)
+set(CUTEST_INCS
+    kernel/third/unit-test/cutest
 )
 
 # ============================================================================
@@ -308,7 +386,7 @@ function(aggregate_module_sources)
     set(MODULE_INCS "")
     set(MODULE_DEFS "")
     set(MODULE_ASMS "")
-    
+
     # Always included - HAL
     if(HAL_DRIVER_ENABLE)
         if(CHIP_CONFIG STREQUAL "stm32f4xx")
@@ -317,19 +395,28 @@ function(aggregate_module_sources)
             # STM32F4xx Nucleo BSP
             list(APPEND MODULE_SRCS ${STM32F4XX_NUCLEO_SRCS})
             list(APPEND MODULE_INCS ${STM32F4XX_NUCLEO_INCS})
+        elseif(CHIP_CONFIG STREQUAL "stm32l5xx")
+            list(APPEND MODULE_SRCS ${HAL_L5_SRCS})
+            list(APPEND MODULE_INCS ${HAL_L5_INCS})
+            # STM32L5xx Nucleo BSP
+            list(APPEND MODULE_SRCS ${STM32L5XX_NUCLEO_SRCS})
+            list(APPEND MODULE_INCS ${STM32L5XX_NUCLEO_INCS})
+            list(APPEND MODULE_DEFS HAL_DRIVER_ENABLE)
         endif()
     endif()
-    
+
     # Always included - BSP
     if(BSP_STEPPER_MOTOR_ENABLE)
         list(APPEND MODULE_SRCS ${STEPPER_SRCS})
         list(APPEND MODULE_INCS ${STEPPER_INCS})
     endif()
-    
-    # Board LED
-    list(APPEND MODULE_SRCS ${LED_SRCS})
-    list(APPEND MODULE_INCS ${LED_INCS})
-    
+
+    # Board LED (only for stm32f4xx)
+    if(CHIP_CONFIG STREQUAL "stm32f4xx")
+        list(APPEND MODULE_SRCS ${LED_SRCS})
+        list(APPEND MODULE_INCS ${LED_INCS})
+    endif()
+
     # Always included - Basic kernel services
     list(APPEND MODULE_SRCS ${KERNEL_PRINTF_SRCS})
     list(APPEND MODULE_SRCS ${KERNEL_LITE_PRINTF_SRCS})
@@ -338,50 +425,63 @@ function(aggregate_module_sources)
     list(APPEND MODULE_INCS ${KERNEL_LITE_PRINTF_INCS})
     list(APPEND MODULE_INCS ${KERNEL_STP_INCS})
     list(APPEND MODULE_DEFS ${KERNEL_PRINTF_DEFS})
-    
-    # Conditional - RTOS
+
+    # Conditional - RTOS (custom RTOS)
     if(RTOS_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_RTOS_SRCS})
         list(APPEND MODULE_ASMS ${KERNEL_RTOS_ASMS})
         list(APPEND MODULE_INCS ${KERNEL_RTOS_INCS})
     endif()
-    
+
+    # Conditional - FreeRTOS
+    if(FREERTOS_ENABLE)
+        list(APPEND MODULE_SRCS ${FREERTOS_SRCS})
+        list(APPEND MODULE_INCS ${FREERTOS_INCS})
+        list(APPEND MODULE_DEFS ${FREERTOS_DEFS})
+    endif()
+
     # Conditional - Exception
     if(EXCEPTION_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_EXCEPTION_SRCS})
         list(APPEND MODULE_INCS ${KERNEL_EXCEPTION_INCS})
     endif()
-    
+
     # Conditional - Shell
     if(SHELL_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_SHELL_SRCS})
         list(APPEND MODULE_INCS ${KERNEL_SHELL_INCS})
     endif()
-    
+
     # Conditional - Backtrace
     if(BACKTRACE_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_BACKTRACE_SRCS})
         list(APPEND MODULE_INCS ${KERNEL_BACKTRACE_INCS})
     endif()
-    
+
     # Conditional - CmBacktrace
     if(CM_BACKTRACE_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_CM_BACKTRACE_SRCS})
         list(APPEND MODULE_INCS ${KERNEL_CM_BACKTRACE_INCS})
     endif()
-    
+
     # Conditional - Syslog
     if(SYSLOG_ENABLE)
         list(APPEND MODULE_SRCS ${KERNEL_SYSLOG_SRCS})
         list(APPEND MODULE_INCS ${KERNEL_SYSLOG_INCS})
     endif()
-    
+
     # Conditional - Serial Command (from middleware)
     if(SERIAL_CMD_ENABLE)
         list(APPEND MODULE_SRCS ${MW_SERIAL_CMD_SRCS})
         list(APPEND MODULE_INCS ${MW_SERIAL_CMD_INCS})
     endif()
-    
+
+    # Conditional - CuTest
+    if(CUTEST_ENABLE)
+        list(APPEND MODULE_SRCS ${CUTEST_SRCS})
+        list(APPEND MODULE_INCS ${CUTEST_INCS})
+    endif()
+
     # Always included - Middleware
     list(APPEND MODULE_SRCS ${MW_RINGBUFFER_SRCS})
     list(APPEND MODULE_SRCS ${MW_MENU_SRCS})
@@ -389,13 +489,13 @@ function(aggregate_module_sources)
     list(APPEND MODULE_INCS ${MW_RINGBUFFER_INCS})
     list(APPEND MODULE_INCS ${MW_MENU_INCS})
     list(APPEND MODULE_INCS ${MW_UTILITY_INCS})
-    
+
     # Export to parent scope
     set(MODULE_SRCS ${MODULE_SRCS} PARENT_SCOPE)
     set(MODULE_INCS ${MODULE_INCS} PARENT_SCOPE)
     set(MODULE_DEFS ${MODULE_DEFS} PARENT_SCOPE)
     set(MODULE_ASMS ${MODULE_ASMS} PARENT_SCOPE)
-    
+
     message(STATUS "Module Sources:")
     message(STATUS "  Sources: ${MODULE_SRCS}")
     message(STATUS "  ASM: ${MODULE_ASMS}")

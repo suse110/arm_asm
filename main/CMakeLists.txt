@@ -43,9 +43,10 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Toolchain: ${CMAKE_C_COMPILER}")
 
 # Build all projects
-# Note: Only stm32f4xx/main is enabled with simplified CMake support.
-# Other projects and full middleware support require the original Makefile.
 add_subdirectory(project/stm32f4xx/main)
+add_subdirectory(project/stm32f4xx/FreeRTOS_demo)
+add_subdirectory(project/stm32f4xx/NetduinoPlus2)
+add_subdirectory(project/stm32l5xx/main)
 
 # Print build summary
 message(STATUS "========================================")
