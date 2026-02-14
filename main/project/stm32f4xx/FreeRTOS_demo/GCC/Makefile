@@ -13,7 +13,7 @@ include $(SDKPATH)/drivers/chip/$(CHIP_COFNIG)/module.mk
 include $(SDKPATH)/kernel/module.mk
 include $(SDKPATH)/middleware/module.mk
 
-include $(SDKPATH)/kernel/rtos/freertos/FreeRTOS-Kernel/module.mk
+include $(SDKPATH)/kernel/rtos/freertos/module.mk
 # include $(SDKPATH)/kernel/rtos/freertos/FreeRTOS/module.mk
 
 ASMSRC += $(APP_DIR)/GCC/startup_stm32f401xe.s 
