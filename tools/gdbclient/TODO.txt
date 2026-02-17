@@ -47,10 +47,10 @@ GDB Client MCP 服务器是一个用于与 GDB 服务器交互的 MCP 服务器�
 - [x] 创建启动脚本：`scripts/start_gdb_client_mcp.bat`
 
 ### 6. 编写测试
-- [ ] 编写单元测试：`tests/unit/test_gdb_client_mcp.py`
-- [ ] 编写集成测试：`tests/integration/test_gdb_client_mcp.py`
-- [ ] 测试load和restore功能
-- [ ] 测试调试工具功能
+- [x] 编写单元测试：`tests/unit/test_gdb_client_mcp.py`
+- [x] 编写集成测试：`tests/integration/test_gdb_client_mcp.py`
+- [x] 测试load和restore功能
+- [x] 测试调试工具功能
 
 ### 7. 编写文档
 - [ ] 创建README：`README.md`

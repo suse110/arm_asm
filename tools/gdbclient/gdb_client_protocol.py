@@ -30,13 +30,19 @@ class GDBMCPTool:
 class GDBMCPProtocolHandler:
     """GDB Client MCP Protocol Handler."""
     
-    def __init__(self):
+    def __init__(self, gdb_path: Optional[str] = None, target_xml: Optional[str] = None):
         """
         Initialize GDB Client MCP Protocol Handler.
+        
+        Args:
+            gdb_path: Path to GDB executable (default: arm-none-eabi-gdb.exe)
+            target_xml: Path to target XML description file
         """
         self.logger = logging.getLogger('gdb_client_protocol')
         self.gdbmi = None
         self.connected = False
+        self.gdb_path = gdb_path or r"I:\workspace\os\myos\arm_asm\tools\toolchain\gcc-arm-none-eabi-10-2020-q4-major\bin\arm-none-eabi-gdb.exe"
+        self.target_xml = target_xml or r"I:\workspace\os\myos\arm_asm\tools\gdbstub\src\arch\armv8m_target.xml"
         self.tools = self._get_available_tools()
     
     def _get_available_tools(self) -> List[GDBMCPTool]:
@@ -433,9 +439,14 @@ class GDBMCPProtocolHandler:
             Connection result
         """
         try:
-            # Start GDB controller
-            self.gdbmi = GdbController()
+            # Start GDB controller with specified GDB path
+            self.gdbmi = GdbController(command=[self.gdb_path, "--nx", "--quiet", "--interpreter=mi3"])
             self.logger.info(f"Started GDB controller: {self.gdbmi.command}")
+            
+            # Set target description file
+            if self.target_xml:
+                response = self.gdbmi.write(f'set target-xml {self.target_xml}')
+                self.logger.debug(f"Set target XML response: {response}")
             
             # Connect to remote GDB server
             response = self.gdbmi.write(f'target remote {host}:{port}')
@@ -446,7 +457,9 @@ class GDBMCPProtocolHandler:
                 "status": "success",
                 "message": f"Connected to {host}:{port}",
                 "host": host,
-                "port": port
+                "port": port,
+                "gdb_path": self.gdb_path,
+                "target_xml": self.target_xml
             }
         except Exception as e:
             self.logger.error(f"Connection error: {e}")
