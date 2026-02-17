@@ -1,0 +1,8 @@
+# GDB Client MCP Dependencies
+
+# pygdbmi: GDB Machine Interface parser and controller
+# https://github.com/cs01/pygdbmi
+pygdbmi>=0.10.0.0
+
+# Python 3.8+
+# requires-python>=3.8

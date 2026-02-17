@@ -1,0 +1,98 @@
+# GDB Client MCP 开发计划
+
+## 项目介绍
+GDB Client MCP 服务器是一个用于与 GDB 服务器交互的 MCP 服务器，支持通过 GDB 的 load 和 restore 命令加载 ELF 文件和内存快照，用于分析 crash 原因。
+
+## 使用技术
+- Python 3.8+
+- pygdbmi 库（用于与 GDB 交互）
+- MCP 协议（与 Trae 通信）
+
+## TODO List
+
+### 1. 创建GDB Client MCP服务器
+- [x] 创建主文件：`gdb_client_mcp.py`
+- [x] 创建MCP协议处理器：`gdb_client_protocol.py`
+- [x] 创建依赖文件：`requirements.txt`（添加pygdbmi）
+
+### 2. 实现GDB客户端连接管理（使用pygdbmi）
+- [x] 实现连接功能：`connect(host, port)` - 使用`gdbmi.write('target remote host:port')`
+- [x] 实现断开功能：`disconnect()` - 使用`gdbmi.exit()`
+- [x] 实现连接状态检查：`is_connected()`
+- [ ] 实现超时处理
+
+### 3. 实现load和restore工具（使用pygdbmi）
+- [x] 实现`load_elf(filepath)` - 使用`gdbmi.write('load filepath')`或`gdbmi.write('-file-exec-and-symbols filepath')`
+- [x] 实现`restore_binary(filepath, address)` - 使用`gdbmi.write(f'restore {filepath} binary {address:#x}')`
+- [x] 实现`load_elf_and_restore_snapshot(elf_filepath, snapshot_gdb)` - 组合工具
+- [x] 实现`source_gdb_script(filepath)` - 使用`gdbmi.write(f'source {filepath}')`
+
+### 4. 实现GDB调试工具
+- [x] 实现`backtrace()` - 使用`gdbmi.write('-stack-list-frames')`
+- [x] 实现`info_registers()` - 使用`gdbmi.write('-data-list-register-values x')`
+- [x] 实现`info_breakpoints()` - 使用`gdbmi.write('-breakpoint-list')`
+- [x] 实现`step()` - 使用`gdbmi.write('-exec-step')`
+- [x] 实现`stepi()` - 使用`gdbmi.write('-exec-step-instruction')`
+- [x] 实现`next()` - 使用`gdbmi.write('-exec-next')`
+- [x] 实现`continue()` - 使用`gdbmi.write('-exec-continue')`
+- [x] 实现`print_expression(expr)` - 使用`gdbmi.write(f'-data-evaluate-expression {expr}')`
+- [x] 实现`disassemble(addr, count)` - 使用`gdbmi.write(f'-data-disassemble -s {addr} {count}')`
+- [x] 实现`set_breakpoint(addr)` - 使用`gdbmi.write(f'-break-insert {addr}')`
+- [x] 实现`delete_breakpoint(id)` - 使用`gdbmi.write(f'-break-delete {id}')`
+- [x] 实现`execute(cmd)` - 使用`gdbmi.write(cmd)`
+
+### 5. 创建配置文件
+- [ ] 创建GDB Client MCP配置文件：`config/gdb_client_mcp_config.json`
+- [ ] 更新Trae配置文件：`.trae/mcp.json`（添加GDB Client MCP）- 需要用户手动更新
+- [x] 创建启动脚本：`scripts/start_gdb_client_mcp.bat`
+
+### 6. 编写测试
+- [ ] 编写单元测试：`tests/unit/test_gdb_client_mcp.py`
+- [ ] 编写集成测试：`tests/integration/test_gdb_client_mcp.py`
+- [ ] 测试load和restore功能
+- [ ] 测试调试工具功能
+
+### 7. 编写文档
+- [ ] 创建README：`README.md`
+- [ ] 创建快速开始指南：`QUICKSTART.md`
+- [ ] 创建API文档：`API.md`
+- [ ] 更新主README：`../gdbstub/README.md`（添加GDB Client MCP说明）
+
+### 8. 实现错误处理和日志
+- [ ] 实现GDB客户端错误处理（pygdbmi的异常）
+- [ ] 实现超时重试机制
+- [ ] 实现日志记录
+- [ ] 实现调试模式
+
+### 9. 实现高级功能（可选）
+- [ ] 实现批量分析：`analyze_multiple_crashes(scenarios)`
+- [ ] 实现场景比较：`compare_scenarios(scenario1, scenario2)`
+- [ ] 实现自动化分析：`auto_analyze_crash(crash_info)`
+- [ ] 实现报告生成：`generate_report(analysis_results)`
+
+## 优先级
+
+### 高优先级（必须实现）
+1. 创建GDB Client MCP服务器
+2. 实现GDB客户端连接管理
+3. 实现load和restore工具
+4. 实现基础GDB调试工具（backtrace, info_registers, step, continue）
+5. 创建配置文件
+
+### 中优先级（重要）
+6. 编写测试
+7. 编写文档
+8. 实现错误处理和日志
+
+### 低优先级（可选）
+9. 实现高级功能（批量分析、场景比较等）
+
+## 预估工作量
+
+- **高优先级**：1-2天（pygdbmi大大简化了开发）
+- **中优先级**：1-2天
+- **低优先级**：1天
+- **总计**：3-5天
+
+## 开始日期
+2026-02-17
